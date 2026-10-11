@@ -4,7 +4,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="学习站">
 <title>学习站</title>
-<link rel="stylesheet" href="style.css?v=1791729649">
+<link rel="stylesheet" href="style.css?v=1791730114">
 </head><body class="app">
 <header class="top">
   <div class="brand"><div class="logo">🏠</div><div><b>我的设计工作室</b><small id="lv"></small></div></div>
@@ -19,7 +19,7 @@
 </nav>
 <div class="modal" id="modal"><div class="box" id="mbox"></div></div>
 
-<script src="common.js?v=1791729649"></script>
+<script src="common.js?v=1791730114"></script>
 <script>
 const LEVELS = [
   {lv:1, name:'设计学徒', need:0, icon:'🌱'},
@@ -44,11 +44,13 @@ const daysBetween = (a, b) => Math.round((new Date(b + 'T12:00') - new Date(a + 
 function checkMissed(){
   const missed = load('missed', {}), leave = load('leave', {}), start = load('start', null) || (save('start', T), T);
   for (const k of Object.keys(DAYS || {})){
-    if (k >= T || k < start || isWeekend(k) || missed[k] || leave[k] || dayComplete(k)) continue;
+    if (k >= T || k < start || isWeekend(k) || missed[k] || dayComplete(k)) continue;
+    if (leave[k] && daysBetween(k, T) <= CONFIG.STALE) continue;
     const left = DAYS[k].tasks.filter((t,i) => !taskDone(k, i, t)).length, pen = left * CONFIG.MISS;
-    missed[k] = {pen, back: 0}; save('missed', missed);
-    addCoins(-pen, `${DAYS[k].name} 有 ${left} 项没完成`);
-    notify(`⚠️ ${k} ${DAYS[k].name} 有 ${left} 项没完成，扣 ${pen} 金币`);
+    const lv = !!leave[k];
+    missed[k] = {pen, back: lv ? -1 : 0}; save('missed', missed);
+    addCoins(-pen, `${DAYS[k].name} ${lv ? '请假超过 ' + CONFIG.STALE + ' 天没补' : '有 ' + left + ' 项没完成'}`);
+    notify(`⚠️ ${k} ${DAYS[k].name} ${lv ? '请假超过 ' + CONFIG.STALE + ' 天还没补' : '有 ' + left + ' 项没完成'}，扣 ${pen} 金币`);
   }
   // 补完了：按晚了几天退还
   for (const [k, m] of Object.entries(missed)){
@@ -59,6 +61,23 @@ function checkMissed(){
     notify(`📚 补完了 ${k} ${DAYS[k].name}` + (back ? `，退还 ${back} 金币` : '（太晚了，不退金币）'));
     toast(back ? `补完了，退还 ${back} 金币` : '补完了');
   }
+}
+// 欠着的作业：过去的工作日（含请假）还没做完
+function backlog(){ const start = load('start', T); return Object.keys(DAYS || {}).filter(k => k < T && k >= start && !isWeekend(k) && !dayComplete(k)).sort(); }
+function stale(){ return backlog().filter(k => daysBetween(k, T) > CONFIG.STALE); }
+// 每周一推送上周周报（只推一次）
+function weekly(){
+  const d = new Date(T + 'T12:00'), mon = new Date(d - ((d.getDay() + 6) % 7) * 864e5), lastMon = todayStr(new Date(mon - 7 * 864e5)), lastSun = todayStr(new Date(mon - 864e5));
+  const sent = load('weekly', null); if (sent === lastMon) return;
+  const start = load('start', T); if (lastSun < start) { save('weekly', lastMon); return; }
+  const days = Object.keys(DAYS || {}).filter(k => k >= lastMon && k <= lastSun && k >= start && !isWeekend(k));
+  const missed = load('missed', {}), leave = load('leave', {});
+  const onTime = days.filter(k => dayComplete(k) && !missed[k] && !leave[k]).length;
+  const madeUp = days.filter(k => dayComplete(k) && (missed[k] || leave[k])).length;
+  const owe = days.filter(k => !dayComplete(k)).length, lv = days.filter(k => leave[k]).length;
+  const net = wallet().log.filter(l => l.t.slice(0, 10) >= lastMon && l.t.slice(0, 10) <= lastSun && !l.why.startsWith('兑换')).reduce((a, l) => a + l.n, 0);
+  notify(`📊 周报 ${lastMon} ~ ${lastSun}：${days.length} 个学习日，按时完成 ${onTime} 天，补完 ${madeUp} 天，还欠 ${owe} 天，请假 ${lv} 次；金币净 ${net >= 0 ? '+' : ''}${net}，余额 ${wallet().coins}`);
+  save('weekly', lastMon);
 }
 function leaveLeft(){ const m = T.slice(0, 7); return CONFIG.LEAVE - Object.keys(load('leave', {})).filter(k => k.startsWith(m)).length; }
 function askLeave(){
@@ -85,6 +104,8 @@ function viewToday(){
     else if (hm() < '06:00') h += `<div class="c wake"><div><b>🌙 现在是 ${hm()}，该睡觉啦</b><div class="d">起床打卡 06:00 开放</div></div></div>`;
     else h += `<div class="c wake"><div><b>☀️ 起床打卡</b><div class="d">14:00 前 +5 金币 · 15:00 前 +3 金币</div></div><button class="main sm" onclick="wakeUp()">我起床了</button></div>`;
   }
+  const bl = backlog(), st = stale();
+  if (bl.length) h += `<div class="bar-msg">📌 欠着的作业：<b>${bl.length} 天</b>${st.length ? `，其中 ${st.length} 天超过 ${CONFIG.STALE} 天（<b>不能接单、不能兑换</b>）` : ''}<br>${bl.map(k => `<a class="go" href="#" onclick="selDay='${k}';render();scrollTo(0,0);return false">去补 ${k} ${DAYS[k].name} →</a>`).join('<br>')}</div>`;
   if (!day){ return h + '<div class="c">还没有任务。</div>'; }
   const wk = ['日','一','二','三','四','五','六'][new Date(key + 'T12:00').getDay()];
   const note = key === T ? '' : (key > T ? ' · 还没到这一天，可以先看看' : ' · 今天还没有新任务，这是最近一天的');
@@ -147,9 +168,9 @@ function claimDay(key){
 // ===== 接单 =====
 const STATUS = {open:['可接单','s-open'], doing:['进行中','s-doing'], review:['待验收','s-review'], done:['已完成','s-done']};
 function viewJobs(){
-  const debt = wallet().coins < 0, ok = unlocked() && !debt, js = load('jobs', {}), lv = level(wallet().earned).lv;
+  const debt = wallet().coins < 0, old = stale().length, ok = unlocked() && !debt && !old, js = load('jobs', {}), lv = level(wallet().earned).lv;
   let h = `<h1>接单大厅</h1><p class="s">接单 → 做作品 → 发给甲方 → 拿验收码领金币</p>`;
-  h += debt ? `<div class="bar-msg">💸 金币是负数，先补作业把金币补回来，才能接新单</div>` : ok ? `<div class="bar-msg ok">🔓 ${isWeekend(T) ? '周末可以直接接单' : '今日任务已完成，可以接新单'}</div>` : `<div class="bar-msg">🔒 先完成今天的任务，才能接新单（进行中的单不受影响）</div>`;
+  h += old ? `<div class="bar-msg">📌 有作业欠了超过 ${CONFIG.STALE} 天，补完才能接新单</div>` : debt ? `<div class="bar-msg">💸 金币是负数，先补作业把金币补回来，才能接新单</div>` : ok ? `<div class="bar-msg ok">🔓 ${isWeekend(T) ? '周末可以直接接单' : '今日任务已完成，可以接新单'}</div>` : `<div class="bar-msg">🔒 先完成今天的任务，才能接新单（进行中的单不受影响）</div>`;
   for (const j of (window.JOBS || [])){
     const st = js[j.id] || 'open', lvLock = j.minLv && lv < j.minLv;
     let b;
@@ -198,7 +219,8 @@ function viewMe(){
     <div class="prog"><i style="width:${pct}%"></i></div><div class="d">${N ? `累计 ${w.earned} / ${N.need} 升到「${N.name}」` : '最高等级！'}</div></div></div>
     <div class="c stats"><div><b>${w.coins}</b><small>金币余额</small></div><div><b>${jobsDone}</b><small>完成订单</small></div><div><b>${days}</b><small>完成天数</small></div></div>
     <div class="c"><b>💰 兑换零花钱</b><div class="d">${CONFIG.RATE} 金币 = 1 元 · 现在可换 <b>${Math.floor(w.coins / CONFIG.RATE)}</b> 元</div>
-    <button class="gold" ${w.coins < CONFIG.RATE ? 'disabled' : ''} onclick="cashOut()">申请兑换</button></div>
+    ${stale().length ? `<div class="bar-msg">📌 有作业欠了超过 ${CONFIG.STALE} 天，补完才能兑换</div>` : ''}
+    <button class="gold" ${w.coins < CONFIG.RATE || stale().length ? 'disabled' : ''} onclick="cashOut()">申请兑换</button></div>
     <div class="c"><b>📜 金币记录</b>`;
   h += w.log.length ? w.log.slice(0, 30).map(l => `<div class="log"><span>${l.why}<br><small>${l.t}</small></span><b class="${l.n > 0 ? 'plus' : ''}">${l.n > 0 ? '+' : ''}${l.n}</b></div>`).join('') : '<div class="d">还没有记录</div>';
   return h + '</div>';
@@ -215,7 +237,7 @@ function modal(h){ $('#mbox').innerHTML = h; $('#modal').classList.add('show'); 
 function closeM(){ $('#modal').classList.remove('show'); }
 $('#modal').onclick = e => { if (e.target.id === 'modal') closeM(); };
 function render(){
-  if (window.DAYS){ settle(); checkMissed(); }
+  if (window.DAYS){ settle(); checkMissed(); weekly(); }
   const w = wallet(); $('#coin').textContent = w.coins; const L = level(w.earned); $('#lv').textContent = `Lv${L.lv} · ${L.name}`;
   $('#view').innerHTML = {today: viewToday, jobs: viewJobs, book: viewBook, me: viewMe}[tab]();
   document.querySelectorAll('.tabs button').forEach(b => b.classList.toggle('on', b.dataset.t === tab));

@@ -7,6 +7,7 @@ const CONFIG = {
   MISS: 2,                 // 工作日没做完的任务，每项扣 2 金币（第二天早上 6 点结算，可以欠成负数）
   REFUND: 0.2,             // 补完后退还：第二天补退 80%，每晚一天少退 20%
   LEAVE: 2,                // 每月可以请假 2 天，请假当天不扣金币
+  STALE: 7,                // 作业欠超过 7 天：不能接单、不能兑换；请假的作业 7 天内没补完照样扣
   FEISHU: 'https://open.feishu.cn/open-apis/bot/v2/hook/7ab344b3-6dc5-40f9-a39b-d73f3c5f5358',
 };
 
