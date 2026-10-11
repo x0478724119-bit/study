@@ -1,5 +1,4 @@
-// 悬赏单。h = [满意码哈希, 一般码哈希]，原码在姐姐电脑的 验收码.txt 里。
-// 字段：brief 需求说明；deliver 要交什么；spec 具体要求；accept 验收标准；ref 参考教程；minLv 需要的等级。
+// 悬赏单（由管理后台生成）。h = [满意码哈希, 一般码哈希]，验收码由后台暗号算出。
 window.JOBS = [
  {
   "id": "J04",
@@ -25,8 +24,8 @@ window.JOBS = [
   ],
   "ref": "",
   "h": [
-   "ce768581",
-   "35f6cccb"
+   "2ed7b1f9",
+   "16ff25e5"
   ]
  },
  {
@@ -51,8 +50,8 @@ window.JOBS = [
   ],
   "ref": "lessons.html#sw1",
   "h": [
-   "1b8279d8",
-   "4a2f97d2"
+   "a67df239",
+   "9e544cb2"
   ]
  },
  {
@@ -81,8 +80,8 @@ window.JOBS = [
   ],
   "ref": "lessons.html#cv1",
   "h": [
-   "6456d6fe",
-   "52b29aa4"
+   "63323804",
+   "cc45bb12"
   ]
  },
  {
@@ -107,8 +106,8 @@ window.JOBS = [
   ],
   "ref": "quiz.html?s=vocab-01",
   "h": [
-   "c42b5ff2",
-   "ab3edf9e"
+   "b5faaa55",
+   "f454b9e1"
   ]
  },
  {
@@ -133,8 +132,8 @@ window.JOBS = [
   ],
   "ref": "quiz.html?s=vocab-02",
   "h": [
-   "6e1669eb",
-   "3ab5fef0"
+   "8342926e",
+   "c17052e6"
   ]
  },
  {
@@ -165,8 +164,8 @@ window.JOBS = [
   ],
   "ref": "lessons.html#kjl1",
   "h": [
-   "41dbaaf2",
-   "126cfbd1"
+   "5fe39457",
+   "7de0f6d1"
   ]
  },
  {
@@ -197,8 +196,8 @@ window.JOBS = [
   ],
   "ref": "",
   "h": [
-   "cbcbc9e4",
-   "b434f87d"
+   "bb68e884",
+   "897016c7"
   ]
  }
 ];
