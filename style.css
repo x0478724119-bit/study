@@ -98,3 +98,4 @@ details.report summary{font-weight:600;cursor:pointer}
 .arr{width:auto;background:none;color:var(--acc);font-size:26px;padding:0 4px;font-weight:400}
 .date{width:auto;flex:1 0 46px;min-width:46px}.date.off{opacity:.45;border-style:dashed}
 .say{width:auto;float:right;background:var(--card);color:var(--acc);border:1px solid var(--line);font-size:13px;padding:5px 10px;margin:0 0 6px 8px}
+.lesson.focus{border-color:var(--acc);box-shadow:0 0 0 3px var(--acc-soft)}.tag.t-英语{background:var(--blue-soft);color:var(--blue)}

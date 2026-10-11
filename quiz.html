@@ -2,7 +2,7 @@
 <html lang="zh-CN"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>做题</title>
-<link rel="stylesheet" href="style.css?v=1791732740">
+<link rel="stylesheet" href="style.css?v=1791733066">
 </head><body><div class="w">
 <a class="back" id="back" href="./">← 回到任务</a>
 <h1 id="title">加载中…</h1>
@@ -12,7 +12,7 @@
 <div id="bar" class="bar"><button class="main" id="submit">交卷</button></div>
 <div id="result"></div>
 </div>
-<script src="common.js?v=1791732740"></script>
+<script src="common.js?v=1791733066"></script>
 <script>
 // ===== 通用做题引擎 =====
 // 题库放在 data/<id>.js，用 quiz.html?s=<id> 打开。
@@ -48,7 +48,7 @@ function renderStudy(){
   if (!SET.study) return;
   const html = SET.study.replace(/\[\[([^|\]]+)\|([^\]]+)\]\]/g, '<span class="vw" onclick="this.classList.toggle(\'show\');say(\'$1\')">$1<em>$2</em></span>');
   const ready = state.studied || state.first !== null;
-  const card = `<div class="c passage"><button class="say" onclick="sayAll()">🔊 朗读全文</button>${SET.studyTitle ? '<b>' + SET.studyTitle + '</b><br><br>' : ''}${html}</div>`;
+  const card = `<div class="c passage">${SET.studyTitle ? '<b>' + SET.studyTitle + '</b><br><br>' : ''}${html}</div>`;
   let h;
   if (!ready) h = card + `<button class="main" onclick="state.studied=true;put(state);renderStudy();render()">读完了，开始测试 →</button>`;
   else if (state.first === null) h = `<div class="bar-msg">📖 第一次测试先靠自己回想（这样记得最牢）。交卷后订正时可以打开文章找答案。</div>`;

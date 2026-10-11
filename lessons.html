@@ -2,7 +2,8 @@
 <html lang="zh-CN"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>软件教程</title>
-<link rel="stylesheet" href="style.css?v=1791732740">
+<script src="common.js?v=1791733066"></script>
+<link rel="stylesheet" href="style.css?v=1791733066">
 <style>
 .lesson h3{margin:0 0 6px;font-size:17px}.lesson ol,.lesson ul{padding-left:20px;margin:6px 0}.lesson li{margin:4px 0}
 .out{background:var(--ok-soft);color:var(--ok);border-radius:10px;padding:8px 12px;font-size:14px;margin-top:8px}
@@ -12,7 +13,7 @@
 </head><body><div class="w">
 <a class="back" href="javascript:history.back()">← 返回</a>
 <h1>软件教程</h1>
-<p class="s">中间的课<b>不用交截图</b>，做完在学习站的任务里写一句话就行。<b>只有订单的最终作品</b>才发到工作室群。看不懂就去 B 站搜括号里的关键词。</p>
+<p class="s">中间的课<b>不用交截图</b>，做完在这一课下面写一句话、点提交就行。<b>只有订单的最终作品</b>才发到工作室群。看不懂就去 B 站搜括号里的关键词。</p>
 <div class="nav2"><a href="#kjl">🏠 酷家乐</a><a href="#swift">🧩 Swift Playgrounds</a><a href="#canva">🎨 可画</a></div>
 
 <h2 id="kjl">🏠 酷家乐（室内设计）</h2>
@@ -43,7 +44,7 @@
 <p class="s">App：Swift Playgrounds，打开「学习编程 1」（Learn to Code 1）。用游戏的方式学真正的编程语言 Swift。</p>
 <div class="c lesson" id="sw1"><h3>第 1 课 · 命令（Commands）</h3>
 <ol><li>跟着引导，让小人走路、转弯、收集宝石。</li><li>每一关都试着用<b>最少的命令</b>过关。</li></ol>
-<div class="out">在学习站打勾就行</div></div>
+<div class="out">在学习站打勾就行：通关了吗？写一句（比如"第 1 章全部通关"）</div></div>
 <div class="c lesson" id="sw2"><h3>第 2 课 · 函数（Functions）</h3>
 <ol><li>学会把一串重复的命令打包成一个函数，起个名字。</li><li>想一想：为什么函数能让代码更短？用一句话写下来。</li></ol>
 <div class="out">在学习站写：为什么函数能让代码更短</div></div>
@@ -52,9 +53,36 @@
 <div class="out">📤 订单作品：第 3 章通关截图发到工作室群 → 订单「Swift Playgrounds 闯关」</div></div>
 <div class="c lesson" id="sw4"><h3>之后</h3><p class="d">条件判断、逻辑运算、While 循环、算法……一章一章往下闯，以后会有新订单。</p></div>
 
-<h2 id="canva">🎨 可画（海报和 logo）</h2>
-<div class="c lesson" id="cv1"><h3>第 1 课 · 从模板开始（B 站搜：可画 logo 设计 教程）</h3>
+<h2 id="canva">🎨 可画 / Procreate（海报和 logo）</h2><p class="s">可画：模板多，排版、加字方便。Procreate：适合手绘风格。用哪个都行。</p>
+<div class="c lesson" id="cv1"><h3>第 1 课 · 从模板开始（B 站搜：可画 logo 教程 / Procreate logo 教程）</h3>
 <ol><li>搜"logo"模板，挑 3 个你觉得好看的，想想它们好看在哪。</li><li>选一个模板，改文字、颜色、图标，改成"钢琴工作室"的样子。</li><li>再从空白画布做一个完全自己的版本。</li></ol>
 <div class="tip">💡 好 logo 的标准：简单（缩小成头像也看得清）、最多 2–3 种颜色、一眼能看出跟钢琴或音乐有关。</div>
 <div class="out">📤 订单作品：2 个方案发到工作室群 → 订单「钢琴工作室 Logo」</div></div>
-</div></body></html>
+</div>
+<script>
+// 每课的小作业：直接在这一课下面写；首页对应任务自动打勾
+const back = new URLSearchParams(location.search).get('d');
+if (back) document.querySelector('.back').href = './?d=' + back;
+function esc(x){ return String(x).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+function paint(){
+  const L = load('lesson', {});
+  document.querySelectorAll('.lesson[id]').forEach(el => {
+    const out = el.querySelector('.out'); if (!out) return;
+    const txt = out.dataset.p || out.textContent; out.dataset.p = txt;
+    if (!/^在学习站/.test(txt)) return;
+    const id = el.id, v = L[id], ask = txt.replace(/^在学习站(写：|打勾就行：?)/, '') || '做完了吗？写一句感想';
+    out.innerHTML = v ? `✅ ${esc(v.text)}<br><small>${v.time} 提交 · <a href="#" onclick="redoL('${id}');return false">修改</a></small>`
+      : `<b>✍️ ${ask}</b><textarea class="fill wbox" id="t-${id}" oninput="dr('${id}',this.value)">${esc(load('ldraft', {})[id] || '')}</textarea><button class="main sm" style="margin-top:8px" onclick="sub('${id}')">提交</button>`;
+  });
+}
+function dr(id, v){ const d = load('ldraft', {}); d[id] = v; save('ldraft', d); }
+function sub(id){
+  const v = document.getElementById('t-' + id).value.trim(); if (v.length < 6) { toast('再多写一点'); return; }
+  const L = load('lesson', {}); L[id] = {text: v, time: todayStr() + ' ' + hm()}; save('lesson', L);
+  const d = load('ldraft', {}); delete d[id]; save('ldraft', d);
+  notify('📖 ' + document.querySelector('#' + id + ' h3').textContent + '：\n' + v); toast('已提交 ✅'); paint();
+}
+function redoL(id){ const L = load('lesson', {}); dr(id, L[id].text); delete L[id]; save('lesson', L); paint(); }
+paint();
+if (location.hash) { const t = document.querySelector(location.hash); if (t) { t.classList.add('focus'); setTimeout(() => t.scrollIntoView({block:'start'}), 100); } }
+</script></body></html>

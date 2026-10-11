@@ -4,7 +4,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="学习站">
 <title>学习站</title>
-<link rel="stylesheet" href="style.css?v=1791732740">
+<link rel="stylesheet" href="style.css?v=1791733066">
 </head><body class="app">
 <header class="top">
   <div class="brand"><div class="logo">🏠</div><div><b>我的设计工作室</b><small id="lv"></small></div></div>
@@ -19,7 +19,7 @@
 </nav>
 <div class="modal" id="modal"><div class="box" id="mbox"></div></div>
 
-<script src="common.js?v=1791732740"></script>
+<script src="common.js?v=1791733066"></script>
 <script>
 const LEVELS = [
   {lv:1, name:'设计学徒', need:0, icon:'🌱'},
@@ -96,7 +96,7 @@ function dayKey(){
   return next || (DAYS[T] ? T : (ks.filter(k => k <= T).pop() || ks[0]));
 }
 function quizState(id){ return load('quiz-' + id, null); }
-function taskDone(key, i, t){ if (t.quiz){ const q = quizState(t.quiz); return !!(q && q.done); } return !!load('day-' + key, {})[i]; }
+function taskDone(key, i, t){ if (t.lesson) return !!load('lesson', {})[t.lesson]; if (t.quiz){ const q = quizState(t.quiz); return !!(q && q.done); } return !!load('day-' + key, {})[i]; }
 function dayComplete(key){ const d = DAYS[key]; return !!d && d.tasks.every((t,i) => taskDone(key, i, t)); }
 function unlocked(){ return isWeekend(T) || !DAYS[T] || dayComplete(T); }
 
@@ -141,12 +141,13 @@ function viewToday(){
     const on = taskDone(key, i, t), q = t.quiz ? quizState(t.quiz) : null, wv = t.write ? load('day-' + key, {})[i] : null;
     let act = '';
     if (t.link) act += `<a class="btn2" href="${t.link}">📖 打开教程</a>`;
+    if (t.lesson){ const lv = load('lesson', {})[t.lesson]; act += lv ? `<div class="wdone">✍️ ${esc(lv.text)}<br><small>${lv.time} · 在教程里提交</small></div><a class="btn2 light" href="lessons.html?d=${key}#${t.lesson}">回教程看看</a>` : `<a class="btn2" href="lessons.html?d=${key}#${t.lesson}">📖 去上课</a>`; }
     if (t.quiz) act += q && q.first != null
       ? `<div class="d">${q.done ? '✅ 已完成' : '⏳ 还要订正'} · 第一次 ${q.first}%</div><a class="btn2 ${q.done ? 'light' : ''}" href="quiz.html?s=${t.quiz}&d=${key}">${q.done ? '查看 / 再刷' : '继续订正'}</a>`
       : `<a class="btn2" href="quiz.html?s=${t.quiz}&d=${key}">开始 →</a>`;
-    if (t.write) act += wv ? `<div class="wdone">✍️ ${esc(wv.text)}<br><small>${wv.time} 提交</small></div>`
+    if (t.write) act += wv ? `<div class="wdone">✍️ ${esc(wv.text)}<br><small>${wv.time} 提交 · <a href="#" onclick="editWrite('${key}',${i});return false">修改</a></small></div>`
       : `<textarea class="fill wbox" id="w-${key}-${i}" placeholder="${t.write}" oninput="draft('${key}',${i},this.value)">${esc(load('draft', {})[key + '-' + i] || '')}</textarea><button class="main sm" style="margin-top:8px" onclick="submitWrite('${key}',${i})">提交</button>`;
-    const tick = !t.quiz && !t.write ? `onclick="tog('${key}',${i})"` : '';
+    const tick = !t.quiz && !t.write && !t.lesson ? `onclick="tog('${key}',${i})"` : '';
     return `<div class="c task ${on ? 'done' : ''}"><div class="chk ${on?'on':''}" ${tick}>${on?'✓':''}</div>
       <div style="flex:1"><div class="t"><span class="tag t-${t.tag}">${t.tag}</span>${t.t}</div><div class="d">${t.d}</div>${act}</div></div>`;
   }).join('');
@@ -169,6 +170,7 @@ function shiftWeek(n){
   const first = Object.keys(DAYS).sort().find(k => k >= wkStart && k <= end); if (first) selDay = first;
   render();
 }
+function editWrite(key, i){ const d = load('day-' + key, {}), dr = load('draft', {}); dr[key + '-' + i] = d[i].text; delete d[i]; save('day-' + key, d); save('draft', dr); render(); }
 function draft(key, i, v){ const d = load('draft', {}); d[key + '-' + i] = v; save('draft', d); }
 const esc = x => String(x).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 function submitWrite(key, i){
