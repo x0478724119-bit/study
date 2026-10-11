@@ -2,7 +2,7 @@
 <html lang="zh-CN"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>做题</title>
-<link rel="stylesheet" href="style.css?v=1791735973">
+<link rel="stylesheet" href="style.css?v=1791736273">
 </head><body><div class="w">
 <a class="back" id="back" href="./">← 回到任务</a>
 <h1 id="title">加载中…</h1>
@@ -12,7 +12,7 @@
 <div id="bar" class="bar"><button class="main" id="submit">交卷</button></div>
 <div id="result"></div>
 </div>
-<script src="common.js?v=1791735973"></script>
+<script src="common.js?v=1791736273"></script>
 <script>
 // ===== 通用做题引擎 =====
 // 题库放在 data/<id>.js，用 quiz.html?s=<id> 打开。
@@ -55,7 +55,16 @@ function renderStudy(){
   else h = `<details class="c" ${mode === 'redo' ? 'open' : ''}><summary><b>📖 打开文章</b></summary></details>`.replace('</summary></details>', '</summary>' + card + '</details>');
   document.getElementById('study').innerHTML = h;
 }
-function say(w){ try { speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(w); u.lang = 'en-US'; u.rate = 0.85; speechSynthesis.speak(u); } catch(e){} }
+// 发音：指定正常的英语人声，排除苹果自带的搞怪音色
+const FUNNY = /Albert|Bad News|Bahh|Bells|Boing|Bubbles|Cellos|Good News|Jester|Organ|Superstar|Trinoids|Whisper|Wobble|Zarvox|Fred|Junior|Ralph|Kathy|Grandma|Grandpa|Rocko|Sandy|Shelley|Eddy|Flo|Reed/i;
+const GOOD = ['Samantha','Ava','Allison','Susan','Zoe','Nicky','Daniel','Karen','Moira','Tessa','Alex','Google US English','Google UK English Female'];
+function pickVoice(){
+  const vs = (speechSynthesis.getVoices() || []).filter(v => /^en[-_]/i.test(v.lang) && !FUNNY.test(v.name));
+  for (const g of GOOD){ const v = vs.find(v => v.name.startsWith(g)); if (v) return v; }
+  return vs.find(v => /en[-_]US/i.test(v.lang)) || vs[0] || null;
+}
+try { speechSynthesis.getVoices(); speechSynthesis.onvoiceschanged = () => speechSynthesis.getVoices(); } catch(e){}
+function say(w){ try { speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(w), v = pickVoice(); if (v) u.voice = v; u.lang = v ? v.lang : 'en-US'; u.rate = 0.9; speechSynthesis.speak(u); } catch(e){} }
 function sayAll(){ const t = (SET.studyTitle || '') + '. ' + SET.study.replace(/\[\[([^|\]]+)\|[^\]]+\]\]/g, '$1').replace(/<[^>]+>/g, ' '); say(t); }
 function render(){
   if (SET.study && !state.studied && state.first === null){ document.getElementById('qs').innerHTML = ''; document.getElementById('bar').style.display = 'none'; return; }
