@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>学习站</title>
+<style>
+:root{--bg:#FAF9F5;--card:#fff;--ink:#1B2130;--soft:#565F70;--line:#E4E0D4;--acc:#C0634A;--ok:#2E7A52;--bad:#B24337}
+@media(prefers-color-scheme:dark){:root{--bg:#13161F;--card:#1A1E29;--ink:#E9E7DF;--soft:#A6ACBC;--line:#2B2F3C;--acc:#E48C72;--ok:#5FBF8E;--bad:#E2897C}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,"PingFang SC",sans-serif;padding:24px 16px}
+.w{max-width:640px;margin:0 auto}h1{margin:0 0 4px}p.s{color:var(--soft);margin:0 0 20px}
+.c{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin:12px 0}
+button{font:inherit;width:100%;text-align:left;padding:12px 14px;margin:6px 0;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink);cursor:pointer}
+button.ok{border-color:var(--ok);color:var(--ok);font-weight:600}button.bad{border-color:var(--bad);color:var(--bad)}
+.ex{display:none;font-size:14px;color:var(--soft);margin-top:8px}.res{font-size:20px;font-weight:700;text-align:center}
+</style></head><body><div class="w">
+<h1>学习站 · 测试页</h1>
+<p class="s">如果你能看到这一页，而且点下面的选项会变色、出解析，就说明网站能正常用 ✅</p>
+<div id="q"></div>
+<div class="c res" id="r">已答 0 / 3</div>
+<p class="s" id="v"></p>
+</div>
+<script>
+const Q=[
+ ['方程 x² − 5x + 6 = 0 的解是？',['x = 2 或 3','x = −2 或 −3','x = 1 或 6'],0,'因式分解：(x−2)(x−3)=0，所以 x=2 或 x=3。'],
+ ['"I ___ to school every day." 填哪个？',['goes','go','going'],1,'主语是 I，一般现在时用动词原形 go。'],
+ ['二次函数 y = x² 的图像开口方向？',['向下','向上','向右'],1,'二次项系数是 1 > 0，开口向上。']];
+let done=0,right=0;
+document.getElementById('q').innerHTML=Q.map((q,i)=>`<div class="c"><b>${i+1}. ${q[0]}</b>${q[1].map((o,j)=>`<button onclick="pick(${i},${j},this)">${o}</button>`).join('')}<div class="ex" id="e${i}">💡 ${q[3]}</div></div>`).join('');
+function pick(i,j,b){const box=b.parentNode;if(box.dataset.d)return;box.dataset.d=1;done++;
+ const bs=box.querySelectorAll('button');bs[Q[i][2]].classList.add('ok');if(j===Q[i][2])right++;else b.classList.add('bad');
+ document.getElementById('e'+i).style.display='block';
+ document.getElementById('r').textContent=done<3?`已答 ${done} / 3`:`得分：${Math.round(right/3*100)}% 🎉`;
+ try{localStorage.setItem('test',String(right))}catch(e){}}
+let saved='不可用';try{localStorage.setItem('t','1');saved='可用'}catch(e){}
+document.getElementById('v').textContent='本机存储：'+saved+' · 版本 test-1';
+</script></body></html>
