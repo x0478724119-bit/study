@@ -1,0 +1,1 @@
+window.LEAVE_OK = [];

@@ -4,7 +4,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="学习站">
 <title>学习站</title>
-<link rel="stylesheet" href="style.css?v=1791733523">
+<link rel="stylesheet" href="style.css?v=1791734029">
 </head><body class="app">
 <header class="top">
   <div class="brand"><div class="logo">🏠</div><div><b>我的设计工作室</b><small id="lv"></small></div></div>
@@ -19,7 +19,7 @@
 </nav>
 <div class="modal" id="modal"><div class="box" id="mbox"></div></div>
 
-<script src="common.js?v=1791733523"></script>
+<script src="common.js?v=1791734029"></script>
 <script>
 const LEVELS = [
   {lv:1, name:'设计学徒', need:0, icon:'🌱'},
@@ -37,15 +37,24 @@ const isWeekend = d => [0,6].includes(new Date(d + 'T12:00').getDay());
 
 // 加载数据文件（加时间戳，保证拿到最新的）
 function loadScript(src){ return new Promise(r => { const s = document.createElement('script'); s.src = src + '?v=' + Date.now(); s.onload = r; s.onerror = r; document.body.appendChild(s); }); }
-Promise.all([loadScript('data/days.js'), loadScript('data/jobs.js'), loadScript('data/pause.js')]).then(() => { checkMissed(); render(); });
+Promise.all([loadScript('data/days.js'), loadScript('data/jobs.js'), loadScript('data/pause.js'), loadScript('data/leave.js'), loadScript('data/adjust.js')]).then(() => { checkMissed(); render(); });
 
 // 过去的工作日没做完：按没做完的项数扣金币（每天只结算一次）；补完按天数退还
+const okLeave = k => (window.LEAVE_OK || []).includes(k);
 const paused = k => (window.PAUSE || []).find(p => k >= p.from && k <= p.to);
 const daysBetween = (a, b) => Math.round((new Date(b + 'T12:00') - new Date(a + 'T12:00')) / 864e5);
+function applyAdjust(){
+  const done = load('adjDone', {});
+  for (const a of (window.ADJUST || [])){
+    if (done[a.id]) continue; done[a.id] = 1; save('adjDone', done);
+    addCoins(a.n, (a.n > 0 ? '🎁 姐姐奖励：' : '姐姐扣除：') + a.why);
+    toast((a.n > 0 ? '🎁 +' : '') + a.n + ' 金币 · ' + a.why);
+  }
+}
 function checkMissed(){
   const missed = load('missed', {}), leave = load('leave', {}), start = load('start', null) || (save('start', T), T);
   for (const k of Object.keys(DAYS || {})){
-    if (k >= T || k < start || isWeekend(k) || paused(k) || missed[k] || dayComplete(k)) continue;
+    if (k >= T || k < start || isWeekend(k) || paused(k) || okLeave(k) || missed[k] || dayComplete(k)) continue;
     if (leave[k] && daysBetween(k, T) <= CONFIG.STALE) continue;
     const left = DAYS[k].tasks.filter((t,i) => !taskDone(k, i, t)).length, pen = left * CONFIG.MISS;
     const lv = !!leave[k];
@@ -64,7 +73,7 @@ function checkMissed(){
   }
 }
 // 欠着的作业：过去的工作日（含请假）还没做完
-function backlog(){ const start = load('start', T); return Object.keys(DAYS || {}).filter(k => k < T && k >= start && !isWeekend(k) && !paused(k) && !dayComplete(k)).sort(); }
+function backlog(){ const start = load('start', T); return Object.keys(DAYS || {}).filter(k => k < T && k >= start && !isWeekend(k) && !paused(k) && !okLeave(k) && !dayComplete(k)).sort(); }
 function stale(){ return backlog().filter(k => daysBetween(k, T) > CONFIG.STALE); }
 // 每周一推送上周周报（只推一次）
 function weekly(){
@@ -130,7 +139,7 @@ function viewToday(){
   if (bl.length) h += `<div class="bar-msg">📌 还欠 <b>${bl.length} 天</b>作业${st.length ? `（${st.length} 天超过 ${CONFIG.STALE} 天，<b>不能接单、不能兑换</b>）` : ''}：${bl.map(k => `<a class="go" href="#" onclick="selDay='${k}';render();scrollTo(0,0);return false">${+k.slice(5,7)}/${+k.slice(8)} 去补</a>`).join(' · ')}</div>`;
   if (!day) return h + '<div class="c">这一天没有任务。</div>';
   // ④ 标题 + 进度
-  const late = key < T, onLeave = load('leave', {})[key], miss = load('missed', {})[key];
+  const late = key < T, onLeave = load('leave', {})[key] || okLeave(key), miss = load('missed', {})[key];
   const n = day.tasks.filter((t,i) => taskDone(key, i, t)).length, all = n === day.tasks.length, paid = load('paid', {})[key];
   const note = key === T ? '今天' : key > T ? '可以提前做 · 截止到这天结束' : '已经过了';
   h += `<div class="c head"><div class="row2"><div><h1>${day.name}</h1><span class="s">${key} 周${WK[new Date(key + 'T12:00').getDay()]} · ${note}</span></div><b class="big2">${n}/${day.tasks.length}</b></div><div class="prog"><i style="width:${n/day.tasks.length*100}%"></i></div></div>`;
@@ -346,7 +355,7 @@ $('#modal').onclick = e => { if (e.target.id === 'modal') closeM(); };
 try { const nav = JSON.parse(sessionStorage.getItem('nav') || '{}'); if (nav.tab) tab = nav.tab; if (nav.job) jobSel = nav.job; if (nav.day && !selDay) selDay = nav.day; } catch(e){}
 function render(){
   try { sessionStorage.setItem('nav', JSON.stringify({tab, job: jobSel, day: selDay})); } catch(e){}
-  if (window.DAYS){ settle(); checkMissed(); weekly(); checkJobs(); }
+  if (window.DAYS){ applyAdjust(); settle(); checkMissed(); weekly(); checkJobs(); }
   const w = wallet(); $('#coin').textContent = w.coins; const L = level(w.earned); $('#lv').textContent = `Lv${L.lv} · ${L.name}`;
   $('#view').innerHTML = {today: viewToday, jobs: viewJobs, book: viewBook, me: viewMe}[tab]();
   document.querySelectorAll('.tabs button').forEach(b => b.classList.toggle('on', b.dataset.t === tab));
