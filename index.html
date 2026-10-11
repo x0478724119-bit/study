@@ -4,7 +4,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="学习站">
 <title>学习站</title>
-<link rel="stylesheet" href="style.css?v=1791733351">
+<link rel="stylesheet" href="style.css?v=1791733441">
 </head><body class="app">
 <header class="top">
   <div class="brand"><div class="logo">🏠</div><div><b>我的设计工作室</b><small id="lv"></small></div></div>
@@ -19,7 +19,7 @@
 </nav>
 <div class="modal" id="modal"><div class="box" id="mbox"></div></div>
 
-<script src="common.js?v=1791733351"></script>
+<script src="common.js?v=1791733441"></script>
 <script>
 const LEVELS = [
   {lv:1, name:'设计学徒', need:0, icon:'🌱'},
@@ -225,7 +225,8 @@ function claimDay(key){
 const STATUS = {open:['可接单','s-open'], doing:['进行中','s-doing'], review:['待验收','s-review'], done:['已完成','s-done']};
 const jget = id => { const v = load('jobs', {})[id]; return typeof v === 'string' ? {st: v, dep: 0} : (v || {st: 'open'}); };
 function jset(id, v){ const js = load('jobs', {}); js[id] = v; save('jobs', js); }
-const deposit = j => Math.max(5, Math.round(j.reward * CONFIG.DEPOSIT));
+const deposit = j => Math.round(j.reward * CONFIG.DEPOSIT);
+const breach = j => Math.round(j.reward * CONFIG.BREACH);
 const dueOf = (j, v) => v.at ? todayStr(new Date(new Date(v.at + 'T12:00').getTime() + j.days * 864e5)) : null;
 const doingCount = () => (window.JOBS || []).filter(j => jget(j.id).st === 'doing').length;
 let jobSel = null;
@@ -233,12 +234,12 @@ let jobSel = null;
 function checkJobs(){
   for (const j of (window.JOBS || [])){
     const v = jget(j.id); if (v.st !== 'doing' || !v.at) continue;
-    if (dueOf(j, v) < T){ jset(j.id, {st: 'open'}); notify(`⌛ 订单超时：${j.title}，保证金 ${v.dep} 金币不退`); }
+    if (dueOf(j, v) < T){ const pen = v.dep + breach(j); addCoins(-pen, '超时赔付：' + j.title); jset(j.id, {st: 'open'}); notify(`⌛ 订单超时：${j.title}，退还定金 ${v.dep} + 赔付 ${breach(j)}，共扣 ${pen}`); }
   }
 }
 function viewJobs(){
   if (jobSel) return viewJob(job(jobSel));
-  let h = `<h1>接单大厅</h1><p class="s">点开订单看详情 · 接单要交保证金（报酬的 ${CONFIG.DEPOSIT * 100}%）· 同时最多 ${CONFIG.JOB_LIMIT} 单</p>`;
+  let h = `<h1>接单大厅</h1><p class="s">点开订单看详情 · 接单先拿 ${CONFIG.DEPOSIT * 100}% 定金 · 同时最多 ${CONFIG.JOB_LIMIT} 单</p>`;
   for (const j of (window.JOBS || [])){
     const v = jget(j.id), lvLock = j.minLv && level(wallet().earned).lv < j.minLv;
     h += `<div class="c job jrow ${lvLock ? 'locked' : ''}" onclick="jobSel='${j.id}';render();scrollTo(0,0)">
@@ -260,13 +261,14 @@ function viewJob(j){
     <h3>✅ 验收标准</h3>${li(j.accept)}
     ${j.ref ? `<h3>📖 参考</h3><a class="go" href="${j.ref}">打开相关教程 →</a>` : ''}</div>
     <div class="c jd"><h3>💰 报酬</h3>
-    <div class="pay"><div><small>接单时交保证金</small><b>−${dep}</b></div><div><small>满意：退保证金 + 报酬</small><b>+${dep + j.reward}</b></div><div><small>一般：退保证金 + 60%</small><b>+${dep + Math.round(j.reward * 0.6)}</b></div><div><small>放弃或超时</small><b>保证金不退</b></div></div></div>`;
+    <div class="pay"><div><small>接单：先拿定金</small><b>+${dep}</b></div><div><small>满意：再拿尾款</small><b>+${j.reward - dep}</b></div><div><small>一般：尾款打折（总共 ${CONFIG.GOOD_ENOUGH * 100}%）</small><b>+${Math.round(j.reward * CONFIG.GOOD_ENOUGH) - dep}</b></div><div><small>放弃或超时：退定金 + 赔付</small><b>−${dep + breach(j)}</b></div></div>
+    <p class="s" style="margin:10px 0 0">💬 觉得价格不合适、想改要求？去「工作室」群找甲方谈，谈好了订单会更新。</p></div>`;
   // 最下面：操作
   if (lvLock) h += `<button class="ghost" disabled>🔒 升到 Lv${j.minLv} 才能接</button>`;
   else if (v.st === 'open'){
-    const why = doingCount() >= CONFIG.JOB_LIMIT ? `手上已经有 ${CONFIG.JOB_LIMIT} 单了` : stale().length ? `有作业欠了超过 ${CONFIG.STALE} 天，先补完` : w.coins < dep ? `金币不够交保证金（要 ${dep}，你有 ${w.coins}）` : !unlocked() ? '先完成今天的任务' : '';
-    h += why ? `<div class="bar-msg">🔒 ${why}</div><button class="main" disabled>接单（保证金 ${dep}）</button>` : `<button class="main" onclick="take('${j.id}')">接单（交保证金 ${dep} 金币）</button>`;
-  } else if (v.st === 'doing') h += `<div class="bar-msg">截止：${v.at ? dueOf(j, v) : '—'} · 已交保证金 ${v.dep}</div><button class="gold" onclick="submitJob('${j.id}')">我做完了，提交</button><button class="ghost" style="margin-top:0" onclick="dropJob('${j.id}')">放弃这单（保证金不退）</button>`;
+    const why = doingCount() >= CONFIG.JOB_LIMIT ? `手上已经有 ${CONFIG.JOB_LIMIT} 单了` : stale().length ? `有作业欠了超过 ${CONFIG.STALE} 天，先补完` : w.coins < 0 ? '金币是负数，先补作业' : !unlocked() ? '先完成今天的任务' : '';
+    h += why ? `<div class="bar-msg">🔒 ${why}</div><button class="main" disabled>接单</button>` : `<button class="main" onclick="take('${j.id}')">接单（马上拿定金 ${dep} 金币）</button>`;
+  } else if (v.st === 'doing') h += `<div class="bar-msg">截止：${v.at ? dueOf(j, v) : '—'} · 已拿定金 ${v.dep}</div><button class="gold" onclick="submitJob('${j.id}')">我做完了，提交</button><button class="ghost" style="margin-top:0" onclick="dropJob('${j.id}')">放弃这单（退定金 + 赔付）</button>`;
   else if (v.st === 'review') h += `<div class="bar-msg">已提交，等姐姐验收。不满意的话会让你返工。</div><button class="gold" onclick="askCode('${j.id}')">输入验收码</button>`;
   else h += `<div class="bar-msg ok">✅ 已完成${v.got ? '，拿到 ' + v.got + ' 金币' : ''}</div>`;
   return h;
@@ -274,14 +276,19 @@ function viewJob(j){
 const job = id => JOBS.find(x => x.id === id);
 function take(id){
   const j = job(id), dep = deposit(j);
-  if (doingCount() >= CONFIG.JOB_LIMIT || wallet().coins < dep) return;
-  addCoins(-dep, '保证金：' + j.title); jset(id, {st: 'doing', at: T, dep});
-  notify(`📋 接单：${j.title}（报酬 ${j.reward}，保证金 ${dep}，截止 ${dueOf(j, {at: T})}）`); toast('接单成功，加油'); render();
+  if (doingCount() >= CONFIG.JOB_LIMIT || wallet().coins < 0) return;
+  addCoins(dep, '定金：' + j.title); jset(id, {st: 'doing', at: T, dep});
+  notify(`📋 接单：${j.title}（报酬 ${j.reward}，已付定金 ${dep}，截止 ${dueOf(j, {at: T})}）`); toast('接单成功，加油'); render();
 }
 function dropJob(id){
   const j = job(id), v = jget(id);
-  modal(`<h3>放弃「${j.title}」？</h3><p>放弃后保证金 <b>${v.dep}</b> 金币不退，订单回到大厅，以后还能再接。姐姐会收到通知。</p>
-    <div class="row"><button class="ghost" onclick="closeM()">再想想</button><button class="main" onclick="jset('${id}',{st:'open'});notify('↩️ 放弃订单：${j.title}，保证金 ${v.dep} 不退');closeM();render()">确定放弃</button></div>`);
+  const pen = v.at ? v.dep + breach(j) : 0;  // 以前没付定金的老订单，放弃不赔
+  modal(`<h3>放弃「${j.title}」？</h3><p>${pen ? `要退还定金 <b>${v.dep}</b>，再赔付 <b>${breach(j)}</b>，一共扣 <b>${pen}</b> 金币。` : ''}订单回到大厅，以后还能再接。姐姐会收到通知。</p>
+    <div class="row"><button class="ghost" onclick="closeM()">再想想</button><button class="main" onclick="doDrop('${id}',${pen})">确定放弃</button></div>`);
+}
+function doDrop(id, pen){
+  const j = job(id); if (pen) addCoins(-pen, '放弃赔付：' + j.title);
+  jset(id, {st: 'open'}); notify(`↩️ 放弃订单：${j.title}` + (pen ? `，退定金 + 赔付共 ${pen}` : '')); closeM(); render();
 }
 function submitJob(id){
   modal(`<h3>提交「${job(id).title}」</h3><p>把作品发到飞书的<b>「工作室」群</b>：第一行写订单名，再附上要交的东西。姐姐验收后会给你 <b>6 位验收码</b>：满意码拿全额，一般码拿 60%，不行就要返工。</p>
@@ -293,13 +300,12 @@ function askCode(id){
 }
 function checkCode(id){
   const j = job(id), v = jget(id), c = fnv($('#cin').value.trim()), hs = [].concat(j.h);
-  const tier = c === hs[0] ? 1 : c === hs[1] ? 0.6 : 0;
+  const tier = c === hs[0] ? 1 : c === hs[1] ? CONFIG.GOOD_ENOUGH : 0;
   if (!tier){ toast('验收码不对，再问问姐姐'); return; }
-  const pay = Math.round(j.reward * tier);
-  if (v.dep) addCoins(v.dep, '退保证金：' + j.title);
-  addCoins(pay, `订单${tier < 1 ? '（一般）' : ''}：` + j.title);
-  jset(id, {st: 'done', got: pay + (v.dep || 0)}); closeM();
-  notify(`✅ 订单完成：${j.title}，${tier < 1 ? '一般' : '满意'}，报酬 ${pay}` + (v.dep ? ` + 退保证金 ${v.dep}` : '')); toast('+' + (pay + (v.dep || 0)) + ' 金币'); render();
+  const rest = Math.round(j.reward * tier) - (v.dep || 0);  // 尾款 = 应得 − 已拿的定金
+  if (rest) addCoins(rest, `尾款${tier < 1 ? '（一般）' : ''}：` + j.title);
+  jset(id, {st: 'done', got: Math.round(j.reward * tier)}); closeM();
+  notify(`✅ 订单完成：${j.title}，${tier < 1 ? '一般' : '满意'}，尾款 ${rest}（总共 ${Math.round(j.reward * tier)}）`); toast('+' + rest + ' 金币'); render();
 }
 
 // ===== 手册 =====
