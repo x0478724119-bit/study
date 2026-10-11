@@ -3,7 +3,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex">
 <title>管理后台</title>
-<link rel="stylesheet" href="style.css?v=1791736273">
+<link rel="stylesheet" href="style.css?v=1791736526">
 <style>
 .tabs2{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0 14px}.tabs2 button{width:auto;background:var(--card);border:1px solid var(--line);color:var(--ink);padding:8px 14px}.tabs2 button.on{background:var(--acc);color:#fff;border-color:var(--acc)}
 label{display:block;font-size:13px;color:var(--soft);margin:10px 0 4px}
@@ -16,7 +16,7 @@ textarea.in{min-height:72px}.grid3{display:grid;grid-template-columns:1fr 1fr 1f
 </head><body><div class="w">
 <div id="app"></div>
 </div>
-<script src="common.js?v=1791736273"></script>
+<script src="common.js?v=1791736526"></script>
 <script>
 // ===== 管理后台：只有存了 GitHub 钥匙的浏览器能改东西 =====
 const REPO = 'x0478724119-bit/study', API = 'https://api.github.com/repos/' + REPO + '/contents/';
@@ -65,7 +65,7 @@ async function boot(){
   [jobs, pause, leaves, adjust] = await Promise.all([readJS('data/jobs.js', 'JOBS'), readJS('data/pause.js', 'PAUSE'), readJS('data/leave.js', 'LEAVE_OK'), readJS('data/adjust.js', 'ADJUST')]);
   // 第一次用暗号：把所有订单的验收码换成暗号算出来的
   let changed = false;
-  for (const j of jobs){ const h = await hashes(j.id); if (String(j.h) !== String(h)){ j.h = h; changed = true; } }
+  for (const j of jobs){ const h = await hashes(j.id); if (String(j.h) !== String(h)){ j.h = h; changed = true; } if (!j.pub){ j.pub = todayStr(); changed = true; } }
   if (changed) await saveJobs('验收码改用后台暗号生成');
   render();
 }
@@ -76,19 +76,27 @@ function render(){
     <div class="tabs2">${[['jobs','📋 订单'],['leave','🙋 请假'],['pause','🏖️ 放假'],['coin','🪙 奖惩'],['set','⚙️ 设置']].map(([k,n]) => `<button class="${tab === k ? 'on' : ''}" onclick="tab='${k}';editing=null;render()">${n}</button>`).join('')}</div>`;
   h += ({jobs: vJobs, leave: vLeave, pause: vPause, coin: vCoin, set: vSet})[tab]();
   $('#app').innerHTML = h;
-  if (tab === 'jobs' && editing === null) showCodes();
+
 }
 function vJobs(){
   if (editing !== null) return vEdit();
-  return `<p class="s">点"修改"改价格和要求，点"新订单"加一单。改完会自动发布，学习站约 1 分钟后更新。</p><button class="main" onclick="editing='new';render()">＋ 新订单</button>` +
-    jobs.map((j,i) => `<div class="c"><div class="row2"><span class="tag t-${j.type}">${j.type}</span><b class="reward">🪙 ${j.reward}</b></div><h3 style="margin:6px 0">${esc(j.title)}</h3>
-    <div class="meta"><span>${j.days} 天</span><span>${'★'.repeat(j.stars)}</span>${j.minLv ? `<span>Lv${j.minLv}</span>` : ''}</div>
-    <div class="codes" id="codes-${j.id}">验收码计算中…</div>
-    <button class="ghost mini" onclick="editing=${i};render()">修改</button><button class="ghost mini" onclick="delJob(${i})">删除</button></div>`).join('');
+  const open = jobs.map((j,i) => [j,i]).filter(([j]) => !j.closed).sort((a,b) => (b[0].pub || '').localeCompare(a[0].pub || ''));
+  const done = jobs.map((j,i) => [j,i]).filter(([j]) => j.closed).sort((a,b) => b[0].closed.localeCompare(a[0].closed));
+  const card = ([j,i]) => `<div class="c ${j.closed ? 'jdone' : ''}"><div class="row2"><span class="tag t-${j.type}">${j.type}</span><b class="reward">🪙 ${j.reward}</b></div>
+    <h3 style="margin:6px 0">${esc(j.title)}</h3>
+    <div class="meta"><span>发布 ${(j.pub || '').slice(5)}</span><span>${j.days} 天</span><span>${'★'.repeat(j.stars)}</span>${j.minLv ? `<span>Lv${j.minLv}</span>` : ''}${j.closed ? `<span>✅ ${j.closed.slice(5)} 验收 · ${j.tier === 'ok' ? '一般' : '满意'}</span>` : ''}</div>
+    <div class="codes" id="codes-${j.id}"></div>
+    ${j.closed ? `<button class="ghost mini" onclick="showCode('${j.id}','${j.tier}')">再看码</button><button class="ghost mini" onclick="unclose(${i})">撤销验收</button>`
+      : `<button class="main mini" onclick="accept(${i},'full')">验收：满意</button><button class="gold mini" onclick="accept(${i},'ok')">验收：一般</button><button class="ghost mini" onclick="editing=${i};render()">修改</button><button class="ghost mini" onclick="delJob(${i})">删除</button>`}</div>`;
+  return `<p class="s">她把作品发到工作室群后，点"验收"就会显示要给她的码，这一单会自动移到最下面。</p><button class="main" onclick="editing='new';render()">＋ 新订单</button>` +
+    open.map(card).join('') + (done.length ? '<h2 style="color:var(--faint)">已验收</h2>' + done.map(card).join('') : '');
 }
-async function showCodes(){
-  for (const j of jobs){ const el = document.getElementById('codes-' + j.id); if (el) el.innerHTML = `<span>满意码 <b>${await codeOf(j.id, 'full')}</b></span><span>一般码 <b>${await codeOf(j.id, 'ok')}</b></span>`; }
+async function showCode(id, tier){ document.getElementById('codes-' + id).innerHTML = `<span>${tier === 'ok' ? '一般码' : '满意码'} <b>${await codeOf(id, tier)}</b>（发给她）</span>`; }
+async function accept(i, tier){
+  const j = jobs[i]; j.closed = todayStr(); j.tier = tier;
+  await saveJobs('验收：' + j.title); render(); showCode(j.id, tier); toast('把码发给她');
 }
+async function unclose(i){ const j = jobs[i]; delete j.closed; delete j.tier; await saveJobs('撤销验收：' + j.title); render(); }
 function vEdit(){
   const j = editing === 'new' ? {type:'设计', title:'', reward:30, days:3, stars:1, client:'姐姐', brief:'', deliver:[], spec:[], accept:[], ref:''} : jobs[editing];
   const L = a => esc((a || []).join('\n'));
@@ -107,7 +115,7 @@ function vEdit(){
 async function saveJob(){
   const v = id => $('#f-' + id).value.trim(), lines = id => v(id).split('\n').map(x => x.trim()).filter(Boolean);
   const isNew = editing === 'new';
-  const j = isNew ? {id: 'J' + Date.now().toString(36).toUpperCase()} : jobs[editing];
+  const j = isNew ? {id: 'J' + Date.now().toString(36).toUpperCase(), pub: todayStr()} : jobs[editing];
   Object.assign(j, {type: v('type'), title: v('title'), reward: +v('reward'), days: +v('days'), stars: Math.min(3, Math.max(1, +v('stars') || 1)), client: v('client') || '姐姐', brief: v('brief'), deliver: lines('deliver'), spec: lines('spec'), accept: lines('accept'), ref: v('ref')});
   if (v('minLv')) j.minLv = +v('minLv'); else delete j.minLv;
   if (!j.title || !j.reward){ $('#msg').textContent = '标题和报酬要填'; return; }
