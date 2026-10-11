@@ -4,7 +4,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="学习站">
 <title>学习站</title>
-<link rel="stylesheet" href="style.css?v=1791736526">
+<link rel="stylesheet" href="style.css?v=1791736785">
 </head><body class="app">
 <header class="top">
   <div class="brand"><div class="logo">🏠</div><div><b>我的设计工作室</b><small id="lv"></small></div></div>
@@ -19,7 +19,7 @@
 </nav>
 <div class="modal" id="modal"><div class="box" id="mbox"></div></div>
 
-<script src="common.js?v=1791736526"></script>
+<script src="common.js?v=1791736785"></script>
 <script>
 const LEVELS = [
   {lv:1, name:'设计学徒', need:0, icon:'🌱'},
@@ -259,7 +259,7 @@ function viewJobs(){
     h += `<div class="c job jrow ${lvLock ? 'locked' : ''} ${v.st === 'done' ? 'jdone' : ''}" onclick="jobSel='${j.id}';render();scrollTo(0,0)">
       <div class="row2"><span class="tag t-${j.type}">${j.type}</span><b class="reward">🪙 ${j.reward}</b></div>
       <h3>${j.title}</h3><div class="meta">${j.pub ? `<span>发布 ${j.pub.slice(5)}</span>` : ''}<span>甲方：${j.client}</span><span>⏱ ${j.days} 天</span><span>${'★'.repeat(j.stars)}${'☆'.repeat(3 - j.stars)}</span>
-      <span class="${STATUS[v.st][1]}">● ${STATUS[v.st][0]}${v.st === 'doing' && v.at ? ' · 截止 ' + dueOf(j, v).slice(5) : ''}</span>${lvLock ? `<span>🔒 Lv${j.minLv}</span>` : ''}</div></div>`;
+      <span class="${STATUS[v.st][1]}">● ${STATUS[v.st][0]}${v.st === 'doing' && v.at ? ' · 截止 ' + dueOf(j, v).slice(5) : ''}</span>${lvLock ? `<span>🔒 Lv${j.minLv} 解锁（还差 ${LEVELS[j.minLv - 1].need - wallet().earned} 金币）</span>` : ''}</div></div>`;
   }
   return h;
 }
@@ -278,7 +278,7 @@ function viewJob(j){
     <div class="pay"><div><small>接单：先拿定金</small><b>+${dep}</b></div><div><small>满意：再拿尾款</small><b>+${j.reward - dep}</b></div><div><small>一般：尾款打折（总共 ${CONFIG.GOOD_ENOUGH * 100}%）</small><b>+${Math.round(j.reward * CONFIG.GOOD_ENOUGH) - dep}</b></div><div><small>放弃或超时：退定金 + 赔付</small><b>−${dep + breach(j)}</b></div></div>
     <p class="s" style="margin:10px 0 0">💬 觉得价格不合适、想改要求？去「工作室」群找甲方谈，谈好了订单会更新。</p></div>`;
   // 最下面：操作
-  if (lvLock) h += `<button class="ghost" disabled>🔒 升到 Lv${j.minLv} 才能接</button>`;
+  if (lvLock) h += `<div class="bar-msg">🔒 累计赚到 <b>${LEVELS[j.minLv - 1].need}</b> 金币升到 Lv${j.minLv}「${LEVELS[j.minLv - 1].name}」才能接，还差 <b>${LEVELS[j.minLv - 1].need - w.earned}</b> 金币。多做作业、多接单就能升级！</div><button class="ghost" disabled>🔒 Lv${j.minLv} 解锁</button>`;
   else if (v.st === 'open'){
     const why = doingCount() >= CONFIG.JOB_LIMIT ? `手上已经有 ${CONFIG.JOB_LIMIT} 单了` : stale().length ? `有作业欠了超过 ${CONFIG.STALE} 天，先补完` : w.coins < 0 ? '金币是负数，先补作业' : !unlocked() ? '先完成今天的任务' : '';
     h += why ? `<div class="bar-msg">🔒 ${why}</div><button class="main" disabled>接单</button>` : `<button class="main" onclick="take('${j.id}')">接单（马上拿定金 ${dep} 金币）</button>`;
@@ -337,6 +337,7 @@ function viewMe(){
   const days = Object.keys(load('paid', {})).length;
   let h = `<h1>我的</h1><div class="c profile"><div class="avatar">${L.icon}</div><div style="flex:1"><b class="lvname">Lv${L.lv} · ${L.name}</b>
     <div class="prog"><i style="width:${pct}%"></i></div><div class="d">${N ? `累计 ${w.earned} / ${N.need} 升到「${N.name}」` : '最高等级！'}</div></div></div>
+    <div class="c"><b>🏅 等级表</b><div class="d">按累计赚到的金币升级（兑换零花钱不会掉级）</div>${LEVELS.map(l => `<div class="log"><span>${l.icon} Lv${l.lv} ${l.name}</span><span>${l.need ? '累计 ' + l.need + ' 金币' : '起点'} ${w.earned >= l.need ? '✅' : ''}</span></div>`).join('')}</div>
     <div class="c stats"><div><b>${w.coins}</b><small>金币余额</small></div><div><b>${jobsDone}</b><small>完成订单</small></div><div><b>${days}</b><small>完成天数</small></div></div>
     <div class="c"><b>💰 兑换零花钱</b><div class="d">${CONFIG.RATE} 金币 = 1 元 · 现在可换 <b>${Math.floor(w.coins / CONFIG.RATE)}</b> 元</div>
     ${stale().length ? `<div class="bar-msg">📌 有作业欠了超过 ${CONFIG.STALE} 天，补完才能兑换</div>` : ''}
