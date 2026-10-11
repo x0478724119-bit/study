@@ -99,3 +99,5 @@ details.report summary{font-weight:600;cursor:pointer}
 .date{width:auto;flex:1 0 46px;min-width:46px}.date.off{opacity:.45;border-style:dashed}
 .say{width:auto;float:right;background:var(--card);color:var(--acc);border:1px solid var(--line);font-size:13px;padding:5px 10px;margin:0 0 6px 8px}
 .lesson.focus{border-color:var(--acc);box-shadow:0 0 0 3px var(--acc-soft)}.tag.t-英语{background:var(--blue-soft);color:var(--blue)}
+.jrow{cursor:pointer}.jd h3{margin:14px 0 4px;font-size:15.5px}.jd h3:first-child{margin-top:0}.jd p,.jd li{font-size:14.5px;color:var(--soft)}
+.pay{display:grid;grid-template-columns:1fr 1fr;gap:8px}.pay div{background:var(--bg);border-radius:10px;padding:8px 10px}.pay small{display:block;color:var(--faint);font-size:12px}.pay b{font-size:17px}
