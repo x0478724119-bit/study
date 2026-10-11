@@ -4,7 +4,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="学习站">
 <title>学习站</title>
-<link rel="stylesheet" href="style.css?v=1791737067">
+<link rel="stylesheet" href="style.css?v=1791737670">
 </head><body class="app">
 <header class="top">
   <div class="brand"><div class="logo">🏠</div><div><b>我的设计工作室</b><small id="lv"></small></div></div>
@@ -19,7 +19,7 @@
 </nav>
 <div class="modal" id="modal"><div class="box" id="mbox"></div></div>
 
-<script src="common.js?v=1791737067"></script>
+<script src="common.js?v=1791737670"></script>
 <script>
 const LEVELS = [
   {lv:1, name:'设计学徒', need:0, icon:'🌱'},
@@ -259,7 +259,7 @@ function viewJobs(){
     if (v.st === 'done' && !shownDone){ h += '<h2 style="color:var(--faint)">已完成</h2>'; shownDone = true; }
     h += `<div class="c job jrow ${lvLock ? 'locked' : ''} ${v.st === 'done' ? 'jdone' : ''}" onclick="jobSel='${j.id}';render();scrollTo(0,0)">
       <div class="row2"><span class="tag t-${j.type}">${j.type}</span><b class="reward">🪙 ${j.reward}</b></div>
-      <h3>${j.title}</h3><div class="meta">${j.pub ? `<span>发布 ${j.pub.slice(5)}</span>` : ''}<span>甲方：${j.client}</span><span>⏱ ${j.days} 天</span><span>${'★'.repeat(j.stars)}${'☆'.repeat(3 - j.stars)}</span>
+      <h3>${j.title}</h3><div class="meta">${j.pub ? `<span>发布 ${j.pub.slice(5)}</span>` : ''}<span>甲方：${j.client}</span><span>⏱ 接单后 ${j.days} 天内交</span><span>${'★'.repeat(j.stars)}${'☆'.repeat(3 - j.stars)}</span>
       <span class="${STATUS[v.st][1]}">● ${STATUS[v.st][0]}${v.st === 'doing' && v.at ? ' · 截止 ' + dueOf(j, v).slice(5) : ''}</span>${lvLock ? `<span>🔒 Lv${j.minLv} 解锁（还差 ${LEVELS[j.minLv - 1].need - wallet().earned} 金币）</span>` : ''}</div></div>`;
   }
   return h;
@@ -269,7 +269,7 @@ function viewJob(j){
   const li = a => '<ul>' + a.map(x => `<li>${x}</li>`).join('') + '</ul>';
   let h = `<a class="back" href="#" onclick="jobSel=null;render();return false">← 返回接单大厅</a>
     <div class="c"><div class="row2"><span class="tag t-${j.type}">${j.type}</span><span class="${STATUS[v.st][1]}">● ${STATUS[v.st][0]}</span></div>
-    <h1 style="margin:8px 0 4px">${j.title}</h1><div class="meta"><span>甲方：${j.client}</span><span>⏱ ${j.days} 天内交付</span><span>难度 ${'★'.repeat(j.stars)}${'☆'.repeat(3 - j.stars)}</span></div></div>
+    <h1 style="margin:8px 0 4px">${j.title}</h1><div class="meta"><span>甲方：${j.client}</span><span>⏱ 接单后 ${j.days} 天内交付</span><span>难度 ${'★'.repeat(j.stars)}${'☆'.repeat(3 - j.stars)}</span></div></div>
     <div class="c jd"><h3>📝 需求说明</h3><p>${j.brief}</p>
     <h3>📦 要交什么</h3>${li(j.deliver)}
     <h3>📐 具体要求</h3>${li(j.spec)}
