@@ -4,7 +4,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="学习站">
 <title>学习站</title>
-<link rel="stylesheet" href="style.css?v=1791730344">
+<link rel="stylesheet" href="style.css?v=1791730407">
 </head><body class="app">
 <header class="top">
   <div class="brand"><div class="logo">🏠</div><div><b>我的设计工作室</b><small id="lv"></small></div></div>
@@ -19,7 +19,7 @@
 </nav>
 <div class="modal" id="modal"><div class="box" id="mbox"></div></div>
 
-<script src="common.js?v=1791730344"></script>
+<script src="common.js?v=1791730407"></script>
 <script>
 const LEVELS = [
   {lv:1, name:'设计学徒', need:0, icon:'🌱'},
@@ -72,6 +72,7 @@ function weekly(){
   const sent = load('weekly', null); if (sent === lastMon) return;
   const start = load('start', T); if (lastSun < start) { save('weekly', lastMon); return; }
   const days = Object.keys(DAYS || {}).filter(k => k >= lastMon && k <= lastSun && k >= start && !isWeekend(k) && !paused(k));
+  if (!days.length) { save('weekly', lastMon); return; }  // 整周放假 / 没任务就不发
   const missed = load('missed', {}), leave = load('leave', {});
   const onTime = days.filter(k => dayComplete(k) && !missed[k] && !leave[k]).length;
   const madeUp = days.filter(k => dayComplete(k) && (missed[k] || leave[k])).length;
@@ -191,7 +192,7 @@ const job = id => JOBS.find(x => x.id === id);
 function setJob(id, st){ const js = load('jobs', {}); js[id] = st; save('jobs', js); }
 function take(id){ setJob(id, 'doing'); notify(`📋 接单：${job(id).title}（${job(id).reward} 金币）`); toast('接单成功，加油'); render(); }
 function submitJob(id){
-  modal(`<h3>提交「${job(id).title}」</h3><p>把作品截图或录屏发给姐姐。验收通过后，姐姐会给你一个 <b>6 位验收码</b>。</p>
+  modal(`<h3>提交「${job(id).title}」</h3><p>把作品发到飞书的<b>「工作室」群</b>：第一行写订单名，再附上截图、PDF 或录屏。验收通过后，姐姐会给你一个 <b>6 位验收码</b>。</p>
     <div class="row"><button class="ghost" onclick="closeM()">再改改</button><button class="main" onclick="setJob('${id}','review');notify('📤 提交作品：${job(id).title}，等你验收');closeM();render()">已发给姐姐</button></div>`);
 }
 function askCode(id){
