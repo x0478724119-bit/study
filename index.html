@@ -4,7 +4,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="学习站">
 <title>学习站</title>
-<link rel="stylesheet" href="style.css?v=1791731078">
+<link rel="stylesheet" href="style.css?v=1791731426">
 </head><body class="app">
 <header class="top">
   <div class="brand"><div class="logo">🏠</div><div><b>我的设计工作室</b><small id="lv"></small></div></div>
@@ -19,7 +19,7 @@
 </nav>
 <div class="modal" id="modal"><div class="box" id="mbox"></div></div>
 
-<script src="common.js?v=1791731078"></script>
+<script src="common.js?v=1791731426"></script>
 <script>
 const LEVELS = [
   {lv:1, name:'设计学徒', need:0, icon:'🌱'},
@@ -104,7 +104,10 @@ function viewToday(){
   let h = '';
   // 起床打卡
   if (!isWeekend(T)){
-    if (wake[T]) h += `<div class="c wake on"><b>☀️ 今天 ${wake[T].time} 起床打卡</b><span>+${wake[T].coin} 金币</span></div>`;
+    const wt = wake[T];
+    if (wt && wt.ok === true) h += `<div class="c wake on"><b>☀️ 今天 ${wt.time} 起床打卡</b><span>+${wt.coin} 金币</span></div>`;
+    else if (wt && wt.ok === 'fail') h += `<div class="c wake"><b>😴 ${wt.time} 打卡后 2 小时没开始学习，打卡作废</b></div>`;
+    else if (wt) h += `<div class="c wake"><div><b>☀️ ${wt.time} 已打卡</b><div class="d">${wakeLeft(wt)} 分钟内完成第一项任务，才能拿到起床金币${wt.coin ? '（+' + wt.coin + '）' : ''}</div></div></div>`;
     else if (hm() < '06:00') h += `<div class="c wake"><div><b>🌙 现在是 ${hm()}，该睡觉啦</b><div class="d">起床打卡 06:00 开放</div></div></div>`;
     else h += `<div class="c wake"><div><b>☀️ 起床打卡</b><div class="d">14:00 前 +5 金币 · 15:00 前 +3 金币</div></div><button class="main sm" onclick="wakeUp()">我起床了</button></div>`;
   }
@@ -112,14 +115,16 @@ function viewToday(){
   if (bl.length) h += `<div class="bar-msg">📌 欠着的作业：<b>${bl.length} 天</b>${st.length ? `，其中 ${st.length} 天超过 ${CONFIG.STALE} 天（<b>不能接单、不能兑换</b>）` : ''}<br>${bl.map(k => `<a class="go" href="#" onclick="selDay='${k}';render();scrollTo(0,0);return false">去补 ${k} ${DAYS[k].name} →</a>`).join('<br>')}</div>`;
   if (!day){ return h + '<div class="c">还没有任务。</div>'; }
   const wk = ['日','一','二','三','四','五','六'][new Date(key + 'T12:00').getDay()];
-  const note = key === T ? '' : (key > T ? ' · 还没到这一天，可以先看看' : ' · 今天还没有新任务，这是最近一天的');
+  const note = key === T ? ' · 今天' : (key > T ? ' · 可以提前做，截止到这一天结束' : (DAYS[T] ? '' : ' · 今天没有新任务，这是最近一天的'));
   let n = 0;
   const rows = day.tasks.map((t,i) => {
     const on = taskDone(key, i, t); if (on) n++;
     const q = t.quiz ? quizState(t.quiz) : null;
-    return `<div class="c task"><div class="chk ${on?'on':''}" ${t.quiz?'':`onclick="tog('${key}',${i})"`}>${on?'✓':''}</div>
+    const wv = t.write ? load('day-' + key, {})[i] : null;
+    const wbox = t.write ? (wv ? `<div class="wdone">✍️ ${esc(wv.text)}<br><small>${wv.time} 提交</small></div>` : `<textarea class="fill wbox" id="w-${key}-${i}" placeholder="${t.write}"></textarea><button class="main sm" style="margin-top:8px" onclick="submitWrite('${key}',${i})">提交</button>`) : '';
+    return `<div class="c task"><div class="chk ${on?'on':''}" ${t.quiz||t.write?'':`onclick="tog('${key}',${i})"`}>${on?'✓':''}</div>
       <div><div class="t"><span class="tag t-${t.tag}">${t.tag}</span>${t.t}</div><div class="d">${t.d}</div>
-      ${t.quiz ? (q && q.first !== null && q.first !== undefined ? `<div class="d">${q.done?'✅ 已完成':'⏳ 还要订正'} · 第一次 ${q.first}%</div><a class="go" href="quiz.html?s=${t.quiz}">${q.done?'查看结果':'继续订正'} →</a>` : `<a class="go" href="quiz.html?s=${t.quiz}">开始做题 →</a>`) : ''}
+      ${wbox}${t.quiz ? (q && q.first !== null && q.first !== undefined ? `<div class="d">${q.done?'✅ 已完成':'⏳ 还要订正'} · 第一次 ${q.first}%</div><a class="go" href="quiz.html?s=${t.quiz}">${q.done?'查看结果':'继续订正'} →</a>` : `<a class="go" href="quiz.html?s=${t.quiz}">开始做题 →</a>`) : ''}
       </div></div>`;
   }).join('');
   const all = n === day.tasks.length, paid = load('paid', {})[key];
@@ -134,34 +139,57 @@ function viewToday(){
   const late = key < T, onLeave = load('leave', {})[key], miss = load('missed', {})[key];
   if (onLeave) h += `<div class="bar-msg ok">🙋 这一天请假了，不扣金币</div>`;
   else if (key === T && !isWeekend(T) && !all && leaveLeft() > 0) h += `<button class="ghost" onclick="askLeave()">今天请假（本月还剩 ${leaveLeft()} 次）</button>`;
-  if (all) h += `<div class="c done-card"><b>🎉 ${late ? '补完了！' : '今天全部完成！'}</b>${paid ? '<div class="d">已领取 +' + CONFIG.DAILY_COIN + ' 金币，去接单吧</div>' : late ? (miss && miss.back > 0 ? '<div class="d">已退还 ' + miss.back + ' 金币</div>' : '<div class="d">补完了</div>') : `<button class="main" onclick="claimDay('${key}')">领取全勤奖励 +${CONFIG.DAILY_COIN} 金币</button>`}</div>`;
+  if (all) h += `<div class="c done-card"><b>🎉 ${late ? '补完了！' : key > T ? '提前做完了！' : '今天全部完成！'}</b>${paid ? '<div class="d">已领取 +' + CONFIG.DAILY_COIN + ' 金币，去接单吧</div>' : late ? (miss && miss.back > 0 ? '<div class="d">已退还 ' + miss.back + ' 金币</div>' : '<div class="d">补完了</div>') : `<button class="main" onclick="claimDay('${key}')">领取全勤奖励 +${CONFIG.DAILY_COIN} 金币</button>`}</div>`;
   else if (late && !onLeave) h += `<div class="bar-msg">⏰ 这一天已经过了${miss && miss.pen ? `，扣了 ${miss.pen} 金币。<b>今天补完退 ${Math.round(miss.pen * Math.max(0, 1 - CONFIG.REFUND * daysBetween(key, T)))}</b>，越晚退得越少` : '，补完不发金币'}。</div>`;
   // 往期任务：可以回去补作业、复习
-  const past = Object.keys(DAYS).sort().reverse().filter(k => k <= T || k === dayKey());
-  if (past.length > 1) h += '<h2>📅 往期任务</h2>' + past.map(k => {
-    const d = DAYS[k], m = d.tasks.filter((t,i) => taskDone(k, i, t)).length;
-    return `<div class="c day-row ${k === key ? 'cur' : ''}" onclick="selDay='${k}';render();scrollTo(0,0)"><span><b>${d.name}</b><br><small>${k}</small></span><span>${m === d.tasks.length ? '✅' : m + ' / ' + d.tasks.length}</span></div>`;
+  const all2 = Object.keys(DAYS).sort().reverse();
+  if (all2.length > 1) h += '<h2>📅 全部任务</h2><p class="s">以后的可以提前做，过去的可以补、可以复习</p>' + all2.map(k => {
+    const d = DAYS[k], m = d.tasks.filter((t,i) => taskDone(k, i, t)).length, lab = k > T ? '<span class="tag">可提前做</span>' : k === T ? '<span class="tag t-数学">今天</span>' : '';
+    return `<div class="c day-row ${k === key ? 'cur' : ''}" onclick="selDay='${k}';render();scrollTo(0,0)"><span>${lab}<b>${d.name}</b><br><small>${k}</small></span><span>${m === d.tasks.length ? '✅' : m + ' / ' + d.tasks.length}</span></div>`;
   }).join('');
   return h;
+}
+const esc = x => String(x).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function submitWrite(key, i){
+  const v = document.getElementById(`w-${key}-${i}`).value.trim(), t = DAYS[key].tasks[i];
+  if (v.length < (t.min || 10)){ toast(`再多写一点（至少 ${t.min || 10} 个字）`); return; }
+  const d = load('day-' + key, {}); d[i] = {text: v, time: todayStr() + ' ' + hm()}; save('day-' + key, d);
+  notify(`✍️ ${t.t}：\n${v}`); render();
 }
 function tog(key, i){ const d = load('day-' + key, {}); d[i] = !d[i]; save('day-' + key, d); render(); }
 // 当天完成的任务每项 +2，一项只给一次；补的不给
 function settle(){
-  const key = T, day = (window.DAYS || {})[key]; if (!day) return;
-  const got = load('taskpaid', {}); got[key] = got[key] || {};
-  day.tasks.forEach((t, i) => {
-    if (got[key][i] || !taskDone(key, i, t)) return;
-    got[key][i] = 1; save('taskpaid', got);
-    addCoins(CONFIG.TASK_COIN, '完成：' + t.t); toast('+' + CONFIG.TASK_COIN + ' 金币 · ' + t.t);
-  });
+  const got = load('taskpaid', {}); let did = false;
+  for (const key of Object.keys(window.DAYS || {}).filter(k => k >= T)){
+    got[key] = got[key] || {};
+    DAYS[key].tasks.forEach((t, i) => {
+      if (got[key][i] || !taskDone(key, i, t)) return;
+      got[key][i] = 1; save('taskpaid', got); did = true;
+      addCoins(CONFIG.TASK_COIN, '完成：' + t.t); toast('+' + CONFIG.TASK_COIN + ' 金币 · ' + t.t);
+    });
+  }
+  checkWake(did);
 }
+const mins = t => +t.slice(0,2) * 60 + +t.slice(3,5);
+function wakeLeft(wt){ return Math.max(0, 120 - (mins(hm()) - mins(wt.time))); }
 function wakeUp(){
   const w = load('wake', {}); if (w[T] || hm() < '06:00' || paused(T)) return;
   const now = hm(); const rule = CONFIG.WAKE.find(([t]) => now <= t); const coin = rule ? rule[1] : 0;
-  w[T] = {time: now, coin}; save('wake', w);
-  if (coin) addCoins(coin, '起床打卡 ' + now);
-  notify(`☀️ 起床打卡 ${now}` + (coin ? `，+${coin} 金币` : '（超过 15:00，没有金币）'));
-  toast(coin ? `打卡成功 +${coin} 金币` : '打卡成功，明天早点起有金币哦'); render();
+  w[T] = {time: now, coin, ok: false}; save('wake', w);
+  notify(`☀️ 起床打卡 ${now}（2 小时内开始学习才算数）`);
+  toast('打卡成功！2 小时内完成第一项任务才有金币'); render();
+}
+// 打卡后：2 小时内完成了任务 → 发金币；超时没动 → 作废
+function checkWake(justDid){
+  const w = load('wake', {}), wt = w[T]; if (!wt || wt.ok !== false) return;
+  if (justDid && wakeLeft(wt) > 0){
+    wt.ok = true; save('wake', w);
+    if (wt.coin) addCoins(wt.coin, '起床打卡 ' + wt.time);
+    notify(`✅ ${wt.time} 起床，${mins(hm()) - mins(wt.time)} 分钟后完成第一项任务` + (wt.coin ? `，起床 +${wt.coin} 金币` : ''));
+  } else if (wakeLeft(wt) === 0){
+    wt.ok = 'fail'; save('wake', w);
+    notify(`😴 ${wt.time} 打卡后 2 小时没开始学习，起床打卡作废`);
+  }
 }
 function claimDay(key){
   const p = load('paid', {}); if (p[key] || key < T) return; p[key] = 1; save('paid', p);
@@ -215,7 +243,7 @@ function checkCode(id){
 function viewBook(){
   return `<h1>学习手册</h1><p class="s">路线、目标学校、三年计划都在这里</p>
     <div class="c"><a class="go big" href="handbook.html">📘 打开成长手册 →</a><div class="d">从现在到上大学：要去哪、学什么、每个月做什么。</div></div>
-    <div class="c"><b>项目教程</b><div class="d">酷家乐、Swift Playgrounds 的分步教程，之后会放在这里。</div></div>`;
+    <div class="c"><a class="go big" href="lessons.html">🛠️ 软件教程 →</a><div class="d">酷家乐、Swift Playgrounds、可画：一课一课跟着做，每课做完都有要交的东西。</div></div>`;
 }
 
 // ===== 我的 =====

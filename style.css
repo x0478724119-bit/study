@@ -80,3 +80,5 @@ body{-webkit-tap-highlight-color:transparent}
 .day-row{display:flex;justify-content:space-between;align-items:center;cursor:pointer;padding:12px 16px}.day-row small{color:var(--faint)}.day-row.cur{border-color:var(--acc)}
 .cn{display:none;margin-top:12px;border-top:1px dashed var(--line);padding-top:10px;color:var(--soft);font-size:14.5px}
 body.submitted .cn{display:block}.cn summary{color:var(--acc);font-weight:600;cursor:pointer}
+.att{text-align:left;font-size:13.5px;color:var(--soft);margin-top:12px;border-top:1px dashed var(--line);padding-top:8px;line-height:1.8}.att b{color:var(--ink)}
+.wbox{min-height:80px;margin-top:8px;font-size:15px}.wdone{margin-top:8px;background:var(--bg);border-radius:10px;padding:8px 12px;font-size:14.5px;white-space:pre-wrap}.wdone small{color:var(--faint)}

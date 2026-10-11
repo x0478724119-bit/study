@@ -2,7 +2,7 @@
 <html lang="zh-CN"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>做题</title>
-<link rel="stylesheet" href="style.css?v=1791731078">
+<link rel="stylesheet" href="style.css?v=1791731426">
 </head><body><div class="w">
 <a class="back" href="./">← 回到今天的任务</a>
 <h1 id="title">加载中…</h1>
@@ -11,7 +11,7 @@
 <div id="bar" class="bar"><button class="main" id="submit">交卷</button></div>
 <div id="result"></div>
 </div>
-<script src="common.js?v=1791731078"></script>
+<script src="common.js?v=1791731426"></script>
 <script>
 // ===== 通用做题引擎 =====
 // 题库放在 data/<id>.js，用 quiz.html?s=<id> 打开。
@@ -19,7 +19,7 @@
 // set.mode = 'diag' 时只摸底不要求订正；否则错题要重做到累计正确率 ≥ 80%。
 const id = new URLSearchParams(location.search).get('s');
 const KEY = 'quiz-' + id;
-let SET, state, mode = 'all', start = Date.now();
+let SET, state, mode = 'all', start = Date.now(), practice = false;
 
 function loadSet(){
   const sc = document.createElement('script');
@@ -82,6 +82,16 @@ document.getElementById('submit').onclick = () => {
     ex.style.display = 'block';
     box.querySelectorAll('input').forEach(x=>x.disabled = true);
   }
+  // 每一次提交都记一笔
+  const score = Math.round(ok / ids.length * 100);
+  state.attempts = state.attempts || [];
+  state.attempts.push({d: new Date().toLocaleString('zh-CN'), s: score, n: ids.length, k: practice ? '再刷' : mode === 'redo' ? '订正' : '第一次', m: Math.round((Date.now()-start)/60000)});
+  if (practice){
+    practice = false; put(state);
+    notify(`🔁 ${SET.title} 再刷一遍：${score}%`);
+    document.body.classList.add('submitted'); document.getElementById('bar').style.display = 'none';
+    showResult(true); scrollTo({top:0, behavior:'smooth'}); return;
+  }
   if (state.first === null){
     state.first = Math.round(ok / SET.qs.length * 100);
     state.firstTime = Math.round((Date.now()-start)/60000);
@@ -112,13 +122,16 @@ function showResult(fresh){
   if (s.sec) h += '<div class="secs">' + s.sec.map(([n,a,b])=>`<span>${n}：${a}/${b}</span>`).join('') + '</div>';
   h += s.done ? `<div class="okmsg">✅ 完成！截图这一页发给姐姐</div>`
               : `<div class="badmsg">还没到 80%，看完解析后重做错题</div>`;
+  if (s.attempts && s.attempts.length) h += '<div class="att"><b>做题记录</b>' + s.attempts.map((a,i) => `<div>${i+1}. ${a.k} · ${a.s}%${a.n < SET.qs.length ? '（' + a.n + ' 题）' : ''} · ${a.m} 分钟 · ${a.d}</div>`).join('') + '</div>';
   h += '</div>';
   if (need) h += `<button class="main" onclick="redo()">重做错题</button>`;
+  else h += `<button class="ghost" onclick="again()">🔁 再刷一遍（不影响第一次的成绩）</button>`;
   if (fresh) h += `<p class="s" style="text-align:center">往下看每道题的解析 ↓</p>`;
   else h += `<button class="ghost" onclick="mode='all';document.getElementById('result').innerHTML='';renderReview()">查看全部题目和解析</button>`;
   document.getElementById('result').innerHTML = h;
   document.getElementById('result').scrollIntoView();
 }
+function again(){ practice = true; start = Date.now(); document.body.classList.remove('submitted'); mode='all'; document.getElementById('result').innerHTML=''; render(); scrollTo({top:0}); }
 function redo(){ document.body.classList.remove('submitted'); mode='redo'; document.getElementById('result').innerHTML=''; render(); scrollTo({top:0}); }
 function renderReview(){
   render();
