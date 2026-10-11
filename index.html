@@ -37,7 +37,18 @@ const isWeekend = d => [0,6].includes(new Date(d + 'T12:00').getDay());
 
 // 加载数据文件（加时间戳，保证拿到最新的）
 function loadScript(src){ return new Promise(r => { const s = document.createElement('script'); s.src = src + '?v=' + Date.now(); s.onload = r; s.onerror = r; document.body.appendChild(s); }); }
-Promise.all([loadScript('data/days.js'), loadScript('data/jobs.js')]).then(render);
+Promise.all([loadScript('data/days.js'), loadScript('data/jobs.js')]).then(() => { checkMissed(); render(); });
+
+// 过去的工作日没做完：自动扣金币，一天只扣一次
+function checkMissed(){
+  const missed = load('missed', {}), start = load('start', null) || (save('start', T), T);
+  for (const k of Object.keys(DAYS || {})){
+    if (k >= T || k < start || isWeekend(k) || missed[k] || dayComplete(k)) continue;
+    missed[k] = 1; save('missed', missed);
+    addCoins(-CONFIG.MISS, `${DAYS[k].name} 没按时完成`);
+    notify(`⚠️ ${k} ${DAYS[k].name} 没按时完成，扣 ${CONFIG.MISS} 金币`);
+  }
+}
 
 // ===== 今日 =====
 function dayKey(){ const ks = Object.keys(window.DAYS || {}).sort(); return (window.DAYS || {})[T] ? T : (ks.filter(k => k <= T).pop() || ks[0]); }
@@ -78,7 +89,9 @@ function viewToday(){
     <div>起床：${wk2 ? wk2.time : '未打卡'}</div>
     ${day.tasks.map((t,i) => { const q = t.quiz ? quizState(t.quiz) : null; return `<div>${taskDone(key,i,t) ? '✅' : '⬜️'} ${t.t}${q && q.first != null ? ` · 第一次 ${q.first}%${q.sec ? '（' + q.sec.map(([n,a,b]) => n + ' ' + a + '/' + b).join('，') + '）' : ''}` : ''}</div>`; }).join('')}
     <div>今天获得：🪙 ${todayLog}</div><div class="d">做完后截图这一张发给姐姐</div></div>`;
-  if (all) h += `<div class="c done-card"><b>🎉 今天全部完成！</b>${paid ? '<div class="d">已领取 +' + CONFIG.DAILY_COIN + ' 金币，去接单吧</div>' : `<button class="main" onclick="claimDay('${key}')">领取今日奖励 +${CONFIG.DAILY_COIN} 金币</button>`}</div>`;
+  const late = key < T;
+  if (all) h += `<div class="c done-card"><b>🎉 ${late ? '补完了！' : '今天全部完成！'}</b>${paid ? '<div class="d">已领取 +' + CONFIG.DAILY_COIN + ' 金币，去接单吧</div>' : late ? '<div class="d">补作业不发金币，但补完了就不算欠账</div>' : `<button class="main" onclick="claimDay('${key}')">领取今日奖励 +${CONFIG.DAILY_COIN} 金币</button>`}</div>`;
+  else if (late) h += `<div class="bar-msg">⏰ 这一天已经过了${load('missed', {})[key] ? '，已扣 ' + CONFIG.MISS + ' 金币' : ''}。补完不发金币，但还是要补。</div>`;
   // 往期任务：可以回去补作业、复习
   const past = Object.keys(DAYS).sort().reverse().filter(k => k <= T || k === dayKey());
   if (past.length > 1) h += '<h2>📅 往期任务</h2>' + past.map(k => {
@@ -97,7 +110,7 @@ function wakeUp(){
   toast(coin ? `打卡成功 +${coin} 金币` : '打卡成功，明天早点起有金币哦'); render();
 }
 function claimDay(key){
-  const p = load('paid', {}); if (p[key]) return; p[key] = 1; save('paid', p);
+  const p = load('paid', {}); if (p[key] || key < T) return; p[key] = 1; save('paid', p);
   addCoins(CONFIG.DAILY_COIN, '完成 ' + DAYS[key].name);
   notify(`🎉 ${DAYS[key].name} 全部完成，+${CONFIG.DAILY_COIN} 金币`); toast('+' + CONFIG.DAILY_COIN + ' 金币'); render();
 }

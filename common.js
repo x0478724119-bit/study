@@ -3,7 +3,8 @@ const CONFIG = {
   RATE: 5,                 // 5 金币 = 1 元
   DAILY_COIN: 5,           // 当天必做任务全部完成
   WAKE: [ ['14:00', 10], ['15:00', 5] ],  // 起床打卡：14:00 前 +10，15:00 前 +5，再晚没有
-  FEISHU: '',              // 飞书群机器人 webhook，填好后自动推送
+  MISS: 10,                // 工作日的任务到第二天早上 6 点还没做完，扣 10 金币（补完也不退）
+  FEISHU: 'https://open.feishu.cn/open-apis/bot/v2/hook/7ab344b3-6dc5-40f9-a39b-d73f3c5f5358',
 };
 
 const pad = n => String(n).padStart(2, '0');
