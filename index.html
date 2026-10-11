@@ -4,7 +4,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="学习站">
 <title>学习站</title>
-<link rel="stylesheet" href="style.css?v=1791736791">
+<link rel="stylesheet" href="style.css?v=1791737067">
 </head><body class="app">
 <header class="top">
   <div class="brand"><div class="logo">🏠</div><div><b>我的设计工作室</b><small id="lv"></small></div></div>
@@ -19,7 +19,7 @@
 </nav>
 <div class="modal" id="modal"><div class="box" id="mbox"></div></div>
 
-<script src="common.js?v=1791736791"></script>
+<script src="common.js?v=1791737067"></script>
 <script>
 const LEVELS = [
   {lv:1, name:'设计学徒', need:0, icon:'🌱'},
@@ -238,7 +238,7 @@ const deposit = j => Math.round(j.reward * CONFIG.DEPOSIT);
 const breach = j => Math.round(j.reward * CONFIG.BREACH);
 const dueOf = (j, v) => v.at ? todayStr(new Date(new Date(v.at + 'T12:00').getTime() + j.days * 864e5)) : null;
 const doingCount = () => (window.JOBS || []).filter(j => jget(j.id).st === 'doing').length;
-let jobSel = null;
+let jobSel = null, jobType = '全部';
 // 超时：过了截止日还没提交，保证金不退，订单回到大厅
 function checkJobs(){
   for (const j of (window.JOBS || [])){
@@ -253,7 +253,8 @@ function viewJobs(){
   const rank = {doing: 0, review: 0, open: 1, done: 2};
   const list = (window.JOBS || []).slice().sort((a, b) => (rank[jget(a.id).st] - rank[jget(b.id).st]) || (b.pub || '').localeCompare(a.pub || ''));
   let shownDone = false;
-  for (const j of list){
+  h += '<div class="chips">' + ['全部','室内','设计','画画','编程','英语'].map(t => `<button class="${jobType === t ? 'on' : ''}" onclick="jobType='${t}';render()">${t}</button>`).join('') + '</div>';
+  for (const j of list.filter(j => jobType === '全部' || j.type === jobType)){
     const v = jget(j.id), lvLock = j.minLv && level(wallet().earned).lv < j.minLv;
     if (v.st === 'done' && !shownDone){ h += '<h2 style="color:var(--faint)">已完成</h2>'; shownDone = true; }
     h += `<div class="c job jrow ${lvLock ? 'locked' : ''} ${v.st === 'done' ? 'jdone' : ''}" onclick="jobSel='${j.id}';render();scrollTo(0,0)">

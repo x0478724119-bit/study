@@ -3,7 +3,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex">
 <title>管理后台</title>
-<link rel="stylesheet" href="style.css?v=1791736791">
+<link rel="stylesheet" href="style.css?v=1791737067">
 <style>
 .tabs2{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0 14px}.tabs2 button{width:auto;background:var(--card);border:1px solid var(--line);color:var(--ink);padding:8px 14px}.tabs2 button.on{background:var(--acc);color:#fff;border-color:var(--acc)}
 label{display:block;font-size:13px;color:var(--soft);margin:10px 0 4px}
@@ -16,13 +16,13 @@ textarea.in{min-height:72px}.grid3{display:grid;grid-template-columns:1fr 1fr 1f
 </head><body><div class="w">
 <div id="app"></div>
 </div>
-<script src="common.js?v=1791736791"></script>
+<script src="common.js?v=1791737067"></script>
 <script>
 // ===== 管理后台：只有存了 GitHub 钥匙的浏览器能改东西 =====
 const REPO = 'x0478724119-bit/study', API = 'https://api.github.com/repos/' + REPO + '/contents/';
 const $ = s => document.querySelector(s);
 const esc = x => String(x ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-let TOKEN = load('adminToken', ''), SECRET = load('adminSecret', ''), tab = 'jobs', jobs = [], pause = [], leaves = [], adjust = [], editing = null;
+let jType = '全部', TOKEN = load('adminToken', ''), SECRET = load('adminSecret', ''), tab = 'jobs', jobs = [], pause = [], leaves = [], adjust = [], editing = null;
 const b64e = s => btoa(unescape(encodeURIComponent(s))), b64d = s => decodeURIComponent(escape(atob(s.replace(/\n/g, ''))));
 const sha = {};
 
@@ -88,8 +88,10 @@ function vJobs(){
     <div class="codes" id="codes-${j.id}"></div>
     ${j.closed ? `<button class="ghost mini" onclick="showCode('${j.id}','${j.tier}')">再看码</button><button class="ghost mini" onclick="unclose(${i})">撤销验收</button>`
       : `<button class="main mini" onclick="accept(${i},'full')">验收：满意</button><button class="gold mini" onclick="accept(${i},'ok')">验收：一般</button><button class="ghost mini" onclick="editing=${i};render()">修改</button><button class="ghost mini" onclick="delJob(${i})">删除</button>`}</div>`;
-  return `<p class="s">她把作品发到工作室群后，点"验收"就会显示要给她的码，这一单会自动移到最下面。</p><button class="main" onclick="editing='new';render()">＋ 新订单</button>` +
-    open.map(card).join('') + (done.length ? '<h2 style="color:var(--faint)">已验收</h2>' + done.map(card).join('') : '');
+  const f = ([j]) => jType === '全部' || j.type === jType;
+  const chips = '<div class="chips">' + ['全部','室内','设计','画画','编程','英语'].map(t => `<button class="${jType === t ? 'on' : ''}" onclick="jType='${t}';render()">${t}</button>`).join('') + '</div>';
+  return chips + `<p class="s">她把作品发到工作室群后，点"验收"就会显示要给她的码，这一单会自动移到最下面。</p><button class="main" onclick="editing='new';render()">＋ 新订单</button>` +
+    open.filter(f).map(card).join('') + (done.filter(f).length ? '<h2 style="color:var(--faint)">已验收</h2>' + done.filter(f).map(card).join('') : '');
 }
 async function showCode(id, tier){ document.getElementById('codes-' + id).innerHTML = `<span>${tier === 'ok' ? '一般码' : '满意码'} <b>${await codeOf(id, tier)}</b>（发给她）</span>`; }
 async function accept(i, tier){
