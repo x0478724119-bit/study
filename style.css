@@ -61,3 +61,4 @@ button:disabled{opacity:.45;cursor:not-allowed}
 .modal input{width:100%;font:inherit;font-size:24px;letter-spacing:8px;text-align:center;padding:10px;border:2px solid var(--line);border-radius:12px;background:var(--bg);color:var(--ink)}
 .row{display:flex;gap:10px}
 .toast{position:fixed;left:50%;bottom:96px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:9px 18px;border-radius:999px;font-size:14px;opacity:0;transition:.25s;pointer-events:none;z-index:30;white-space:nowrap}.toast.show{opacity:1}
+.report{font-size:14.5px;line-height:1.8;border-style:dashed}.report b{display:block;margin-bottom:4px;font-size:15.5px}

@@ -71,6 +71,12 @@ function viewToday(){
   const all = n === day.tasks.length, paid = load('paid', {})[key];
   h += `<h1>${day.name}</h1><p class="s">${key} 周${wk}${note}</p>
     <div class="c"><div class="row2"><span>今日进度</span><b>${n} / ${day.tasks.length}</b></div><div class="prog"><i style="width:${n/day.tasks.length*100}%"></i></div></div>` + rows;
+  // 今日汇报：一天只截这一张
+  const wk2 = load('wake', {})[key], todayLog = wallet().log.filter(l => l.t.startsWith(key) && l.n > 0).reduce((a,l) => a + l.n, 0);
+  h += `<div class="c report"><b>📋 今日汇报 · ${key}</b>
+    <div>起床：${wk2 ? wk2.time : '未打卡'}</div>
+    ${day.tasks.map((t,i) => { const q = t.quiz ? quizState(t.quiz) : null; return `<div>${taskDone(key,i,t) ? '✅' : '⬜️'} ${t.t}${q && q.first != null ? ` · 第一次 ${q.first}%${q.sec ? '（' + q.sec.map(([n,a,b]) => n + ' ' + a + '/' + b).join('，') + '）' : ''}` : ''}</div>`; }).join('')}
+    <div>今天获得：🪙 ${todayLog}</div><div class="d">做完后截图这一张发给姐姐</div></div>`;
   if (all) h += `<div class="c done-card"><b>🎉 今天全部完成！</b>${paid ? '<div class="d">已领取 +' + CONFIG.DAILY_COIN + ' 金币，去接单吧</div>' : `<button class="main" onclick="claimDay('${key}')">领取今日奖励 +${CONFIG.DAILY_COIN} 金币</button>`}</div>`;
   return h;
 }
