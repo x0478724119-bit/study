@@ -2,35 +2,62 @@
 <html lang="zh-CN"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="学习站">
 <title>学习站</title>
-<style>
-:root{--bg:#FAF9F5;--card:#fff;--ink:#1B2130;--soft:#565F70;--line:#E4E0D4;--acc:#C0634A;--ok:#2E7A52;--bad:#B24337}
-@media(prefers-color-scheme:dark){:root{--bg:#13161F;--card:#1A1E29;--ink:#E9E7DF;--soft:#A6ACBC;--line:#2B2F3C;--acc:#E48C72;--ok:#5FBF8E;--bad:#E2897C}}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,"PingFang SC",sans-serif;padding:24px 16px}
-.w{max-width:640px;margin:0 auto}h1{margin:0 0 4px}p.s{color:var(--soft);margin:0 0 20px}
-.c{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin:12px 0}
-button{font:inherit;width:100%;text-align:left;padding:12px 14px;margin:6px 0;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink);cursor:pointer}
-button.ok{border-color:var(--ok);color:var(--ok);font-weight:600}button.bad{border-color:var(--bad);color:var(--bad)}
-.ex{display:none;font-size:14px;color:var(--soft);margin-top:8px}.res{font-size:20px;font-weight:700;text-align:center}
-</style></head><body><div class="w">
-<h1>学习站 · 测试页</h1>
-<p class="s">如果你能看到这一页，而且点下面的选项会变色、出解析，就说明网站能正常用 ✅</p>
-<div id="q"></div>
-<div class="c res" id="r">已答 0 / 3</div>
-<p class="s" id="v"></p>
+<link rel="stylesheet" href="style.css">
+</head><body><div class="w">
+<h1 id="h">今天的任务</h1>
+<p class="s" id="sub"></p>
+<div class="c"><div style="display:flex;justify-content:space-between;font-size:14px"><span>今日进度</span><b id="pt"></b></div><div class="prog"><i id="pb"></i></div></div>
+<div id="tasks"></div>
+<div id="finish"></div>
+<h2>其他</h2>
+<div class="c"><a class="go" href="handbook.html">📘 成长手册：路线、学校、三年计划 →</a></div>
 </div>
 <script>
-const Q=[
- ['方程 x² − 5x + 6 = 0 的解是？',['x = 2 或 3','x = −2 或 −3','x = 1 或 6'],0,'因式分解：(x−2)(x−3)=0，所以 x=2 或 x=3。'],
- ['"I ___ to school every day." 填哪个？',['goes','go','going'],1,'主语是 I，一般现在时用动词原形 go。'],
- ['二次函数 y = x² 的图像开口方向？',['向下','向上','向右'],1,'二次项系数是 1 > 0，开口向上。']];
-let done=0,right=0;
-document.getElementById('q').innerHTML=Q.map((q,i)=>`<div class="c"><b>${i+1}. ${q[0]}</b>${q[1].map((o,j)=>`<button onclick="pick(${i},${j},this)">${o}</button>`).join('')}<div class="ex" id="e${i}">💡 ${q[3]}</div></div>`).join('');
-function pick(i,j,b){const box=b.parentNode;if(box.dataset.d)return;box.dataset.d=1;done++;
- const bs=box.querySelectorAll('button');bs[Q[i][2]].classList.add('ok');if(j===Q[i][2])right++;else b.classList.add('bad');
- document.getElementById('e'+i).style.display='block';
- document.getElementById('r').textContent=done<3?`已答 ${done} / 3`:`得分：${Math.round(right/3*100)}% 🎉`;
- try{localStorage.setItem('test',String(right))}catch(e){}}
-let saved='不可用';try{localStorage.setItem('t','1');saved='可用'}catch(e){}
-document.getElementById('v').textContent='本机存储：'+saved+' · 版本 test-1';
+// ===== 每日任务：每天加一条，key 是日期 =====
+// type: 'check' 自己打勾；'quiz' 做完对应题库自动打勾（quiz 字段是题库 id）
+const DAYS = {
+  '2026-10-13': { name: '第 1 天 · 摸底', tasks: [
+    {tag:'作息', t:'14:00 前起床，出门晒 15 分钟太阳', d:'今天开始固定起床时间，周末也一样。'},
+    {tag:'英语', t:'英语摸底测试', d:'约 30–40 分钟，看看现在的水平。', quiz:'en-diag'},
+    {tag:'数学', t:'数学摸底测试', d:'约 40 分钟，准备草稿纸。', quiz:'math-diag'},
+    {tag:'英语', t:'背 30 个单词', d:'下载"墨墨背单词"或"不背单词"，选初中词汇，今天学 30 个。'},
+    {tag:'英语', t:'听 1 集 BBC 6 Minute English', d:'B 站搜"6 Minute English"，可以开字幕，听不懂没关系。'},
+    {tag:'运动', t:'运动 30 分钟', d:'散步、跳绳、骑车都行。'},
+    {tag:'项目', t:'试一下酷家乐', d:'用 Safari 打开 kujiale.com，试试在 iPad 上能不能画户型、摆家具。截图告诉姐姐能不能用。'},
+  ]},
+};
+
+const pad = n => String(n).padStart(2,'0');
+const d = new Date(), today = d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+const keys = Object.keys(DAYS).sort();
+let key = DAYS[today] ? today : (keys.filter(k => k <= today).pop() || keys[0]);
+const day = DAYS[key];
+const wk = ['日','一','二','三','四','五','六'][new Date(key).getDay()];
+document.getElementById('h').textContent = day.name;
+document.getElementById('sub').textContent = key + ' 周' + wk + (key !== today ? ' · （' + (key > today ? '还没到这一天，可以先看看' : '今天还没有新任务，这是最近一天的') + '）' : '');
+
+const CK = 'day-' + key;
+let done = {}; try { done = JSON.parse(localStorage.getItem(CK)) || {}; } catch(e){}
+const quizDone = id => { try { const s = JSON.parse(localStorage.getItem('quiz-'+id)); return s && s.done ? s : null; } catch(e){ return null; } };
+
+function render(){
+  let n = 0;
+  document.getElementById('tasks').innerHTML = day.tasks.map((t,i) => {
+    const q = t.quiz ? quizDone(t.quiz) : null;
+    const on = t.quiz ? !!q : !!done[i]; if (on) n++;
+    return `<div class="c task"><div class="chk ${on?'on':''}" ${t.quiz?'':`onclick="tog(${i})"`}>${on?'✓':''}</div>
+      <div><div class="t"><span class="tag">${t.tag}</span>${t.t}</div><div class="d">${t.d}</div>
+      ${t.quiz ? (q ? `<div class="d">✅ 已完成 · 得分 ${q.first}%</div><a class="go" href="quiz.html?s=${t.quiz}">查看结果 →</a>` : `<a class="go" href="quiz.html?s=${t.quiz}">开始做题 →</a>`) : ''}
+      </div></div>`;
+  }).join('');
+  const pct = Math.round(n / day.tasks.length * 100);
+  document.getElementById('pt').textContent = n + ' / ' + day.tasks.length;
+  document.getElementById('pb').style.width = pct + '%';
+  document.getElementById('finish').innerHTML = n === day.tasks.length
+    ? '<div class="c" style="text-align:center;border-color:var(--ok)"><b style="color:var(--ok)">🎉 今天全部完成！</b><br><span class="s">截图这一页发给姐姐</span></div>' : '';
+}
+function tog(i){ done[i] = !done[i]; try { localStorage.setItem(CK, JSON.stringify(done)); } catch(e){} render(); }
+render();
 </script></body></html>

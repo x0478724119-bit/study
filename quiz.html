@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>做题</title>
+<link rel="stylesheet" href="style.css">
+</head><body><div class="w">
+<a class="back" href="./">← 回到今天的任务</a>
+<h1 id="title">加载中…</h1>
+<p class="s" id="intro"></p>
+<div id="qs"></div>
+<div id="bar" class="bar"><button class="main" id="submit">交卷</button></div>
+<div id="result"></div>
+</div>
+<script>
+// ===== 通用做题引擎 =====
+// 题库放在 data/<id>.js，用 quiz.html?s=<id> 打开。
+// 题型：mc 单选（opts + a 为正确选项序号）；fill 填空（a 为答案或答案数组）。
+// set.mode = 'diag' 时只摸底不要求订正；否则错题要重做到累计正确率 ≥ 80%。
+const id = new URLSearchParams(location.search).get('s');
+const KEY = 'quiz-' + id;
+let SET, state, mode = 'all', start = Date.now();
+
+function load(){
+  const sc = document.createElement('script');
+  sc.src = 'data/' + id + '.js?v=' + Date.now();
+  sc.onload = () => { SET = window.SET; init(); };
+  sc.onerror = () => { document.getElementById('title').textContent = '找不到这套题'; };
+  document.body.appendChild(sc);
+}
+function get(){ try { return JSON.parse(localStorage.getItem(KEY)) || null; } catch(e){ return null; } }
+function put(v){ try { localStorage.setItem(KEY, JSON.stringify(v)); } catch(e){} }
+const norm = s => String(s).replace(/\s+/g,'').replace(/，/g,',').replace(/．/g,'.').toLowerCase();
+
+function init(){
+  document.title = SET.title;
+  document.getElementById('title').textContent = SET.title;
+  document.getElementById('intro').innerHTML = SET.intro || '';
+  state = get() || { right: {}, first: null, firstTime: null, done: false };
+  if (state.first !== null) { mode = 'review'; showResult(); }
+  render();
+}
+
+function render(){
+  const list = SET.qs.map((q,i)=>({q,i})).filter(({i}) => mode==='all' || (mode==='redo' && !state.right[i]));
+  let lastP = null, h = '';
+  for (const {q,i} of list){
+    if (q.p && q.p !== lastP){ h += `<div class="c passage">${SET.passages[q.p]}</div>`; }
+    lastP = q.p;
+    h += `<div class="c q" id="q${i}"><div class="qn">${i+1}. ${q.q}</div>`;
+    if (q.t === 'fill') h += `<input class="fill" id="in${i}" autocomplete="off" autocapitalize="off" placeholder="填写答案">`;
+    else h += q.opts.map((o,j)=>`<label class="opt"><input type="radio" name="r${i}" value="${j}"> <span>${String.fromCharCode(65+j)}. ${o}</span></label>`).join('');
+    h += `<div class="ex" id="ex${i}"></div></div>`;
+  }
+  document.getElementById('qs').innerHTML = mode==='review' ? '' : h;
+  document.getElementById('bar').style.display = mode==='review' ? 'none' : 'block';
+  document.getElementById('submit').textContent = mode==='redo' ? '提交订正' : '交卷';
+  window._list = list.map(x=>x.i);
+}
+
+function check(i){
+  const q = SET.qs[i];
+  if (q.t === 'fill'){
+    const v = norm(document.getElementById('in'+i).value);
+    return [].concat(q.a).some(a => norm(a) === v);
+  }
+  const r = document.querySelector(`input[name="r${i}"]:checked`);
+  return !!r && +r.value === q.a;
+}
+
+document.getElementById('submit').onclick = () => {
+  const ids = window._list;
+  const blank = ids.filter(i => SET.qs[i].t==='fill' ? !document.getElementById('in'+i).value.trim() : !document.querySelector(`input[name="r${i}"]:checked`));
+  if (blank.length && !confirm(`还有 ${blank.length} 道没做，确定交卷吗？`)) return;
+  let ok = 0;
+  for (const i of ids){
+    const good = check(i); if (good){ ok++; state.right[i] = true; }
+    const q = SET.qs[i], box = document.getElementById('q'+i), ex = document.getElementById('ex'+i);
+    box.classList.add(good ? 'good' : 'badq');
+    const ans = q.t==='fill' ? [].concat(q.a)[0] : String.fromCharCode(65+q.a)+'. '+q.opts[q.a];
+    ex.innerHTML = (good ? '✅ 正确' : `❌ 正确答案：<b>${ans}</b>`) + (q.e ? `<br>💡 ${q.e}` : '');
+    ex.style.display = 'block';
+    box.querySelectorAll('input').forEach(x=>x.disabled = true);
+  }
+  if (state.first === null){
+    state.first = Math.round(ok / SET.qs.length * 100);
+    state.firstTime = Math.round((Date.now()-start)/60000);
+    state.date = new Date().toLocaleString('zh-CN');
+    if (SET.sections) state.sec = SET.sections.map(s => {
+      const idx = SET.qs.map((q,i)=>i).filter(i=>SET.qs[i].sec===s);
+      return [s, idx.filter(i=>state.right[i]).length, idx.length];
+    });
+  }
+  const total = Object.keys(state.right).length;
+  state.now = Math.round(total / SET.qs.length * 100);
+  state.done = SET.mode === 'diag' || state.now >= 80;
+  put(state);
+  document.getElementById('bar').style.display = 'none';
+  showResult(true);
+  scrollTo({top:0, behavior:'smooth'});
+};
+
+function showResult(fresh){
+  const s = state, need = SET.mode !== 'diag' && !s.done;
+  let h = `<div class="c res"><div class="big">${SET.mode==='diag' ? s.first+'%' : s.now+'%'}</div>
+    <div>${SET.title}</div>
+    <div class="s">第一次：${s.first}% · 用时 ${s.firstTime} 分钟 · ${s.date}</div>`;
+  if (s.sec) h += '<div class="secs">' + s.sec.map(([n,a,b])=>`<span>${n}：${a}/${b}</span>`).join('') + '</div>';
+  h += s.done ? `<div class="okmsg">✅ 完成！截图这一页发给姐姐</div>`
+              : `<div class="badmsg">还没到 80%，看完解析后重做错题</div>`;
+  h += '</div>';
+  if (need) h += `<button class="main" onclick="redo()">重做错题</button>`;
+  if (fresh) h += `<p class="s" style="text-align:center">往下看每道题的解析 ↓</p>`;
+  else h += `<button class="ghost" onclick="mode='all';document.getElementById('result').innerHTML='';renderReview()">查看全部题目和解析</button>`;
+  document.getElementById('result').innerHTML = h;
+  document.getElementById('result').scrollIntoView();
+}
+function redo(){ mode='redo'; document.getElementById('result').innerHTML=''; render(); scrollTo({top:0}); }
+function renderReview(){
+  render();
+  for (const i of window._list){
+    const q=SET.qs[i], ex=document.getElementById('ex'+i);
+    const ans = q.t==='fill' ? [].concat(q.a)[0] : String.fromCharCode(65+q.a)+'. '+q.opts[q.a];
+    ex.innerHTML = `答案：<b>${ans}</b>` + (q.e ? `<br>💡 ${q.e}` : ''); ex.style.display='block';
+    document.getElementById('q'+i).querySelectorAll('input').forEach(x=>x.disabled=true);
+  }
+  document.getElementById('bar').style.display='none';
+}
+load();
+</script></body></html>
