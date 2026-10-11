@@ -223,8 +223,8 @@ window.JOBS = [
   ],
   "ref": "quiz.html?s=vocab-03",
   "h": [
-   "",
-   ""
+   "fd83ce12",
+   "f27e86f5"
   ]
  },
  {
@@ -251,8 +251,8 @@ window.JOBS = [
   ],
   "ref": "",
   "h": [
-   "",
-   ""
+   "db6abad7",
+   "e909def1"
   ]
  },
  {
@@ -277,8 +277,8 @@ window.JOBS = [
   ],
   "ref": "lessons.html#sw4",
   "h": [
-   "",
-   ""
+   "3f1dd728",
+   "8f41d2da"
   ]
  },
  {
@@ -305,8 +305,8 @@ window.JOBS = [
   ],
   "ref": "",
   "h": [
-   "",
-   ""
+   "2ab9d3e5",
+   "2ebd350d"
   ]
  }
 ];
