@@ -33,8 +33,10 @@ function addCoins(n, why){
 }
 
 // 推送到飞书群。没配置时什么都不做。
+// 姐姐自己的浏览器不推送：打开过 ?me=1，或者登录过后台
+try { if (new URLSearchParams(location.search).get('me') === '1') localStorage.setItem('isAdmin', 'true'); } catch(e){}
 function notify(text){
-  if (!CONFIG.FEISHU) return;
+  if (!CONFIG.FEISHU || load('isAdmin', false) || load('adminToken', '')) return;
   const body = JSON.stringify({msg_type: 'text', content: {text: '【学习站】' + text}});
   try { fetch(CONFIG.FEISHU, {method: 'POST', mode: 'no-cors', headers: {'Content-Type': 'text/plain'}, body}); } catch(e){}
 }

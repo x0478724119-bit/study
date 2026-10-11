@@ -3,7 +3,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex">
 <title>管理后台</title>
-<link rel="stylesheet" href="style.css?v=1791734029">
+<link rel="stylesheet" href="style.css?v=1791735183">
 <style>
 .tabs2{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0 14px}.tabs2 button{width:auto;background:var(--card);border:1px solid var(--line);color:var(--ink);padding:8px 14px}.tabs2 button.on{background:var(--acc);color:#fff;border-color:var(--acc)}
 label{display:block;font-size:13px;color:var(--soft);margin:10px 0 4px}
@@ -16,7 +16,7 @@ textarea.in{min-height:72px}.grid3{display:grid;grid-template-columns:1fr 1fr 1f
 </head><body><div class="w">
 <div id="app"></div>
 </div>
-<script src="common.js?v=1791734029"></script>
+<script src="common.js?v=1791735183"></script>
 <script>
 // ===== 管理后台：只有存了 GitHub 钥匙的浏览器能改东西 =====
 const REPO = 'x0478724119-bit/study', API = 'https://api.github.com/repos/' + REPO + '/contents/';
@@ -53,13 +53,13 @@ async function hashes(id){ return [fnv(await codeOf(id, 'full')), fnv(await code
 function viewLogin(){
   $('#app').innerHTML = `<div class="lockpage"><h1>🔐 管理后台</h1><p class="s">第一次使用：粘贴你在 GitHub 生成的钥匙，再设一个只有你知道的"后台暗号"（用来生成验收码，记住它）。都只存在这个浏览器里。</p>
     <div class="c"><label>GitHub 钥匙（github_pat_ 开头）</label><input class="in" id="tk" type="password" autocomplete="off">
-    <label>后台暗号（随便一句话，至少 6 个字，别告诉妹妹）</label><input class="in" id="sc" type="password" autocomplete="off" value="${esc(SECRET)}">
+    <label>后台暗号（字母加数字，至少 6 位，比如拼音 + 数字；别告诉妹妹）</label><input class="in" id="sc" type="password" autocomplete="off" value="${esc(SECRET)}">
     <button class="main" onclick="login()">进入后台</button><p class="s" id="err"></p></div></div>`;
 }
 async function login(){
   TOKEN = $('#tk').value.trim(); SECRET = $('#sc').value.trim();
-  if (SECRET.length < 6){ $('#err').textContent = '暗号至少 6 个字'; return; }
-  try { await boot(); save('adminToken', TOKEN); save('adminSecret', SECRET); } catch(e){ $('#err').textContent = '连不上：' + e.message + '（检查钥匙是否复制完整、权限是否选了 Contents 读写）'; }
+  if (SECRET.length < 6){ $('#err').textContent = '暗号至少 6 位'; return; }
+  try { await boot(); save('adminToken', TOKEN); save('adminSecret', SECRET); save('isAdmin', true); } catch(e){ $('#err').textContent = '连不上：' + e.message + '（检查钥匙是否复制完整、权限是否选了 Contents 读写）'; }
 }
 async function boot(){
   [jobs, pause, leaves, adjust] = await Promise.all([readJS('data/jobs.js', 'JOBS'), readJS('data/pause.js', 'PAUSE'), readJS('data/leave.js', 'LEAVE_OK'), readJS('data/adjust.js', 'ADJUST')]);
