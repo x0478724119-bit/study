@@ -2,23 +2,25 @@
 <html lang="zh-CN"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>做题</title>
-<link rel="stylesheet" href="style.css?v=1791731509">
+<link rel="stylesheet" href="style.css?v=1791732137">
 </head><body><div class="w">
-<a class="back" href="./">← 回到今天的任务</a>
+<a class="back" id="back" href="./">← 回到任务</a>
 <h1 id="title">加载中…</h1>
 <p class="s" id="intro"></p>
+<div id="study"></div>
 <div id="qs"></div>
 <div id="bar" class="bar"><button class="main" id="submit">交卷</button></div>
 <div id="result"></div>
 </div>
-<script src="common.js?v=1791731509"></script>
+<script src="common.js?v=1791732137"></script>
 <script>
 // ===== 通用做题引擎 =====
 // 题库放在 data/<id>.js，用 quiz.html?s=<id> 打开。
 // 题型：mc 单选（opts + a 为正确选项序号）；fill 填空（a 为答案或答案数组）。
 // set.mode = 'diag' 时只摸底不要求订正；否则错题要重做到累计正确率 ≥ 80%。
 const id = new URLSearchParams(location.search).get('s');
-const KEY = 'quiz-' + id;
+const KEY = 'quiz-' + id, DAY = new URLSearchParams(location.search).get('d');
+if (DAY) document.getElementById('back').href = './?d=' + DAY;
 let SET, state, mode = 'all', start = Date.now(), practice = false;
 
 function loadSet(){
@@ -38,10 +40,19 @@ function init(){
   document.getElementById('intro').innerHTML = SET.intro || '';
   state = get() || { right: {}, first: null, firstTime: null, done: false };
   if (state.first !== null) { mode = 'review'; showResult(); }
+  renderStudy();
   render();
 }
 
+function renderStudy(){
+  if (!SET.study) return;
+  const html = SET.study.replace(/\[\[([^|\]]+)\|([^\]]+)\]\]/g, '<span class="vw" onclick="this.classList.toggle(\'show\')">$1<em>$2</em></span>');
+  const ready = state.studied || state.first !== null;
+  document.getElementById('study').innerHTML = `<div class="c passage">${SET.studyTitle ? '<b>' + SET.studyTitle + '</b><br><br>' : ''}${html}</div>` +
+    (ready ? '' : `<button class="main" onclick="state.studied=true;put(state);renderStudy();render()">读完了，开始测试 →</button>`);
+}
 function render(){
+  if (SET.study && !state.studied && state.first === null){ document.getElementById('qs').innerHTML = ''; document.getElementById('bar').style.display = 'none'; return; }
   const list = SET.qs.map((q,i)=>({q,i})).filter(({i}) => mode==='all' || (mode==='redo' && !state.right[i]));
   let lastP = null, h = '';
   for (const {q,i} of list){
@@ -56,6 +67,14 @@ function render(){
   document.getElementById('bar').style.display = mode==='review' ? 'none' : 'block';
   document.getElementById('submit').textContent = mode==='redo' ? '提交订正' : '交卷';
   window._list = list.map(x=>x.i);
+  if (mode !== 'review'){
+    const dr = load('qdraft-' + id, {});
+    for (const i of window._list){
+      const q = SET.qs[i];
+      if (q.t === 'fill'){ const el = document.getElementById('in'+i); if (dr[i] != null) el.value = dr[i]; el.oninput = () => { const d = load('qdraft-' + id, {}); d[i] = el.value; save('qdraft-' + id, d); }; }
+      else document.querySelectorAll(`input[name="r${i}"]`).forEach(r => { if (dr[i] != null && +r.value === dr[i]) r.checked = true; r.onchange = () => { const d = load('qdraft-' + id, {}); d[i] = +r.value; save('qdraft-' + id, d); }; });
+    }
+  }
 }
 
 function check(i){
@@ -82,6 +101,7 @@ document.getElementById('submit').onclick = () => {
     ex.style.display = 'block';
     box.querySelectorAll('input').forEach(x=>x.disabled = true);
   }
+  try { localStorage.removeItem('qdraft-' + id); } catch(e){}
   // 每一次提交都记一笔
   const score = Math.round(ok / ids.length * 100);
   state.attempts = state.attempts || [];

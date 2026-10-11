@@ -82,3 +82,15 @@ body{-webkit-tap-highlight-color:transparent}
 body.submitted .cn{display:block}.cn summary{color:var(--acc);font-weight:600;cursor:pointer}
 .att{text-align:left;font-size:13.5px;color:var(--soft);margin-top:12px;border-top:1px dashed var(--line);padding-top:8px;line-height:1.8}.att b{color:var(--ink)}
 .wbox{min-height:80px;margin-top:8px;font-size:15px}.wdone{margin-top:8px;background:var(--bg);border-radius:10px;padding:8px 12px;font-size:14.5px;white-space:pre-wrap}.wdone small{color:var(--faint)}
+.dates{display:flex;gap:8px;overflow-x:auto;padding:4px 0 10px;margin:0 -4px}
+.date{flex:0 0 auto;width:64px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:6px 0;display:flex;flex-direction:column;align-items:center;gap:1px;color:var(--ink);font-weight:500}
+.date b{font-size:16px}.date small{font-size:11px;color:var(--faint)}.date.today{border-color:var(--gold)}
+.date.on{background:var(--acc);border-color:var(--acc);color:#fff}.date.on small{color:#fff}
+.head h1{margin:0;font-size:22px}.big2{font-size:22px;color:var(--acc)}
+.task.done{opacity:.75}
+.btn2{display:inline-block;margin-top:8px;margin-right:8px;background:var(--acc);color:#fff;text-decoration:none;font-weight:600;font-size:14.5px;padding:8px 16px;border-radius:10px}
+.btn2.light{background:var(--acc-soft);color:var(--acc)}
+details.report summary{font-weight:600;cursor:pointer}
+.vw{border-bottom:2px solid var(--acc);font-weight:600;cursor:pointer;position:relative}
+.vw em{display:none;font-style:normal;font-weight:500;font-size:13px;background:var(--ink);color:#fff;border-radius:6px;padding:1px 6px;margin-left:4px}
+.vw.show em{display:inline}

@@ -4,7 +4,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="学习站">
 <title>学习站</title>
-<link rel="stylesheet" href="style.css?v=1791731509">
+<link rel="stylesheet" href="style.css?v=1791732137">
 </head><body class="app">
 <header class="top">
   <div class="brand"><div class="logo">🏠</div><div><b>我的设计工作室</b><small id="lv"></small></div></div>
@@ -19,7 +19,7 @@
 </nav>
 <div class="modal" id="modal"><div class="box" id="mbox"></div></div>
 
-<script src="common.js?v=1791731509"></script>
+<script src="common.js?v=1791732137"></script>
 <script>
 const LEVELS = [
   {lv:1, name:'设计学徒', need:0, icon:'🌱'},
@@ -89,71 +89,80 @@ function askLeave(){
 function doLeave(){ const l = load('leave', {}); l[T] = 1; save('leave', l); notify(`🙋 ${T} 请假（本月还剩 ${leaveLeft()} 次）`); closeM(); toast('已请假'); render(); }
 
 // ===== 今日 =====
-function dayKey(){ const ks = Object.keys(window.DAYS || {}).sort(); return (window.DAYS || {})[T] ? T : (ks.filter(k => k <= T).pop() || ks[0]); }
+function dayKey(){
+  const ks = Object.keys(window.DAYS || {}).sort();
+  if (DAYS[T] && !dayComplete(T)) return T;
+  const next = ks.find(k => k > T && !dayComplete(k));
+  return next || (DAYS[T] ? T : (ks.filter(k => k <= T).pop() || ks[0]));
+}
 function quizState(id){ return load('quiz-' + id, null); }
 function taskDone(key, i, t){ if (t.quiz){ const q = quizState(t.quiz); return !!(q && q.done); } return !!load('day-' + key, {})[i]; }
 function dayComplete(key){ const d = DAYS[key]; return !!d && d.tasks.every((t,i) => taskDone(key, i, t)); }
 function unlocked(){ return isWeekend(T) || !DAYS[T] || dayComplete(T); }
 
-let selDay = null;
+let selDay = new URLSearchParams(location.search).get('d') || null;
 function viewToday(){
   const hp = paused(T);
   if (hp && !selDay) return `<div class="c" style="text-align:center;padding:36px 16px"><div style="font-size:52px">🏖️</div><h1>假期中，好好玩！</h1><p class="s">${hp.why || ''}<br>${hp.from} ~ ${hp.to}<br>这几天不用学习、不用打卡、不扣金币</p></div>`;
   const key = selDay || dayKey(), day = DAYS[key];
-  const wake = load('wake', {});
+  const wake = load('wake', {}), WK = ['日','一','二','三','四','五','六'];
   let h = '';
-  // 起床打卡
-  if (!isWeekend(T)){
+  // ① 日期条：点哪天看哪天
+  h += '<div class="dates">' + Object.keys(DAYS).sort().map(k => {
+    const d = DAYS[k], m = d.tasks.filter((t,i) => taskDone(k, i, t)).length, full = m === d.tasks.length;
+    return `<button class="date ${k === key ? 'on' : ''} ${k === T ? 'today' : ''}" onclick="selDay='${k}';render();scrollTo(0,0)"><small>${k === T ? '今天' : '周' + WK[new Date(k + 'T12:00').getDay()]}</small><b>${+k.slice(5,7)}/${+k.slice(8)}</b><small>${full ? '✅' : m + '/' + d.tasks.length}</small></button>`;
+  }).join('') + '</div>';
+  // ② 起床打卡（只在今天）
+  if (!isWeekend(T) && key === T){
     const wt = wake[T];
     if (wt && wt.ok === true) h += `<div class="c wake on"><b>☀️ 今天 ${wt.time} 起床打卡</b><span>+${wt.coin} 金币</span></div>`;
     else if (wt && wt.ok === 'fail') h += `<div class="c wake"><b>😴 ${wt.time} 打卡后 2 小时没开始学习，打卡作废</b></div>`;
     else if (wt) h += `<div class="c wake"><div><b>☀️ ${wt.time} 已打卡</b><div class="d">${wakeLeft(wt)} 分钟内完成第一项任务，才能拿到起床金币${wt.coin ? '（+' + wt.coin + '）' : ''}</div></div></div>`;
     else if (hm() < '06:00') h += `<div class="c wake"><div><b>🌙 现在是 ${hm()}，该睡觉啦</b><div class="d">起床打卡 06:00 开放</div></div></div>`;
-    else h += `<div class="c wake"><div><b>☀️ 起床打卡</b><div class="d">14:00 前 +5 金币 · 15:00 前 +3 金币</div></div><button class="main sm" onclick="wakeUp()">我起床了</button></div>`;
+    else h += `<div class="c wake"><div><b>☀️ 起床打卡</b><div class="d">14:00 前 +5 · 15:00 前 +3（2 小时内要开始学习）</div></div><button class="main sm" onclick="wakeUp()">我起床了</button></div>`;
   }
+  // ③ 欠账提醒
   const bl = backlog(), st = stale();
-  if (bl.length) h += `<div class="bar-msg">📌 欠着的作业：<b>${bl.length} 天</b>${st.length ? `，其中 ${st.length} 天超过 ${CONFIG.STALE} 天（<b>不能接单、不能兑换</b>）` : ''}<br>${bl.map(k => `<a class="go" href="#" onclick="selDay='${k}';render();scrollTo(0,0);return false">去补 ${k} ${DAYS[k].name} →</a>`).join('<br>')}</div>`;
-  if (!day){ return h + '<div class="c">还没有任务。</div>'; }
-  const wk = ['日','一','二','三','四','五','六'][new Date(key + 'T12:00').getDay()];
-  const note = key === T ? ' · 今天' : (key > T ? ' · 可以提前做，截止到这一天结束' : (DAYS[T] ? '' : ' · 今天没有新任务，这是最近一天的'));
-  let n = 0;
-  const rows = day.tasks.map((t,i) => {
-    const on = taskDone(key, i, t); if (on) n++;
-    const q = t.quiz ? quizState(t.quiz) : null;
-    const wv = t.write ? load('day-' + key, {})[i] : null;
-    const wbox = t.write ? (wv ? `<div class="wdone">✍️ ${esc(wv.text)}<br><small>${wv.time} 提交</small></div>` : `<textarea class="fill wbox" id="w-${key}-${i}" placeholder="${t.write}"></textarea><button class="main sm" style="margin-top:8px" onclick="submitWrite('${key}',${i})">提交</button>`) : '';
-    return `<div class="c task"><div class="chk ${on?'on':''}" ${t.quiz||t.write?'':`onclick="tog('${key}',${i})"`}>${on?'✓':''}</div>
-      <div><div class="t"><span class="tag t-${t.tag}">${t.tag}</span>${t.t}</div><div class="d">${t.d}</div>
-      ${wbox}${t.quiz ? (q && q.first !== null && q.first !== undefined ? `<div class="d">${q.done?'✅ 已完成':'⏳ 还要订正'} · 第一次 ${q.first}%</div><a class="go" href="quiz.html?s=${t.quiz}">${q.done?'查看结果':'继续订正'} →</a>` : `<a class="go" href="quiz.html?s=${t.quiz}">开始做题 →</a>`) : ''}
-      </div></div>`;
-  }).join('');
-  const all = n === day.tasks.length, paid = load('paid', {})[key];
-  h += `<h1>${day.name}</h1><p class="s">${key} 周${wk}${note}</p>
-    <div class="c"><div class="row2"><span>今日进度</span><b>${n} / ${day.tasks.length}</b></div><div class="prog"><i style="width:${n/day.tasks.length*100}%"></i></div></div>` + rows;
-  // 今日汇报：一天只截这一张
-  const wk2 = load('wake', {})[key], todayLog = wallet().log.filter(l => l.t.startsWith(key) && l.n > 0).reduce((a,l) => a + l.n, 0);
-  h += `<div class="c report"><b>📋 今日汇报 · ${key}</b>
-    <div>起床：${wk2 ? wk2.time : '未打卡'}</div>
-    ${day.tasks.map((t,i) => { const q = t.quiz ? quizState(t.quiz) : null; return `<div>${taskDone(key,i,t) ? '✅' : '⬜️'} ${t.t}${q && q.first != null ? ` · 第一次 ${q.first}%${q.sec ? '（' + q.sec.map(([n,a,b]) => n + ' ' + a + '/' + b).join('，') + '）' : ''}` : ''}</div>`; }).join('')}
-    <div>今天获得：🪙 ${todayLog}</div><div class="d">做完后截图这一张发给姐姐</div></div>`;
+  if (bl.length) h += `<div class="bar-msg">📌 还欠 <b>${bl.length} 天</b>作业${st.length ? `（${st.length} 天超过 ${CONFIG.STALE} 天，<b>不能接单、不能兑换</b>）` : ''}：${bl.map(k => `<a class="go" href="#" onclick="selDay='${k}';render();scrollTo(0,0);return false">${+k.slice(5,7)}/${+k.slice(8)} 去补</a>`).join(' · ')}</div>`;
+  if (!day) return h + '<div class="c">这一天没有任务。</div>';
+  // ④ 标题 + 进度
   const late = key < T, onLeave = load('leave', {})[key], miss = load('missed', {})[key];
+  const n = day.tasks.filter((t,i) => taskDone(key, i, t)).length, all = n === day.tasks.length, paid = load('paid', {})[key];
+  const note = key === T ? '今天' : key > T ? '可以提前做 · 截止到这天结束' : '已经过了';
+  h += `<div class="c head"><div class="row2"><div><h1>${day.name}</h1><span class="s">${key} 周${WK[new Date(key + 'T12:00').getDay()]} · ${note}</span></div><b class="big2">${n}/${day.tasks.length}</b></div><div class="prog"><i style="width:${n/day.tasks.length*100}%"></i></div></div>`;
   if (onLeave) h += `<div class="bar-msg ok">🙋 这一天请假了，不扣金币</div>`;
-  else if (key === T && !isWeekend(T) && !all && leaveLeft() > 0) h += `<button class="ghost" onclick="askLeave()">今天请假（本月还剩 ${leaveLeft()} 次）</button>`;
-  if (all) h += `<div class="c done-card"><b>🎉 ${late ? '补完了！' : key > T ? '提前做完了！' : '今天全部完成！'}</b>${paid ? '<div class="d">已领取 +' + CONFIG.DAILY_COIN + ' 金币，去接单吧</div>' : late ? (miss && miss.back > 0 ? '<div class="d">已退还 ' + miss.back + ' 金币</div>' : '<div class="d">补完了</div>') : `<button class="main" onclick="claimDay('${key}')">领取全勤奖励 +${CONFIG.DAILY_COIN} 金币</button>`}</div>`;
-  else if (late && !onLeave) h += `<div class="bar-msg">⏰ 这一天已经过了${miss && miss.pen ? `，扣了 ${miss.pen} 金币。<b>今天补完退 ${Math.round(miss.pen * Math.max(0, 1 - CONFIG.REFUND * daysBetween(key, T)))}</b>，越晚退得越少` : '，补完不发金币'}。</div>`;
-  // 往期任务：可以回去补作业、复习
-  const all2 = Object.keys(DAYS).sort().reverse();
-  if (all2.length > 1) h += '<h2>📅 全部任务</h2><p class="s">以后的可以提前做，过去的可以补、可以复习</p>' + all2.map(k => {
-    const d = DAYS[k], m = d.tasks.filter((t,i) => taskDone(k, i, t)).length, lab = k > T ? '<span class="tag">可提前做</span>' : k === T ? '<span class="tag t-数学">今天</span>' : '';
-    return `<div class="c day-row ${k === key ? 'cur' : ''}" onclick="selDay='${k}';render();scrollTo(0,0)"><span>${lab}<b>${d.name}</b><br><small>${k}</small></span><span>${m === d.tasks.length ? '✅' : m + ' / ' + d.tasks.length}</span></div>`;
+  else if (late && !all) h += `<div class="bar-msg">⏰ ${miss && miss.pen ? `扣了 ${miss.pen} 金币，<b>今天补完退 ${Math.round(miss.pen * Math.max(0, 1 - CONFIG.REFUND * daysBetween(key, T)))}</b>，越晚退得越少` : '补完不发金币'}</div>`;
+  // ⑤ 任务卡片：每个任务一个动作
+  h += day.tasks.map((t,i) => {
+    const on = taskDone(key, i, t), q = t.quiz ? quizState(t.quiz) : null, wv = t.write ? load('day-' + key, {})[i] : null;
+    let act = '';
+    if (t.link) act += `<a class="btn2" href="${t.link}">📖 打开教程</a>`;
+    if (t.quiz) act += q && q.first != null
+      ? `<div class="d">${q.done ? '✅ 已完成' : '⏳ 还要订正'} · 第一次 ${q.first}%</div><a class="btn2 ${q.done ? 'light' : ''}" href="quiz.html?s=${t.quiz}&d=${key}">${q.done ? '查看 / 再刷' : '继续订正'}</a>`
+      : `<a class="btn2" href="quiz.html?s=${t.quiz}&d=${key}">开始 →</a>`;
+    if (t.write) act += wv ? `<div class="wdone">✍️ ${esc(wv.text)}<br><small>${wv.time} 提交</small></div>`
+      : `<textarea class="fill wbox" id="w-${key}-${i}" placeholder="${t.write}" oninput="draft('${key}',${i},this.value)">${esc(load('draft', {})[key + '-' + i] || '')}</textarea><button class="main sm" style="margin-top:8px" onclick="submitWrite('${key}',${i})">提交</button>`;
+    const tick = !t.quiz && !t.write ? `onclick="tog('${key}',${i})"` : '';
+    return `<div class="c task ${on ? 'done' : ''}"><div class="chk ${on?'on':''}" ${tick}>${on?'✓':''}</div>
+      <div style="flex:1"><div class="t"><span class="tag t-${t.tag}">${t.tag}</span>${t.t}</div><div class="d">${t.d}</div>${act}</div></div>`;
   }).join('');
+  // ⑥ 完成 / 领奖
+  if (all) h += `<div class="c done-card"><b>🎉 ${late ? '补完了！' : key > T ? '提前做完了！' : '今天全部完成！'}</b>${paid ? '<div class="d">已领取 +' + CONFIG.DAILY_COIN + ' 金币，去接单吧</div>' : late ? (miss && miss.back > 0 ? '<div class="d">已退还 ' + miss.back + ' 金币</div>' : '<div class="d">补完了</div>') : `<button class="main" onclick="claimDay('${key}')">领取全勤奖励 +${CONFIG.DAILY_COIN} 金币</button>`}</div>`;
+  // ⑦ 汇报（截图用）+ 请假，放最下面
+  const wk2 = wake[key], got = wallet().log.filter(l => l.t.startsWith(key) && l.n > 0).reduce((a,l) => a + l.n, 0);
+  h += `<details class="c report"><summary>📋 今日汇报（需要时截图）</summary>
+    <div>起床：${wk2 ? wk2.time : '未打卡'}</div>
+    ${day.tasks.map((t,i) => { const q = t.quiz ? quizState(t.quiz) : null; return `<div>${taskDone(key,i,t) ? '✅' : '⬜️'} ${t.t}${q && q.first != null ? ` · 第一次 ${q.first}%` : ''}</div>`; }).join('')}
+    <div>获得：🪙 ${got}</div></details>`;
+  if (!onLeave && key === T && !isWeekend(T) && !all && leaveLeft() > 0) h += `<button class="ghost" onclick="askLeave()">今天请假（本月还剩 ${leaveLeft()} 次）</button>`;
   return h;
 }
+function draft(key, i, v){ const d = load('draft', {}); d[key + '-' + i] = v; save('draft', d); }
 const esc = x => String(x).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 function submitWrite(key, i){
   const v = document.getElementById(`w-${key}-${i}`).value.trim(), t = DAYS[key].tasks[i];
   if (v.length < (t.min || 10)){ toast(`再多写一点（至少 ${t.min || 10} 个字）`); return; }
-  const d = load('day-' + key, {}); d[i] = {text: v, time: todayStr() + ' ' + hm()}; save('day-' + key, d);
+  const d = load('day-' + key, {}); d[i] = {text: v, time: todayStr() + ' ' + hm()}; save('day-' + key, d); const dr = load('draft', {}); delete dr[key + '-' + i]; save('draft', dr);
   notify(`✍️ ${t.t}：\n${v}`); render();
 }
 function tog(key, i){ const d = load('day-' + key, {}); d[i] = !d[i]; save('day-' + key, d); render(); }
@@ -279,5 +288,5 @@ function render(){
   $('#view').innerHTML = {today: viewToday, jobs: viewJobs, book: viewBook, me: viewMe}[tab]();
   document.querySelectorAll('.tabs button').forEach(b => b.classList.toggle('on', b.dataset.t === tab));
 }
-document.querySelectorAll('.tabs button').forEach(b => b.onclick = () => { tab = b.dataset.t; if (tab === 'today') selDay = null; render(); scrollTo(0, 0); });
+document.querySelectorAll('.tabs button').forEach(b => b.onclick = () => { tab = b.dataset.t;  render(); scrollTo(0, 0); });
 </script></body></html>
