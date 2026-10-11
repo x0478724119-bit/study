@@ -4,7 +4,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="学习站">
 <title>学习站</title>
-<link rel="stylesheet" href="style.css?v=1791730114">
+<link rel="stylesheet" href="style.css?v=1791730344">
 </head><body class="app">
 <header class="top">
   <div class="brand"><div class="logo">🏠</div><div><b>我的设计工作室</b><small id="lv"></small></div></div>
@@ -19,7 +19,7 @@
 </nav>
 <div class="modal" id="modal"><div class="box" id="mbox"></div></div>
 
-<script src="common.js?v=1791730114"></script>
+<script src="common.js?v=1791730344"></script>
 <script>
 const LEVELS = [
   {lv:1, name:'设计学徒', need:0, icon:'🌱'},
@@ -37,14 +37,15 @@ const isWeekend = d => [0,6].includes(new Date(d + 'T12:00').getDay());
 
 // 加载数据文件（加时间戳，保证拿到最新的）
 function loadScript(src){ return new Promise(r => { const s = document.createElement('script'); s.src = src + '?v=' + Date.now(); s.onload = r; s.onerror = r; document.body.appendChild(s); }); }
-Promise.all([loadScript('data/days.js'), loadScript('data/jobs.js')]).then(() => { checkMissed(); render(); });
+Promise.all([loadScript('data/days.js'), loadScript('data/jobs.js'), loadScript('data/pause.js')]).then(() => { checkMissed(); render(); });
 
 // 过去的工作日没做完：按没做完的项数扣金币（每天只结算一次）；补完按天数退还
+const paused = k => (window.PAUSE || []).find(p => k >= p.from && k <= p.to);
 const daysBetween = (a, b) => Math.round((new Date(b + 'T12:00') - new Date(a + 'T12:00')) / 864e5);
 function checkMissed(){
   const missed = load('missed', {}), leave = load('leave', {}), start = load('start', null) || (save('start', T), T);
   for (const k of Object.keys(DAYS || {})){
-    if (k >= T || k < start || isWeekend(k) || missed[k] || dayComplete(k)) continue;
+    if (k >= T || k < start || isWeekend(k) || paused(k) || missed[k] || dayComplete(k)) continue;
     if (leave[k] && daysBetween(k, T) <= CONFIG.STALE) continue;
     const left = DAYS[k].tasks.filter((t,i) => !taskDone(k, i, t)).length, pen = left * CONFIG.MISS;
     const lv = !!leave[k];
@@ -63,14 +64,14 @@ function checkMissed(){
   }
 }
 // 欠着的作业：过去的工作日（含请假）还没做完
-function backlog(){ const start = load('start', T); return Object.keys(DAYS || {}).filter(k => k < T && k >= start && !isWeekend(k) && !dayComplete(k)).sort(); }
+function backlog(){ const start = load('start', T); return Object.keys(DAYS || {}).filter(k => k < T && k >= start && !isWeekend(k) && !paused(k) && !dayComplete(k)).sort(); }
 function stale(){ return backlog().filter(k => daysBetween(k, T) > CONFIG.STALE); }
 // 每周一推送上周周报（只推一次）
 function weekly(){
   const d = new Date(T + 'T12:00'), mon = new Date(d - ((d.getDay() + 6) % 7) * 864e5), lastMon = todayStr(new Date(mon - 7 * 864e5)), lastSun = todayStr(new Date(mon - 864e5));
   const sent = load('weekly', null); if (sent === lastMon) return;
   const start = load('start', T); if (lastSun < start) { save('weekly', lastMon); return; }
-  const days = Object.keys(DAYS || {}).filter(k => k >= lastMon && k <= lastSun && k >= start && !isWeekend(k));
+  const days = Object.keys(DAYS || {}).filter(k => k >= lastMon && k <= lastSun && k >= start && !isWeekend(k) && !paused(k));
   const missed = load('missed', {}), leave = load('leave', {});
   const onTime = days.filter(k => dayComplete(k) && !missed[k] && !leave[k]).length;
   const madeUp = days.filter(k => dayComplete(k) && (missed[k] || leave[k])).length;
@@ -95,6 +96,8 @@ function unlocked(){ return isWeekend(T) || !DAYS[T] || dayComplete(T); }
 
 let selDay = null;
 function viewToday(){
+  const hp = paused(T);
+  if (hp && !selDay) return `<div class="c" style="text-align:center;padding:36px 16px"><div style="font-size:52px">🏖️</div><h1>假期中，好好玩！</h1><p class="s">${hp.why || ''}<br>${hp.from} ~ ${hp.to}<br>这几天不用学习、不用打卡、不扣金币</p></div>`;
   const key = selDay || dayKey(), day = DAYS[key];
   const wake = load('wake', {});
   let h = '';
@@ -152,7 +155,7 @@ function settle(){
   });
 }
 function wakeUp(){
-  const w = load('wake', {}); if (w[T] || hm() < '06:00') return;
+  const w = load('wake', {}); if (w[T] || hm() < '06:00' || paused(T)) return;
   const now = hm(); const rule = CONFIG.WAKE.find(([t]) => now <= t); const coin = rule ? rule[1] : 0;
   w[T] = {time: now, coin}; save('wake', w);
   if (coin) addCoins(coin, '起床打卡 ' + now);
