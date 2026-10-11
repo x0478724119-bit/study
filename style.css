@@ -1,5 +1,4 @@
-:root{--bg:#FAF9F5;--card:#fff;--ink:#1B2130;--soft:#565F70;--faint:#8890A0;--line:#E4E0D4;--acc:#C0634A;--acc-soft:#F6E3DC;--ok:#2E7A52;--ok-soft:#E4F0E8;--bad:#B24337;--bad-soft:#F6E5E2;--gold:#B4802F;--gold-soft:#F3E7D2}
-@media(prefers-color-scheme:dark){:root{--bg:#13161F;--card:#1A1E29;--ink:#E9E7DF;--soft:#A6ACBC;--faint:#6E7488;--line:#2B2F3C;--acc:#E48C72;--acc-soft:#33211B;--ok:#5FBF8E;--ok-soft:#1B2B22;--bad:#E2897C;--bad-soft:#2E1E1C;--gold:#DDAE5F;--gold-soft:#332818}}
+:root{--bg:#f6f1ea;--card:#fffdf9;--ink:#2b2622;--soft:#5b524a;--faint:#8a7f74;--line:#ebe3d8;--acc:#e07a5f;--acc-soft:#fbe6df;--ok:#3d9970;--ok-soft:#dff2e8;--bad:#c4553d;--bad-soft:#fbe9e4;--gold:#c98a1e;--gold-soft:#fdf0d6;--blue:#4a7fc1;--blue-soft:#e1ebf7;--purple:#8b6cc1;--purple-soft:#ece5f7}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,"PingFang SC",sans-serif;line-height:1.6;padding:20px 16px 60px}
 .w{max-width:720px;margin:0 auto}
@@ -62,3 +61,19 @@ button:disabled{opacity:.45;cursor:not-allowed}
 .row{display:flex;gap:10px}
 .toast{position:fixed;left:50%;bottom:96px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:9px 18px;border-radius:999px;font-size:14px;opacity:0;transition:.25s;pointer-events:none;z-index:30;white-space:nowrap}.toast.show{opacity:1}
 .report{font-size:14.5px;line-height:1.8;border-style:dashed}.report b{display:block;margin-bottom:4px;font-size:15.5px}
+
+/* ===== 设计工作室风格 ===== */
+body{-webkit-tap-highlight-color:transparent}
+.c{border-radius:16px;box-shadow:0 1px 2px rgba(60,40,20,.04)}
+.brand .logo{border-radius:12px;width:40px;height:40px;color:#fff}
+.coins{color:#9a6511;font-size:17px}
+.tag.t-室内{background:var(--acc-soft);color:var(--acc)}.tag.t-编程{background:var(--blue-soft);color:var(--blue)}
+.tag.t-设计{background:var(--purple-soft);color:var(--purple)}.tag.t-画画{background:var(--ok-soft);color:var(--ok)}
+.tag.t-英语{background:var(--blue-soft);color:var(--blue)}.tag.t-数学{background:var(--purple-soft);color:var(--purple)}
+.tag.t-项目{background:var(--acc-soft);color:var(--acc)}
+.chk{width:30px;height:30px}
+.prog{background:var(--line)}.prog i{background:var(--acc)}
+.bar-msg{border:1px dashed var(--gold);background:#fff4e5;color:#8a5a0f}.bar-msg.ok{border-color:var(--ok)}
+.res .big{color:var(--acc)}
+.passage{background:#fdf6e8}
+.tabs button.on{color:var(--acc)}

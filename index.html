@@ -32,7 +32,7 @@ const level = e => LEVELS.filter(l => e >= l.need).pop();
 const nextLevel = e => LEVELS.find(l => l.need > e);
 let tab = 'today';
 const $ = s => document.querySelector(s);
-const T = todayStr();
+const T = dayStr();  // 一天从早上 6 点开始算，凌晨还没睡算前一天
 const isWeekend = d => [0,6].includes(new Date(d + 'T12:00').getDay());
 
 // 加载数据文件（加时间戳，保证拿到最新的）
@@ -64,7 +64,7 @@ function viewToday(){
     const on = taskDone(key, i, t); if (on) n++;
     const q = t.quiz ? quizState(t.quiz) : null;
     return `<div class="c task"><div class="chk ${on?'on':''}" ${t.quiz?'':`onclick="tog('${key}',${i})"`}>${on?'✓':''}</div>
-      <div><div class="t"><span class="tag">${t.tag}</span>${t.t}</div><div class="d">${t.d}</div>
+      <div><div class="t"><span class="tag t-${t.tag}">${t.tag}</span>${t.t}</div><div class="d">${t.d}</div>
       ${t.quiz ? (q && q.first !== null && q.first !== undefined ? `<div class="d">${q.done?'✅ 已完成':'⏳ 还要订正'} · 第一次 ${q.first}%</div><a class="go" href="quiz.html?s=${t.quiz}">${q.done?'查看结果':'继续订正'} →</a>` : `<a class="go" href="quiz.html?s=${t.quiz}">开始做题 →</a>`) : ''}
       </div></div>`;
   }).join('');
@@ -109,7 +109,7 @@ function viewJobs(){
     else if (st === 'doing') b = `<button class="gold" onclick="submitJob('${j.id}')">我做完了，提交</button>`;
     else if (st === 'review') b = `<button class="gold" onclick="askCode('${j.id}')">输入验收码</button>`;
     else b = `<button class="ghost" disabled>✓ 已完成</button>`;
-    h += `<div class="c job ${lvLock?'locked':''}"><div class="row2"><span class="tag">${j.type}</span><b class="reward">🪙 ${j.reward}</b></div>
+    h += `<div class="c job ${lvLock?'locked':''}"><div class="row2"><span class="tag t-${j.type}">${j.type}</span><b class="reward">🪙 ${j.reward}</b></div>
       <h3>${j.title}</h3><p class="d">${j.desc}</p><div class="meta"><span>甲方：${j.client}</span><span>⏱ ${j.days} 天</span><span>${'★'.repeat(j.stars)}${'☆'.repeat(3-j.stars)}</span><span class="${STATUS[st][1]}">● ${STATUS[st][0]}</span></div>${b}</div>`;
   }
   return h;

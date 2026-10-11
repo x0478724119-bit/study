@@ -30,7 +30,7 @@ function loadSet(){
 }
 function get(){ try { return JSON.parse(localStorage.getItem(KEY)) || null; } catch(e){ return null; } }
 function put(v){ try { localStorage.setItem(KEY, JSON.stringify(v)); } catch(e){} }
-const norm = s => String(s).replace(/\s+/g,'').replace(/，/g,',').replace(/．/g,'.').toLowerCase();
+const norm = s => String(s).replace(/\s+/g,'').replace(/，/g,',').replace(/．/g,'.').replace(/[−—–]/g,'-').replace(/^x=/,'').toLowerCase();
 
 function init(){
   document.title = SET.title;

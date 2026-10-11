@@ -8,6 +8,8 @@ const CONFIG = {
 
 const pad = n => String(n).padStart(2, '0');
 function todayStr(d = new Date()){ return d.getFullYear() + '-' + pad(d.getMonth()+1) + '-' + pad(d.getDate()); }
+// 学习日：早上 6 点前算前一天
+function dayStr(){ return todayStr(new Date(Date.now() - 6*3600*1000)); }
 function hm(d = new Date()){ return pad(d.getHours()) + ':' + pad(d.getMinutes()); }
 
 function load(key, def){ try { const v = JSON.parse(localStorage.getItem(key)); return v ?? def; } catch(e){ return def; } }
@@ -17,7 +19,7 @@ function save(key, v){ try { localStorage.setItem(key, JSON.stringify(v)); } cat
 function wallet(){ return load('wallet', {coins:0, earned:0, log:[]}); }
 function addCoins(n, why){
   const w = wallet(); w.coins += n; if (n > 0) w.earned += n;
-  w.log.unshift({t: todayStr() + ' ' + hm(), n, why}); w.log = w.log.slice(0, 200);
+  w.log.unshift({t: dayStr() + ' ' + hm(), n, why}); w.log = w.log.slice(0, 200);
   save('wallet', w); return w;
 }
 
