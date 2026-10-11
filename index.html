@@ -53,6 +53,7 @@ function viewToday(){
   // 起床打卡
   if (!isWeekend(T)){
     if (wake[T]) h += `<div class="c wake on"><b>☀️ 今天 ${wake[T].time} 起床打卡</b><span>+${wake[T].coin} 金币</span></div>`;
+    else if (hm() < '06:00') h += `<div class="c wake"><div><b>🌙 现在是 ${hm()}，该睡觉啦</b><div class="d">起床打卡 06:00 开放</div></div></div>`;
     else h += `<div class="c wake"><div><b>☀️ 起床打卡</b><div class="d">14:00 前 +10 金币 · 15:00 前 +5 金币</div></div><button class="main sm" onclick="wakeUp()">我起床了</button></div>`;
   }
   if (!day){ return h + '<div class="c">还没有任务。</div>'; }
@@ -75,7 +76,7 @@ function viewToday(){
 }
 function tog(key, i){ const d = load('day-' + key, {}); d[i] = !d[i]; save('day-' + key, d); render(); }
 function wakeUp(){
-  const w = load('wake', {}); if (w[T]) return;
+  const w = load('wake', {}); if (w[T] || hm() < '06:00') return;
   const now = hm(); const rule = CONFIG.WAKE.find(([t]) => now <= t); const coin = rule ? rule[1] : 0;
   w[T] = {time: now, coin}; save('wake', w);
   if (coin) addCoins(coin, '起床打卡 ' + now);
