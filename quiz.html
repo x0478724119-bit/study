@@ -45,7 +45,7 @@ function render(){
   const list = SET.qs.map((q,i)=>({q,i})).filter(({i}) => mode==='all' || (mode==='redo' && !state.right[i]));
   let lastP = null, h = '';
   for (const {q,i} of list){
-    if (q.p && q.p !== lastP){ h += `<div class="c passage">${SET.passages[q.p]}</div>`; }
+    if (q.p && q.p !== lastP){ const cn = SET.passagesCn && SET.passagesCn[q.p]; h += `<div class="c passage">${SET.passages[q.p]}${cn ? `<details class="cn"><summary>看中文翻译</summary>${cn}</details>` : ''}</div>`; }
     lastP = q.p;
     h += `<div class="c q" id="q${i}"><div class="qn">${i+1}. ${q.q}</div>`;
     if (q.t === 'fill') h += `<input class="fill" id="in${i}" autocomplete="off" autocapitalize="off" placeholder="填写答案">`;
@@ -98,6 +98,7 @@ document.getElementById('submit').onclick = () => {
   put(state);
   if (mode !== 'redo') notify(`📝 ${SET.title}：第一次 ${state.first}%，用时 ${state.firstTime} 分钟` + (state.sec ? '（' + state.sec.map(([n,a,b])=>n+' '+a+'/'+b).join('，') + '）' : ''));
   else if (state.done && !wasDone) notify(`✅ ${SET.title} 订正完成，现在 ${state.now}%`);
+  document.body.classList.add('submitted');
   document.getElementById('bar').style.display = 'none';
   showResult(true);
   scrollTo({top:0, behavior:'smooth'});
@@ -118,7 +119,7 @@ function showResult(fresh){
   document.getElementById('result').innerHTML = h;
   document.getElementById('result').scrollIntoView();
 }
-function redo(){ mode='redo'; document.getElementById('result').innerHTML=''; render(); scrollTo({top:0}); }
+function redo(){ document.body.classList.remove('submitted'); mode='redo'; document.getElementById('result').innerHTML=''; render(); scrollTo({top:0}); }
 function renderReview(){
   render();
   for (const i of window._list){
@@ -128,6 +129,7 @@ function renderReview(){
     document.getElementById('q'+i).querySelectorAll('input').forEach(x=>x.disabled=true);
   }
   document.getElementById('bar').style.display='none';
+  document.body.classList.add('submitted');
 }
 loadSet();
 </script></body></html>

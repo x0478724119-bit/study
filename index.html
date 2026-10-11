@@ -46,8 +46,9 @@ function taskDone(key, i, t){ if (t.quiz){ const q = quizState(t.quiz); return !
 function dayComplete(key){ const d = DAYS[key]; return !!d && d.tasks.every((t,i) => taskDone(key, i, t)); }
 function unlocked(){ return isWeekend(T) || !DAYS[T] || dayComplete(T); }
 
+let selDay = null;
 function viewToday(){
-  const key = dayKey(), day = DAYS[key];
+  const key = selDay || dayKey(), day = DAYS[key];
   const wake = load('wake', {});
   let h = '';
   // 起床打卡
@@ -78,6 +79,12 @@ function viewToday(){
     ${day.tasks.map((t,i) => { const q = t.quiz ? quizState(t.quiz) : null; return `<div>${taskDone(key,i,t) ? '✅' : '⬜️'} ${t.t}${q && q.first != null ? ` · 第一次 ${q.first}%${q.sec ? '（' + q.sec.map(([n,a,b]) => n + ' ' + a + '/' + b).join('，') + '）' : ''}` : ''}</div>`; }).join('')}
     <div>今天获得：🪙 ${todayLog}</div><div class="d">做完后截图这一张发给姐姐</div></div>`;
   if (all) h += `<div class="c done-card"><b>🎉 今天全部完成！</b>${paid ? '<div class="d">已领取 +' + CONFIG.DAILY_COIN + ' 金币，去接单吧</div>' : `<button class="main" onclick="claimDay('${key}')">领取今日奖励 +${CONFIG.DAILY_COIN} 金币</button>`}</div>`;
+  // 往期任务：可以回去补作业、复习
+  const past = Object.keys(DAYS).sort().reverse().filter(k => k <= T || k === dayKey());
+  if (past.length > 1) h += '<h2>📅 往期任务</h2>' + past.map(k => {
+    const d = DAYS[k], m = d.tasks.filter((t,i) => taskDone(k, i, t)).length;
+    return `<div class="c day-row ${k === key ? 'cur' : ''}" onclick="selDay='${k}';render();scrollTo(0,0)"><span><b>${d.name}</b><br><small>${k}</small></span><span>${m === d.tasks.length ? '✅' : m + ' / ' + d.tasks.length}</span></div>`;
+  }).join('');
   return h;
 }
 function tog(key, i){ const d = load('day-' + key, {}); d[i] = !d[i]; save('day-' + key, d); render(); }
@@ -170,5 +177,5 @@ function render(){
   $('#view').innerHTML = {today: viewToday, jobs: viewJobs, book: viewBook, me: viewMe}[tab]();
   document.querySelectorAll('.tabs button').forEach(b => b.classList.toggle('on', b.dataset.t === tab));
 }
-document.querySelectorAll('.tabs button').forEach(b => b.onclick = () => { tab = b.dataset.t; render(); scrollTo(0, 0); });
+document.querySelectorAll('.tabs button').forEach(b => b.onclick = () => { tab = b.dataset.t; if (tab === 'today') selDay = null; render(); scrollTo(0, 0); });
 </script></body></html>

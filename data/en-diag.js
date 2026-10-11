@@ -10,6 +10,13 @@ She bought some seeds, planted them in pots and watered them three times a day. 
 Her neighbour, Mr Chen, used to work as a gardener before he retired. When he saw the plants, he smiled. "You love them too much," he said. "Tomatoes need lots of sunshine, but not so much water." Mia moved the pots to the sunniest corner and watered them only when the soil felt dry.<br><br>
 By the end of summer, she had more tomatoes than her family could eat, so she gave the rest to her neighbours. Soon, other people in the building wanted to try too. Mia and Mr Chen started a "Balcony Garden Club". Now twelve people meet every Saturday to share seeds and advice.`
   },
+  passagesCn: {
+    garden: `<b>米娅的小花园</b><br><br>
+米娅和父母住在一个繁华城市中心的小公寓里。家里没有花园，只有一个窄窄的阳台。有一年春天，她决定在阳台上种番茄。<br><br>
+她买了种子，种在花盆里，一天浇三次水，想让它们快点长。可是两周以后，小苗<b>蔫了（wilted）</b>：叶子垂下来，有的还发黄了。<br><br>
+她的邻居陈先生退休前是园丁。他看到这些苗，笑了："你太爱它们了。番茄需要很多阳光，但不需要那么多水。"米娅把花盆搬到阳光最好的角落，只在土摸起来干了的时候才浇水。<br><br>
+到夏天快结束的时候，她收的番茄多到一家人吃不完，就把剩下的送给了邻居。很快，楼里的其他人也想试试。米娅和陈先生办了一个"阳台花园俱乐部"。现在每个星期六，有十二个人聚在一起，交换种子、互相出主意。`
+  },
   qs: [
     // 词汇
     {sec:'词汇', q:'It is very ___ today. Let\'s go to the beach!', opts:['rainy','sunny','snowy'], a:1, e:'去海边，天气应该是晴天 sunny。'},
