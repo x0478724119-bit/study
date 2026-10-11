@@ -4,7 +4,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="学习站">
 <title>学习站</title>
-<link rel="stylesheet" href="style.css?v=1791732137">
+<link rel="stylesheet" href="style.css?v=1791732668">
 </head><body class="app">
 <header class="top">
   <div class="brand"><div class="logo">🏠</div><div><b>我的设计工作室</b><small id="lv"></small></div></div>
@@ -19,7 +19,7 @@
 </nav>
 <div class="modal" id="modal"><div class="box" id="mbox"></div></div>
 
-<script src="common.js?v=1791732137"></script>
+<script src="common.js?v=1791732668"></script>
 <script>
 const LEVELS = [
   {lv:1, name:'设计学徒', need:0, icon:'🌱'},
@@ -107,11 +107,15 @@ function viewToday(){
   const key = selDay || dayKey(), day = DAYS[key];
   const wake = load('wake', {}), WK = ['日','一','二','三','四','五','六'];
   let h = '';
-  // ① 日期条：点哪天看哪天
-  h += '<div class="dates">' + Object.keys(DAYS).sort().map(k => {
-    const d = DAYS[k], m = d.tasks.filter((t,i) => taskDone(k, i, t)).length, full = m === d.tasks.length;
-    return `<button class="date ${k === key ? 'on' : ''} ${k === T ? 'today' : ''}" onclick="selDay='${k}';render();scrollTo(0,0)"><small>${k === T ? '今天' : '周' + WK[new Date(k + 'T12:00').getDay()]}</small><b>${+k.slice(5,7)}/${+k.slice(8)}</b><small>${full ? '✅' : m + '/' + d.tasks.length}</small></button>`;
-  }).join('') + '</div>';
+  // ① 日期条：只显示一周，左右切换
+  const mon = d => { const x = new Date(d + 'T12:00'); return todayStr(new Date(x - ((x.getDay() + 6) % 7) * 864e5)); };
+  const ws = wkStart || mon(key), wd = [...Array(7)].map((_, i) => todayStr(new Date(new Date(ws + 'T12:00').getTime() + i * 864e5)));
+  h += `<div class="week"><button class="arr" onclick="shiftWeek(-7)">‹</button><div class="dates">` + wd.map(k => {
+    const d = DAYS[k], wkd = '周' + WK[new Date(k + 'T12:00').getDay()];
+    if (!d) return `<div class="date off"><small>${k === T ? '今天' : wkd}</small><b>${+k.slice(5,7)}/${+k.slice(8)}</b><small>${isWeekend(k) ? '休' : '—'}</small></div>`;
+    const m = d.tasks.filter((t,i) => taskDone(k, i, t)).length;
+    return `<button class="date ${k === key ? 'on' : ''} ${k === T ? 'today' : ''}" onclick="selDay='${k}';wkStart=null;render();scrollTo(0,0)"><small>${k === T ? '今天' : wkd}</small><b>${+k.slice(5,7)}/${+k.slice(8)}</b><small>${m === d.tasks.length ? '✅' : m + '/' + d.tasks.length}</small></button>`;
+  }).join('') + `</div><button class="arr" onclick="shiftWeek(7)">›</button></div>`;
   // ② 起床打卡（只在今天）
   if (!isWeekend(T) && key === T){
     const wt = wake[T];
@@ -156,6 +160,14 @@ function viewToday(){
     <div>获得：🪙 ${got}</div></details>`;
   if (!onLeave && key === T && !isWeekend(T) && !all && leaveLeft() > 0) h += `<button class="ghost" onclick="askLeave()">今天请假（本月还剩 ${leaveLeft()} 次）</button>`;
   return h;
+}
+let wkStart = null;
+function shiftWeek(n){
+  const cur = wkStart || (() => { const x = new Date((selDay || dayKey()) + 'T12:00'); return todayStr(new Date(x - ((x.getDay() + 6) % 7) * 864e5)); })();
+  wkStart = todayStr(new Date(new Date(cur + 'T12:00').getTime() + n * 864e5));
+  const end = todayStr(new Date(new Date(wkStart + 'T12:00').getTime() + 6 * 864e5));
+  const first = Object.keys(DAYS).sort().find(k => k >= wkStart && k <= end); if (first) selDay = first;
+  render();
 }
 function draft(key, i, v){ const d = load('draft', {}); d[key + '-' + i] = v; save('draft', d); }
 const esc = x => String(x).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));

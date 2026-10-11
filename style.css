@@ -94,3 +94,7 @@ details.report summary{font-weight:600;cursor:pointer}
 .vw{border-bottom:2px solid var(--acc);font-weight:600;cursor:pointer;position:relative}
 .vw em{display:none;font-style:normal;font-weight:500;font-size:13px;background:var(--ink);color:#fff;border-radius:6px;padding:1px 6px;margin-left:4px}
 .vw.show em{display:inline}
+.week{display:flex;align-items:center;gap:4px}.week .dates{flex:1;padding-bottom:6px}
+.arr{width:auto;background:none;color:var(--acc);font-size:26px;padding:0 4px;font-weight:400}
+.date{width:auto;flex:1 0 46px;min-width:46px}.date.off{opacity:.45;border-style:dashed}
+.say{width:auto;float:right;background:var(--card);color:var(--acc);border:1px solid var(--line);font-size:13px;padding:5px 10px;margin:0 0 6px 8px}
