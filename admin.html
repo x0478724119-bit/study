@@ -3,7 +3,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex">
 <title>管理后台</title>
-<link rel="stylesheet" href="style.css?v=1791735183">
+<link rel="stylesheet" href="style.css?v=1791735472">
 <style>
 .tabs2{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0 14px}.tabs2 button{width:auto;background:var(--card);border:1px solid var(--line);color:var(--ink);padding:8px 14px}.tabs2 button.on{background:var(--acc);color:#fff;border-color:var(--acc)}
 label{display:block;font-size:13px;color:var(--soft);margin:10px 0 4px}
@@ -16,7 +16,7 @@ textarea.in{min-height:72px}.grid3{display:grid;grid-template-columns:1fr 1fr 1f
 </head><body><div class="w">
 <div id="app"></div>
 </div>
-<script src="common.js?v=1791735183"></script>
+<script src="common.js?v=1791735472"></script>
 <script>
 // ===== 管理后台：只有存了 GitHub 钥匙的浏览器能改东西 =====
 const REPO = 'x0478724119-bit/study', API = 'https://api.github.com/repos/' + REPO + '/contents/';
@@ -76,10 +76,10 @@ function render(){
     <div class="tabs2">${[['jobs','📋 订单'],['leave','🙋 请假'],['pause','🏖️ 放假'],['coin','🪙 奖惩'],['set','⚙️ 设置']].map(([k,n]) => `<button class="${tab === k ? 'on' : ''}" onclick="tab='${k}';editing=null;render()">${n}</button>`).join('')}</div>`;
   h += ({jobs: vJobs, leave: vLeave, pause: vPause, coin: vCoin, set: vSet})[tab]();
   $('#app').innerHTML = h;
-  if (tab === 'jobs' && !editing) showCodes();
+  if (tab === 'jobs' && editing === null) showCodes();
 }
 function vJobs(){
-  if (editing) return vEdit();
+  if (editing !== null) return vEdit();
   return `<p class="s">点"修改"改价格和要求，点"新订单"加一单。改完会自动发布，学习站约 1 分钟后更新。</p><button class="main" onclick="editing='new';render()">＋ 新订单</button>` +
     jobs.map((j,i) => `<div class="c"><div class="row2"><span class="tag t-${j.type}">${j.type}</span><b class="reward">🪙 ${j.reward}</b></div><h3 style="margin:6px 0">${esc(j.title)}</h3>
     <div class="meta"><span>${j.days} 天</span><span>${'★'.repeat(j.stars)}</span>${j.minLv ? `<span>Lv${j.minLv}</span>` : ''}</div>
@@ -122,10 +122,14 @@ const saveJobs = msg => writeJS('data/jobs.js', 'JOBS', jobs, '// 悬赏单（�
 
 function vLeave(){
   return `<p class="s">在这里批准的请假：那天不扣金币、不算欠账，<b>不占她每月 2 次的自助请假</b>。</p>
-    <div class="c"><label>批准哪一天</label><input class="in" type="date" id="lv-d"><button class="main" onclick="addLeave()">批准</button></div>` +
+    <div class="c"><div class="grid3"><div><label>从</label><input class="in" type="date" id="lv-f"></div><div><label>到（请一天就选同一天）</label><input class="in" type="date" id="lv-t"></div></div><button class="main" onclick="addLeave()">批准</button></div>` +
     (leaves.length ? '<div class="c">' + leaves.slice().sort().reverse().map(d => `<div class="row2" style="padding:6px 0"><span>${d}</span><button class="ghost mini" onclick="rmLeave('${d}')">撤销</button></div>`).join('') + '</div>' : '<p class="s">还没有批准过请假。</p>');
 }
-async function addLeave(){ const d = $('#lv-d').value; if (!d || leaves.includes(d)) return; leaves.push(d); await writeJS('data/leave.js', 'LEAVE_OK', leaves, '', '批准请假 ' + d); notify(`🙋 姐姐批准了 ${d} 请假`); render(); toast('已批准'); }
+async function addLeave(){
+  const f = $('#lv-f').value, t = $('#lv-t').value || f; if (!f || t < f) return toast('日期不对');
+  for (let d = new Date(f + 'T12:00'); todayStr(d) <= t; d = new Date(d.getTime() + 864e5)) if (!leaves.includes(todayStr(d))) leaves.push(todayStr(d));
+  await writeJS('data/leave.js', 'LEAVE_OK', leaves, '', '批准请假 ' + f + (t !== f ? '~' + t : '')); render(); toast('已批准');
+}
 async function rmLeave(d){ leaves = leaves.filter(x => x !== d); await writeJS('data/leave.js', 'LEAVE_OK', leaves, '', '撤销请假 ' + d); render(); }
 
 function vPause(){
