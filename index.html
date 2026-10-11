@@ -4,7 +4,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="学习站">
 <title>学习站</title>
-<link rel="stylesheet" href="style.css?v=1791733441">
+<link rel="stylesheet" href="style.css?v=1791733523">
 </head><body class="app">
 <header class="top">
   <div class="brand"><div class="logo">🏠</div><div><b>我的设计工作室</b><small id="lv"></small></div></div>
@@ -19,7 +19,7 @@
 </nav>
 <div class="modal" id="modal"><div class="box" id="mbox"></div></div>
 
-<script src="common.js?v=1791733441"></script>
+<script src="common.js?v=1791733523"></script>
 <script>
 const LEVELS = [
   {lv:1, name:'设计学徒', need:0, icon:'🌱'},
@@ -342,7 +342,10 @@ function doCash(y){ addCoins(-y * CONFIG.RATE, `兑换 ${y} 元零花钱`); noti
 function modal(h){ $('#mbox').innerHTML = h; $('#modal').classList.add('show'); }
 function closeM(){ $('#modal').classList.remove('show'); }
 $('#modal').onclick = e => { if (e.target.id === 'modal') closeM(); };
+// 刷新后停在原来的页面（标签、订单详情、日期）
+try { const nav = JSON.parse(sessionStorage.getItem('nav') || '{}'); if (nav.tab) tab = nav.tab; if (nav.job) jobSel = nav.job; if (nav.day && !selDay) selDay = nav.day; } catch(e){}
 function render(){
+  try { sessionStorage.setItem('nav', JSON.stringify({tab, job: jobSel, day: selDay})); } catch(e){}
   if (window.DAYS){ settle(); checkMissed(); weekly(); checkJobs(); }
   const w = wallet(); $('#coin').textContent = w.coins; const L = level(w.earned); $('#lv').textContent = `Lv${L.lv} · ${L.name}`;
   $('#view').innerHTML = {today: viewToday, jobs: viewJobs, book: viewBook, me: viewMe}[tab]();
