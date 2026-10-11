@@ -6,3 +6,10 @@ sed -i '' -E "s/(common\.js|style\.css)(\?v=[0-9]+)?\"/\1?v=$V\"/g" index.html q
 git add -A
 git -c user.name="x0478724119-bit" -c user.email="x0478724119-bit@users.noreply.github.com" commit -qm "${1:-update}"
 git push -q && echo "pushed v=$V"
+C=$(git rev-parse --short=7 HEAD)
+for i in $(seq 1 30); do
+  r=$(~/.local/bin/gh api repos/x0478724119-bit/study/pages/builds/latest --jq '.status+" "+.commit[0:7]' 2>/dev/null)
+  [ "$r" = "built $C" ] && echo "live: $C" && exit 0
+  curl -s -o /dev/null --max-time 8 https://10.255.255.1
+done
+echo "still building, check later"

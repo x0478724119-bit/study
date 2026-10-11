@@ -4,7 +4,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="学习站">
 <title>学习站</title>
-<link rel="stylesheet" href="style.css?v=1791729059">
+<link rel="stylesheet" href="style.css?v=1791729390">
 </head><body class="app">
 <header class="top">
   <div class="brand"><div class="logo">🏠</div><div><b>我的设计工作室</b><small id="lv"></small></div></div>
@@ -19,7 +19,7 @@
 </nav>
 <div class="modal" id="modal"><div class="box" id="mbox"></div></div>
 
-<script src="common.js?v=1791729059"></script>
+<script src="common.js?v=1791729390"></script>
 <script>
 const LEVELS = [
   {lv:1, name:'设计学徒', need:0, icon:'🌱'},
@@ -45,8 +45,9 @@ function checkMissed(){
   for (const k of Object.keys(DAYS || {})){
     if (k >= T || k < start || isWeekend(k) || missed[k] || dayComplete(k)) continue;
     missed[k] = 1; save('missed', missed);
-    addCoins(-CONFIG.MISS, `${DAYS[k].name} 没按时完成`);
-    notify(`⚠️ ${k} ${DAYS[k].name} 没按时完成，扣 ${CONFIG.MISS} 金币`);
+    const cut = Math.min(CONFIG.MISS, Math.max(0, wallet().coins));
+    if (cut) addCoins(-cut, `${DAYS[k].name} 没按时完成`);
+    notify(`⚠️ ${k} ${DAYS[k].name} 没按时完成` + (cut ? `，扣 ${cut} 金币` : '（金币已经是 0，没得扣）'));
   }
 }
 
@@ -66,7 +67,7 @@ function viewToday(){
   if (!isWeekend(T)){
     if (wake[T]) h += `<div class="c wake on"><b>☀️ 今天 ${wake[T].time} 起床打卡</b><span>+${wake[T].coin} 金币</span></div>`;
     else if (hm() < '06:00') h += `<div class="c wake"><div><b>🌙 现在是 ${hm()}，该睡觉啦</b><div class="d">起床打卡 06:00 开放</div></div></div>`;
-    else h += `<div class="c wake"><div><b>☀️ 起床打卡</b><div class="d">14:00 前 +10 金币 · 15:00 前 +5 金币</div></div><button class="main sm" onclick="wakeUp()">我起床了</button></div>`;
+    else h += `<div class="c wake"><div><b>☀️ 起床打卡</b><div class="d">14:00 前 +5 金币 · 15:00 前 +3 金币</div></div><button class="main sm" onclick="wakeUp()">我起床了</button></div>`;
   }
   if (!day){ return h + '<div class="c">还没有任务。</div>'; }
   const wk = ['日','一','二','三','四','五','六'][new Date(key + 'T12:00').getDay()];
@@ -90,8 +91,8 @@ function viewToday(){
     ${day.tasks.map((t,i) => { const q = t.quiz ? quizState(t.quiz) : null; return `<div>${taskDone(key,i,t) ? '✅' : '⬜️'} ${t.t}${q && q.first != null ? ` · 第一次 ${q.first}%${q.sec ? '（' + q.sec.map(([n,a,b]) => n + ' ' + a + '/' + b).join('，') + '）' : ''}` : ''}</div>`; }).join('')}
     <div>今天获得：🪙 ${todayLog}</div><div class="d">做完后截图这一张发给姐姐</div></div>`;
   const late = key < T;
-  if (all) h += `<div class="c done-card"><b>🎉 ${late ? '补完了！' : '今天全部完成！'}</b>${paid ? '<div class="d">已领取 +' + CONFIG.DAILY_COIN + ' 金币，去接单吧</div>' : late ? '<div class="d">补作业不发金币，但补完了就不算欠账</div>' : `<button class="main" onclick="claimDay('${key}')">领取今日奖励 +${CONFIG.DAILY_COIN} 金币</button>`}</div>`;
-  else if (late) h += `<div class="bar-msg">⏰ 这一天已经过了${load('missed', {})[key] ? '，已扣 ' + CONFIG.MISS + ' 金币' : ''}。补完不发金币，但还是要补。</div>`;
+  if (all) h += `<div class="c done-card"><b>🎉 ${late ? '补完了！' : '今天全部完成！'}</b>${paid ? '<div class="d">已领取 +' + CONFIG.DAILY_COIN + ' 金币，去接单吧</div>' : late ? '<div class="d">补作业不发金币，但补完了就不算欠账</div>' : `<button class="main" onclick="claimDay('${key}')">领取全勤奖励 +${CONFIG.DAILY_COIN} 金币</button>`}</div>`;
+  else if (late) h += `<div class="bar-msg">⏰ 这一天已经过了${load('missed', {})[key] ? '，已扣过金币' : ''}。补完不发金币，但还是要补。</div>`;
   // 往期任务：可以回去补作业、复习
   const past = Object.keys(DAYS).sort().reverse().filter(k => k <= T || k === dayKey());
   if (past.length > 1) h += '<h2>📅 往期任务</h2>' + past.map(k => {
@@ -101,6 +102,16 @@ function viewToday(){
   return h;
 }
 function tog(key, i){ const d = load('day-' + key, {}); d[i] = !d[i]; save('day-' + key, d); render(); }
+// 当天完成的任务每项 +2，一项只给一次；补的不给
+function settle(){
+  const key = T, day = (window.DAYS || {})[key]; if (!day) return;
+  const got = load('taskpaid', {}); got[key] = got[key] || {};
+  day.tasks.forEach((t, i) => {
+    if (got[key][i] || !taskDone(key, i, t)) return;
+    got[key][i] = 1; save('taskpaid', got);
+    addCoins(CONFIG.TASK_COIN, '完成：' + t.t); toast('+' + CONFIG.TASK_COIN + ' 金币 · ' + t.t);
+  });
+}
 function wakeUp(){
   const w = load('wake', {}); if (w[T] || hm() < '06:00') return;
   const now = hm(); const rule = CONFIG.WAKE.find(([t]) => now <= t); const coin = rule ? rule[1] : 0;
@@ -186,6 +197,7 @@ function modal(h){ $('#mbox').innerHTML = h; $('#modal').classList.add('show'); 
 function closeM(){ $('#modal').classList.remove('show'); }
 $('#modal').onclick = e => { if (e.target.id === 'modal') closeM(); };
 function render(){
+  if (window.DAYS) settle();
   const w = wallet(); $('#coin').textContent = w.coins; const L = level(w.earned); $('#lv').textContent = `Lv${L.lv} · ${L.name}`;
   $('#view').innerHTML = {today: viewToday, jobs: viewJobs, book: viewBook, me: viewMe}[tab]();
   document.querySelectorAll('.tabs button').forEach(b => b.classList.toggle('on', b.dataset.t === tab));
