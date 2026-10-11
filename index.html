@@ -1,63 +1,167 @@
 <!doctype html>
 <html lang="zh-CN"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="学习站">
 <title>学习站</title>
 <link rel="stylesheet" href="style.css">
-</head><body><div class="w">
-<h1 id="h">今天的任务</h1>
-<p class="s" id="sub"></p>
-<div class="c"><div style="display:flex;justify-content:space-between;font-size:14px"><span>今日进度</span><b id="pt"></b></div><div class="prog"><i id="pb"></i></div></div>
-<div id="tasks"></div>
-<div id="finish"></div>
-<h2>其他</h2>
-<div class="c"><a class="go" href="handbook.html">📘 成长手册：路线、学校、三年计划 →</a></div>
-</div>
+</head><body class="app">
+<header class="top">
+  <div class="brand"><div class="logo">🏠</div><div><b>我的设计工作室</b><small id="lv"></small></div></div>
+  <div class="coins">🪙 <span id="coin">0</span></div>
+</header>
+<div class="w" id="view"></div>
+<nav class="tabs">
+  <button data-t="today" class="on"><span>✅</span>今日</button>
+  <button data-t="jobs"><span>📋</span>接单</button>
+  <button data-t="book"><span>📘</span>手册</button>
+  <button data-t="me"><span>👤</span>我的</button>
+</nav>
+<div class="modal" id="modal"><div class="box" id="mbox"></div></div>
+
+<script src="common.js"></script>
 <script>
-// ===== 每日任务：每天加一条，key 是日期 =====
-// type: 'check' 自己打勾；'quiz' 做完对应题库自动打勾（quiz 字段是题库 id）
-const DAYS = {
-  '2026-10-13': { name: '第 1 天 · 摸底', tasks: [
-    {tag:'作息', t:'14:00 前起床，出门晒 15 分钟太阳', d:'今天开始固定起床时间，周末也一样。'},
-    {tag:'英语', t:'英语摸底测试', d:'约 30–40 分钟，看看现在的水平。', quiz:'en-diag'},
-    {tag:'数学', t:'数学摸底测试', d:'约 40 分钟，准备草稿纸。', quiz:'math-diag'},
-    {tag:'英语', t:'背 30 个单词', d:'下载"墨墨背单词"或"不背单词"，选初中词汇，今天学 30 个。'},
-    {tag:'英语', t:'听 1 集 BBC 6 Minute English', d:'B 站搜"6 Minute English"，可以开字幕，听不懂没关系。'},
-    {tag:'运动', t:'运动 30 分钟', d:'散步、跳绳、骑车都行。'},
-    {tag:'项目', t:'试一下酷家乐', d:'用 Safari 打开 kujiale.com，试试在 iPad 上能不能画户型、摆家具。截图告诉姐姐能不能用。'},
-  ]},
-};
+const LEVELS = [
+  {lv:1, name:'设计学徒', need:0, icon:'🌱'},
+  {lv:2, name:'初级设计师', need:200, icon:'✏️'},
+  {lv:3, name:'设计师', need:600, icon:'🎨'},
+  {lv:4, name:'主设计师', need:1500, icon:'🏆'},
+  {lv:5, name:'工作室老板', need:3000, icon:'👑'},
+];
+const level = e => LEVELS.filter(l => e >= l.need).pop();
+const nextLevel = e => LEVELS.find(l => l.need > e);
+let tab = 'today';
+const $ = s => document.querySelector(s);
+const T = todayStr();
+const isWeekend = d => [0,6].includes(new Date(d + 'T12:00').getDay());
 
-const pad = n => String(n).padStart(2,'0');
-const d = new Date(), today = d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
-const keys = Object.keys(DAYS).sort();
-let key = DAYS[today] ? today : (keys.filter(k => k <= today).pop() || keys[0]);
-const day = DAYS[key];
-const wk = ['日','一','二','三','四','五','六'][new Date(key).getDay()];
-document.getElementById('h').textContent = day.name;
-document.getElementById('sub').textContent = key + ' 周' + wk + (key !== today ? ' · （' + (key > today ? '还没到这一天，可以先看看' : '今天还没有新任务，这是最近一天的') + '）' : '');
+// 加载数据文件（加时间戳，保证拿到最新的）
+function loadScript(src){ return new Promise(r => { const s = document.createElement('script'); s.src = src + '?v=' + Date.now(); s.onload = r; s.onerror = r; document.body.appendChild(s); }); }
+Promise.all([loadScript('data/days.js'), loadScript('data/jobs.js')]).then(render);
 
-const CK = 'day-' + key;
-let done = {}; try { done = JSON.parse(localStorage.getItem(CK)) || {}; } catch(e){}
-const quizDone = id => { try { const s = JSON.parse(localStorage.getItem('quiz-'+id)); return s && s.done ? s : null; } catch(e){ return null; } };
+// ===== 今日 =====
+function dayKey(){ const ks = Object.keys(window.DAYS || {}).sort(); return (window.DAYS || {})[T] ? T : (ks.filter(k => k <= T).pop() || ks[0]); }
+function quizState(id){ return load('quiz-' + id, null); }
+function taskDone(key, i, t){ if (t.quiz){ const q = quizState(t.quiz); return !!(q && q.done); } return !!load('day-' + key, {})[i]; }
+function dayComplete(key){ const d = DAYS[key]; return !!d && d.tasks.every((t,i) => taskDone(key, i, t)); }
+function unlocked(){ return isWeekend(T) || !DAYS[T] || dayComplete(T); }
 
-function render(){
+function viewToday(){
+  const key = dayKey(), day = DAYS[key];
+  const wake = load('wake', {});
+  let h = '';
+  // 起床打卡
+  if (!isWeekend(T)){
+    if (wake[T]) h += `<div class="c wake on"><b>☀️ 今天 ${wake[T].time} 起床打卡</b><span>+${wake[T].coin} 金币</span></div>`;
+    else h += `<div class="c wake"><div><b>☀️ 起床打卡</b><div class="d">14:00 前 +10 金币 · 15:00 前 +5 金币</div></div><button class="main sm" onclick="wakeUp()">我起床了</button></div>`;
+  }
+  if (!day){ return h + '<div class="c">还没有任务。</div>'; }
+  const wk = ['日','一','二','三','四','五','六'][new Date(key + 'T12:00').getDay()];
+  const note = key === T ? '' : (key > T ? ' · 还没到这一天，可以先看看' : ' · 今天还没有新任务，这是最近一天的');
   let n = 0;
-  document.getElementById('tasks').innerHTML = day.tasks.map((t,i) => {
-    const q = t.quiz ? quizDone(t.quiz) : null;
-    const on = t.quiz ? !!q : !!done[i]; if (on) n++;
-    return `<div class="c task"><div class="chk ${on?'on':''}" ${t.quiz?'':`onclick="tog(${i})"`}>${on?'✓':''}</div>
+  const rows = day.tasks.map((t,i) => {
+    const on = taskDone(key, i, t); if (on) n++;
+    const q = t.quiz ? quizState(t.quiz) : null;
+    return `<div class="c task"><div class="chk ${on?'on':''}" ${t.quiz?'':`onclick="tog('${key}',${i})"`}>${on?'✓':''}</div>
       <div><div class="t"><span class="tag">${t.tag}</span>${t.t}</div><div class="d">${t.d}</div>
-      ${t.quiz ? (q ? `<div class="d">✅ 已完成 · 得分 ${q.first}%</div><a class="go" href="quiz.html?s=${t.quiz}">查看结果 →</a>` : `<a class="go" href="quiz.html?s=${t.quiz}">开始做题 →</a>`) : ''}
+      ${t.quiz ? (q && q.first !== null && q.first !== undefined ? `<div class="d">${q.done?'✅ 已完成':'⏳ 还要订正'} · 第一次 ${q.first}%</div><a class="go" href="quiz.html?s=${t.quiz}">${q.done?'查看结果':'继续订正'} →</a>` : `<a class="go" href="quiz.html?s=${t.quiz}">开始做题 →</a>`) : ''}
       </div></div>`;
   }).join('');
-  const pct = Math.round(n / day.tasks.length * 100);
-  document.getElementById('pt').textContent = n + ' / ' + day.tasks.length;
-  document.getElementById('pb').style.width = pct + '%';
-  document.getElementById('finish').innerHTML = n === day.tasks.length
-    ? '<div class="c" style="text-align:center;border-color:var(--ok)"><b style="color:var(--ok)">🎉 今天全部完成！</b><br><span class="s">截图这一页发给姐姐</span></div>' : '';
+  const all = n === day.tasks.length, paid = load('paid', {})[key];
+  h += `<h1>${day.name}</h1><p class="s">${key} 周${wk}${note}</p>
+    <div class="c"><div class="row2"><span>今日进度</span><b>${n} / ${day.tasks.length}</b></div><div class="prog"><i style="width:${n/day.tasks.length*100}%"></i></div></div>` + rows;
+  if (all) h += `<div class="c done-card"><b>🎉 今天全部完成！</b>${paid ? '<div class="d">已领取 +' + CONFIG.DAILY_COIN + ' 金币，去接单吧</div>' : `<button class="main" onclick="claimDay('${key}')">领取今日奖励 +${CONFIG.DAILY_COIN} 金币</button>`}</div>`;
+  return h;
 }
-function tog(i){ done[i] = !done[i]; try { localStorage.setItem(CK, JSON.stringify(done)); } catch(e){} render(); }
-render();
+function tog(key, i){ const d = load('day-' + key, {}); d[i] = !d[i]; save('day-' + key, d); render(); }
+function wakeUp(){
+  const w = load('wake', {}); if (w[T]) return;
+  const now = hm(); const rule = CONFIG.WAKE.find(([t]) => now <= t); const coin = rule ? rule[1] : 0;
+  w[T] = {time: now, coin}; save('wake', w);
+  if (coin) addCoins(coin, '起床打卡 ' + now);
+  notify(`☀️ 起床打卡 ${now}` + (coin ? `，+${coin} 金币` : '（超过 15:00，没有金币）'));
+  toast(coin ? `打卡成功 +${coin} 金币` : '打卡成功，明天早点起有金币哦'); render();
+}
+function claimDay(key){
+  const p = load('paid', {}); if (p[key]) return; p[key] = 1; save('paid', p);
+  addCoins(CONFIG.DAILY_COIN, '完成 ' + DAYS[key].name);
+  notify(`🎉 ${DAYS[key].name} 全部完成，+${CONFIG.DAILY_COIN} 金币`); toast('+' + CONFIG.DAILY_COIN + ' 金币'); render();
+}
+
+// ===== 接单 =====
+const STATUS = {open:['可接单','s-open'], doing:['进行中','s-doing'], review:['待验收','s-review'], done:['已完成','s-done']};
+function viewJobs(){
+  const ok = unlocked(), js = load('jobs', {}), lv = level(wallet().earned).lv;
+  let h = `<h1>接单大厅</h1><p class="s">接单 → 做作品 → 发给甲方 → 拿验收码领金币</p>`;
+  h += ok ? `<div class="bar-msg ok">🔓 ${isWeekend(T) ? '周末可以直接接单' : '今日任务已完成，可以接新单'}</div>` : `<div class="bar-msg">🔒 先完成今天的任务，才能接新单（进行中的单不受影响）</div>`;
+  for (const j of (window.JOBS || [])){
+    const st = js[j.id] || 'open', lvLock = j.minLv && lv < j.minLv;
+    let b;
+    if (lvLock) b = `<button class="ghost" disabled>🔒 Lv${j.minLv} 解锁</button>`;
+    else if (st === 'open') b = `<button class="main" ${ok?'':'disabled'} onclick="take('${j.id}')">接单</button>`;
+    else if (st === 'doing') b = `<button class="gold" onclick="submitJob('${j.id}')">我做完了，提交</button>`;
+    else if (st === 'review') b = `<button class="gold" onclick="askCode('${j.id}')">输入验收码</button>`;
+    else b = `<button class="ghost" disabled>✓ 已完成</button>`;
+    h += `<div class="c job ${lvLock?'locked':''}"><div class="row2"><span class="tag">${j.type}</span><b class="reward">🪙 ${j.reward}</b></div>
+      <h3>${j.title}</h3><p class="d">${j.desc}</p><div class="meta"><span>甲方：${j.client}</span><span>⏱ ${j.days} 天</span><span>${'★'.repeat(j.stars)}${'☆'.repeat(3-j.stars)}</span><span class="${STATUS[st][1]}">● ${STATUS[st][0]}</span></div>${b}</div>`;
+  }
+  return h;
+}
+const job = id => JOBS.find(x => x.id === id);
+function setJob(id, st){ const js = load('jobs', {}); js[id] = st; save('jobs', js); }
+function take(id){ setJob(id, 'doing'); notify(`📋 接单：${job(id).title}（${job(id).reward} 金币）`); toast('接单成功，加油'); render(); }
+function submitJob(id){
+  modal(`<h3>提交「${job(id).title}」</h3><p>把作品截图或录屏发给姐姐。验收通过后，姐姐会给你一个 <b>6 位验收码</b>。</p>
+    <div class="row"><button class="ghost" onclick="closeM()">再改改</button><button class="main" onclick="setJob('${id}','review');notify('📤 提交作品：${job(id).title}，等你验收');closeM();render()">已发给姐姐</button></div>`);
+}
+function askCode(id){
+  modal(`<h3>输入验收码</h3><p>「${job(id).title}」验收通过后，姐姐会告诉你 6 位数字。</p><input id="cin" inputmode="numeric" maxlength="6" autocomplete="off">
+    <div class="row"><button class="ghost" onclick="closeM()">取消</button><button class="main" onclick="checkCode('${id}')">领取 🪙 ${job(id).reward}</button></div>`);
+}
+function checkCode(id){
+  const v = $('#cin').value.trim();
+  if (fnv(v) !== job(id).h){ toast('验收码不对，再问问姐姐'); return; }
+  setJob(id, 'done'); closeM(); addCoins(job(id).reward, '订单：' + job(id).title);
+  notify(`✅ 订单完成：${job(id).title}，+${job(id).reward} 金币`); toast('+' + job(id).reward + ' 金币'); render();
+}
+
+// ===== 手册 =====
+function viewBook(){
+  return `<h1>学习手册</h1><p class="s">路线、目标学校、三年计划都在这里</p>
+    <div class="c"><a class="go big" href="handbook.html">📘 打开成长手册 →</a><div class="d">从现在到上大学：要去哪、学什么、每个月做什么。</div></div>
+    <div class="c"><b>项目教程</b><div class="d">酷家乐、Swift Playgrounds 的分步教程，之后会放在这里。</div></div>`;
+}
+
+// ===== 我的 =====
+function viewMe(){
+  const w = wallet(), L = level(w.earned), N = nextLevel(w.earned);
+  const pct = N ? (w.earned - L.need) / (N.need - L.need) * 100 : 100;
+  const jobsDone = Object.values(load('jobs', {})).filter(s => s === 'done').length;
+  const days = Object.keys(load('paid', {})).length;
+  let h = `<h1>我的</h1><div class="c profile"><div class="avatar">${L.icon}</div><div style="flex:1"><b class="lvname">Lv${L.lv} · ${L.name}</b>
+    <div class="prog"><i style="width:${pct}%"></i></div><div class="d">${N ? `累计 ${w.earned} / ${N.need} 升到「${N.name}」` : '最高等级！'}</div></div></div>
+    <div class="c stats"><div><b>${w.coins}</b><small>金币余额</small></div><div><b>${jobsDone}</b><small>完成订单</small></div><div><b>${days}</b><small>完成天数</small></div></div>
+    <div class="c"><b>💰 兑换零花钱</b><div class="d">${CONFIG.RATE} 金币 = 1 元 · 现在可换 <b>${Math.floor(w.coins / CONFIG.RATE)}</b> 元</div>
+    <button class="gold" ${w.coins < CONFIG.RATE ? 'disabled' : ''} onclick="cashOut()">申请兑换</button></div>
+    <div class="c"><b>📜 金币记录</b>`;
+  h += w.log.length ? w.log.slice(0, 30).map(l => `<div class="log"><span>${l.why}<br><small>${l.t}</small></span><b class="${l.n > 0 ? 'plus' : ''}">${l.n > 0 ? '+' : ''}${l.n}</b></div>`).join('') : '<div class="d">还没有记录</div>';
+  return h + '</div>';
+}
+function cashOut(){
+  const y = Math.floor(wallet().coins / CONFIG.RATE);
+  modal(`<h3>兑换 ${y} 元</h3><p>确认后扣掉 ${y * CONFIG.RATE} 金币，截图发给姐姐，姐姐转钱给你。</p>
+    <div class="row"><button class="ghost" onclick="closeM()">先攒着</button><button class="gold" onclick="doCash(${y})">确认兑换</button></div>`);
+}
+function doCash(y){ addCoins(-y * CONFIG.RATE, `兑换 ${y} 元零花钱`); notify(`💰 申请兑换 ${y} 元零花钱`); closeM(); toast('已申请，截图发给姐姐'); render(); }
+
+// ===== 通用 =====
+function modal(h){ $('#mbox').innerHTML = h; $('#modal').classList.add('show'); }
+function closeM(){ $('#modal').classList.remove('show'); }
+$('#modal').onclick = e => { if (e.target.id === 'modal') closeM(); };
+function render(){
+  const w = wallet(); $('#coin').textContent = w.coins; const L = level(w.earned); $('#lv').textContent = `Lv${L.lv} · ${L.name}`;
+  $('#view').innerHTML = {today: viewToday, jobs: viewJobs, book: viewBook, me: viewMe}[tab]();
+  document.querySelectorAll('.tabs button').forEach(b => b.classList.toggle('on', b.dataset.t === tab));
+}
+document.querySelectorAll('.tabs button').forEach(b => b.onclick = () => { tab = b.dataset.t; render(); scrollTo(0, 0); });
 </script></body></html>

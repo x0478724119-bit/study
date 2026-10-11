@@ -1,0 +1,38 @@
+// ===== 学习站公共功能：存档、金币、飞书推送 =====
+const CONFIG = {
+  RATE: 5,                 // 5 金币 = 1 元
+  DAILY_COIN: 5,           // 当天必做任务全部完成
+  WAKE: [ ['14:00', 10], ['15:00', 5] ],  // 起床打卡：14:00 前 +10，15:00 前 +5，再晚没有
+  FEISHU: '',              // 飞书群机器人 webhook，填好后自动推送
+};
+
+const pad = n => String(n).padStart(2, '0');
+function todayStr(d = new Date()){ return d.getFullYear() + '-' + pad(d.getMonth()+1) + '-' + pad(d.getDate()); }
+function hm(d = new Date()){ return pad(d.getHours()) + ':' + pad(d.getMinutes()); }
+
+function load(key, def){ try { const v = JSON.parse(localStorage.getItem(key)); return v ?? def; } catch(e){ return def; } }
+function save(key, v){ try { localStorage.setItem(key, JSON.stringify(v)); } catch(e){} }
+
+// 钱包：coins 余额，earned 累计，log 记录
+function wallet(){ return load('wallet', {coins:0, earned:0, log:[]}); }
+function addCoins(n, why){
+  const w = wallet(); w.coins += n; if (n > 0) w.earned += n;
+  w.log.unshift({t: todayStr() + ' ' + hm(), n, why}); w.log = w.log.slice(0, 200);
+  save('wallet', w); return w;
+}
+
+// 推送到飞书群。没配置时什么都不做。
+function notify(text){
+  if (!CONFIG.FEISHU) return;
+  const body = JSON.stringify({msg_type: 'text', content: {text: '【学习站】' + text}});
+  try { fetch(CONFIG.FEISHU, {method: 'POST', mode: 'no-cors', headers: {'Content-Type': 'text/plain'}, body}); } catch(e){}
+}
+
+// 验收码校验：只存哈希，不存原码
+function fnv(s){ let h = 0x811c9dc5; for (const b of new TextEncoder().encode(s)){ h ^= b; h = Math.imul(h, 0x01000193) >>> 0; } return h.toString(16).padStart(8, '0'); }
+
+function toast(m){
+  let t = document.getElementById('toast');
+  if (!t){ t = document.createElement('div'); t.id = 'toast'; t.className = 'toast'; document.body.appendChild(t); }
+  t.textContent = m; t.classList.add('show'); clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove('show'), 2000);
+}
