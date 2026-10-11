@@ -4,7 +4,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="学习站">
 <title>学习站</title>
-<link rel="stylesheet" href="style.css?v=1791730407">
+<link rel="stylesheet" href="style.css?v=1791730752">
 </head><body class="app">
 <header class="top">
   <div class="brand"><div class="logo">🏠</div><div><b>我的设计工作室</b><small id="lv"></small></div></div>
@@ -19,7 +19,7 @@
 </nav>
 <div class="modal" id="modal"><div class="box" id="mbox"></div></div>
 
-<script src="common.js?v=1791730407"></script>
+<script src="common.js?v=1791730752"></script>
 <script>
 const LEVELS = [
   {lv:1, name:'设计学徒', need:0, icon:'🌱'},
@@ -172,9 +172,10 @@ function claimDay(key){
 // ===== 接单 =====
 const STATUS = {open:['可接单','s-open'], doing:['进行中','s-doing'], review:['待验收','s-review'], done:['已完成','s-done']};
 function viewJobs(){
-  const debt = wallet().coins < 0, old = stale().length, ok = unlocked() && !debt && !old, js = load('jobs', {}), lv = level(wallet().earned).lv;
+  const busy = Object.values(load('jobs', {})).filter(x => x === 'doing').length >= CONFIG.JOB_LIMIT;
+  const debt = wallet().coins < 0, old = stale().length, ok = unlocked() && !debt && !old && !busy, js = load('jobs', {}), lv = level(wallet().earned).lv;
   let h = `<h1>接单大厅</h1><p class="s">接单 → 做作品 → 发给甲方 → 拿验收码领金币</p>`;
-  h += old ? `<div class="bar-msg">📌 有作业欠了超过 ${CONFIG.STALE} 天，补完才能接新单</div>` : debt ? `<div class="bar-msg">💸 金币是负数，先补作业把金币补回来，才能接新单</div>` : ok ? `<div class="bar-msg ok">🔓 ${isWeekend(T) ? '周末可以直接接单' : '今日任务已完成，可以接新单'}</div>` : `<div class="bar-msg">🔒 先完成今天的任务，才能接新单（进行中的单不受影响）</div>`;
+  h += busy ? `<div class="bar-msg">🛠️ 手上有一单还没做完，提交后才能接下一单</div>` : old ? `<div class="bar-msg">📌 有作业欠了超过 ${CONFIG.STALE} 天，补完才能接新单</div>` : debt ? `<div class="bar-msg">💸 金币是负数，先补作业把金币补回来，才能接新单</div>` : ok ? `<div class="bar-msg ok">🔓 ${isWeekend(T) ? '周末可以直接接单' : '今日任务已完成，可以接新单'}</div>` : `<div class="bar-msg">🔒 先完成今天的任务，才能接新单（进行中的单不受影响）</div>`;
   for (const j of (window.JOBS || [])){
     const st = js[j.id] || 'open', lvLock = j.minLv && lv < j.minLv;
     let b;
@@ -190,7 +191,7 @@ function viewJobs(){
 }
 const job = id => JOBS.find(x => x.id === id);
 function setJob(id, st){ const js = load('jobs', {}); js[id] = st; save('jobs', js); }
-function take(id){ setJob(id, 'doing'); notify(`📋 接单：${job(id).title}（${job(id).reward} 金币）`); toast('接单成功，加油'); render(); }
+function take(id){ if (Object.values(load('jobs', {})).filter(x => x === 'doing').length >= CONFIG.JOB_LIMIT) return; setJob(id, 'doing'); notify(`📋 接单：${job(id).title}（${job(id).reward} 金币）`); toast('接单成功，加油'); render(); }
 function submitJob(id){
   modal(`<h3>提交「${job(id).title}」</h3><p>把作品发到飞书的<b>「工作室」群</b>：第一行写订单名，再附上截图、PDF 或录屏。验收通过后，姐姐会给你一个 <b>6 位验收码</b>。</p>
     <div class="row"><button class="ghost" onclick="closeM()">再改改</button><button class="main" onclick="setJob('${id}','review');notify('📤 提交作品：${job(id).title}，等你验收');closeM();render()">已发给姐姐</button></div>`);
