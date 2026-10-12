@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="学习站">
 <title>学习站</title>
-<link rel="stylesheet" href="style.css?v=1791783799">
+<link rel="stylesheet" href="style.css?v=1791784480">
 </head><body class="app">
 <header class="top">
   <div class="brand"><div class="logo" style="background:url(apple-touch-icon.png) center/cover"></div><div><b>我的设计工作室</b><small id="lv"></small></div></div>
@@ -21,7 +21,7 @@
 </nav>
 <div class="modal" id="modal"><div class="box" id="mbox"></div></div>
 
-<script src="common.js?v=1791783799"></script>
+<script src="common.js?v=1791784480"></script>
 <script>
 const LEVELS = [
   {lv:1, name:'设计学徒', need:0, icon:'🌱'},
@@ -58,7 +58,7 @@ function checkMissed(){
   for (const k of Object.keys(DAYS || {})){
     if (k >= T || k < start || isWeekend(k) || paused(k) || okLeave(k) || missed[k] || dayComplete(k)) continue;
     if (leave[k] && daysBetween(k, T) <= CONFIG.STALE) continue;
-    const left = DAYS[k].tasks.filter((t,i) => !taskDone(k, i, t)).length, pen = left * CONFIG.MISS;
+    const undone = DAYS[k].tasks.filter((t,i) => !taskDone(k, i, t)), left = undone.length, pen = undone.reduce((a, t) => a + taskCoin(t), 0);  // 没做的每项扣它本来能拿的金币
     const lv = !!leave[k];
     missed[k] = {pen, back: lv ? -1 : 0}; save('missed', missed);
     addCoins(-pen, `${DAYS[k].name} ${lv ? '请假超过 ' + CONFIG.STALE + ' 天没补' : '有 ' + left + ' 项没完成'}`);
@@ -161,13 +161,13 @@ function viewToday(){
       ? `<div class="d">${q.done ? '✅ 已完成' : '⏳ 还要订正'} · 第一次 ${q.first}%</div><a class="btn2 ${q.done ? 'light' : ''}" href="quiz.html?s=${t.quiz}&d=${key}">${q.done ? '查看 / 再刷' : '继续订正'}</a>`
       : `<a class="btn2" href="quiz.html?s=${t.quiz}&d=${key}">开始 →</a>`;
     if (t.write) act += wv ? `<div class="wdone">✍️ ${esc(wv.text)}<br><small>${wv.time} 提交 · <a href="#" onclick="editWrite('${key}',${i});return false">修改</a></small></div>`
-      : `<textarea class="fill wbox" id="w-${key}-${i}" placeholder="${t.write}" oninput="draft('${key}',${i},this.value)">${esc(load('draft', {})[key + '-' + i] || '')}</textarea><button class="main sm" style="margin-top:8px" onclick="submitWrite('${key}',${i})">提交</button>`;
+      : `<textarea class="fill wbox" data-ws="w-${key}-${i}" id="w-${key}-${i}" placeholder="${t.write}" oninput="draft('${key}',${i},this.value)">${esc(load('draft', {})[key + '-' + i] || '')}</textarea><button class="main sm" style="margin-top:8px" onclick="submitWrite('${key}',${i})">提交</button>`;
     const tick = !t.quiz && !t.write && !t.lesson ? `onclick="tog('${key}',${i})"` : '';
     return `<div class="c task ${on ? 'done' : ''}"><div class="chk ${on?'on':''}" ${tick}>${on?'✓':''}</div>
-      <div style="flex:1"><div class="t"><span class="tag t-${t.tag}">${t.tag}</span>${t.t}</div><div class="d">${t.d}</div>${act}</div></div>`;
+      <div style="flex:1"><div class="t"><span class="tag t-${t.tag}">${t.tag}</span>${t.t}<span class="tcoin">🪙${taskCoin(t)}</span></div><div class="d">${t.d}</div>${act}</div></div>`;
   }).join('');
   // ⑥ 完成 / 领奖
-  if (all) h += `<div class="c done-card"><b>🎉 ${late ? '补完了！' : key > T ? '提前做完了！' : '今天全部完成！'}</b>${paid ? '<div class="d">已领取 +' + CONFIG.DAILY_COIN + ' 金币，去接单吧</div>' : late ? (miss && miss.back > 0 ? '<div class="d">已退还 ' + miss.back + ' 金币</div>' : '<div class="d">补完了</div>') : key > T ? '<div class="d">金币（每项 +' + CONFIG.TASK_COIN + ' 和全勤 +' + CONFIG.DAILY_COIN + '）到那一天打开网站时发</div>' : `<button class="main" onclick="claimDay('${key}')">领取全勤奖励 +${CONFIG.DAILY_COIN} 金币</button>`}</div>`;
+  if (all) h += `<div class="c done-card"><b>🎉 ${late ? '补完了！' : key > T ? '提前做完了！' : '今天全部完成！'}</b>${paid ? '<div class="d">已领取 +' + CONFIG.DAILY_COIN + ' 金币，去接单吧</div>' : late ? (miss && miss.back > 0 ? '<div class="d">已退还 ' + miss.back + ' 金币</div>' : '<div class="d">补完了</div>') : key > T ? '<div class="d">金币（每项的金币和全勤 +' + CONFIG.DAILY_COIN + '）到那一天打开网站时发</div>' : `<button class="main" onclick="claimDay('${key}')">领取全勤奖励 +${CONFIG.DAILY_COIN} 金币</button>`}</div>`;
   // ⑦ 汇报（截图用）+ 请假，放最下面
   const wk2 = wake[key], got = wallet().log.filter(l => l.t.startsWith(key) && l.n > 0).reduce((a,l) => a + l.n, 0);
   h += `<details class="c report"><summary>📋 今日汇报（需要时截图）</summary>
@@ -192,7 +192,7 @@ function submitWrite(key, i){
   const v = document.getElementById(`w-${key}-${i}`).value.trim(), t = DAYS[key].tasks[i];
   if (v.length < (t.min || 10)){ toast(`再多写一点（至少 ${t.min || 10} 个字）`); return; }
   const d = load('day-' + key, {}); d[i] = {text: v, time: todayStr() + ' ' + hm()}; save('day-' + key, d); const dr = load('draft', {}); delete dr[key + '-' + i]; save('draft', dr);
-  notify(`✍️ ${t.t}：\n${v}`); render();
+  notify(`✍️ ${t.t}：\n${v}\n${writeStats('w-' + key + '-' + i, v)}`); clearWrite('w-' + key + '-' + i); render();
 }
 function tog(key, i){ const d = load('day-' + key, {}); d[i] = !d[i]; save('day-' + key, d); render(); }
 // 当天完成的任务每项 +2，一项只给一次；补的不给
@@ -204,7 +204,7 @@ function settle(){
     DAYS[key].tasks.forEach((t, i) => {
       if (got[key][i] || !taskDone(key, i, t)) return;
       got[key][i] = 1; save('taskpaid', got); did = true;
-      addCoins(CONFIG.TASK_COIN, '完成：' + t.t); toast('+' + CONFIG.TASK_COIN + ' 金币 · ' + t.t);
+      addCoins(taskCoin(t), '完成：' + t.t); toast('+' + taskCoin(t) + ' 金币 · ' + t.t);
     });
   }
   checkWake(did);
@@ -254,7 +254,8 @@ function checkJobs(){
   }
 }
 function viewJobs(){
-  if (jobSel) return viewJob(job(jobSel));
+  if (jobSel && !(job(jobSel).minLv && level(wallet().earned).lv < job(jobSel).minLv)) return viewJob(job(jobSel));
+  jobSel = null;
   let h = `<h1>接单大厅</h1><p class="s">点开订单看详情 · 接单先拿 ${CONFIG.DEPOSIT * 100}% 定金 · 同时最多 ${CONFIG.JOB_LIMIT} 单</p>`;
   // 排序：进行中 / 待验收在最上面，可接单在中间，已完成变灰放最下面
   const rank = {doing: 0, review: 0, open: 1, done: 2};
@@ -266,9 +267,11 @@ function viewJobs(){
     if ((v.st === 'doing' || v.st === 'review') && !shownDoing){ h += '<h2>📌 进行中 · 待完成</h2>'; shownDoing = true; }
     if (v.st === 'open' && !shownOpen){ h += '<h2>🆕 可以接的单</h2>'; shownOpen = true; }
     if (v.st === 'done' && !shownDone){ h += '<h2 style="color:var(--faint)">已完成</h2>'; shownDone = true; }
-    h += `<div class="c job jrow ${lvLock ? 'locked' : ''} ${v.st === 'done' ? 'jdone' : ''}" onclick="jobSel='${j.id}';render();scrollTo(0,0)">
+    if (lvLock){ h += `<div class="c job locked" onclick="toast('Lv${j.minLv} 解锁后才能看详情')"><div class="row2"><span class="tag t-${j.type}">${j.type}</span><b class="reward">🪙 ???</b></div>
+      <h3><span class="jno">${jobNo(j)}</span>${j.title}</h3><div class="meta"><span>🔒 Lv${j.minLv}「${LEVELS[j.minLv - 1].name}」解锁 · 还差 ${LEVELS[j.minLv - 1].need - wallet().earned} 金币</span><span>神秘订单，升级后揭晓</span></div></div>`; continue; }
+    h += `<div class="c job jrow ${v.st === 'done' ? 'jdone' : ''}" onclick="jobSel='${j.id}';render();scrollTo(0,0)">
       <div class="row2"><span class="tag t-${j.type}">${j.type}</span><b class="reward">🪙 ${j.reward}</b></div>
-      <h3><span class="jno">${jobNo(j)}</span>${j.title}</h3><div class="meta">${j.pub ? `<span>发布 ${j.pub.slice(5)}</span>` : ''}<span>甲方：${j.client}</span><span>⏱ 接单后 ${j.days} 天内交</span><span>${'★'.repeat(j.stars)}${'☆'.repeat(3 - j.stars)}</span>
+      <h3><span class="jno">${jobNo(j)}</span>${j.title}</h3><div class="meta">${j.pub ? `<span>发布 ${j.pub.slice(5)}</span>` : ''}<span>甲方：${j.client}</span><span>⏱ 接单后 ${j.days} 天内交</span><span>${'★'.repeat(j.stars)}${'☆'.repeat(3 - j.stars)}</span>${j.tool ? `<span>🛠️ ${j.tool}</span>` : ''}
       <span class="${STATUS[v.st][1]}">● ${STATUS[v.st][0]}${v.st === 'doing' && v.at ? ' · 截止 ' + dueOf(j, v).slice(5) : ''}</span>${lvLock ? `<span>🔒 Lv${j.minLv} 解锁（还差 ${LEVELS[j.minLv - 1].need - wallet().earned} 金币）</span>` : ''}</div></div>`;
   }
   return h;
@@ -280,6 +283,7 @@ function viewJob(j){
     <div class="c"><div class="row2"><span class="tag t-${j.type}">${j.type}</span><span class="${STATUS[v.st][1]}">● ${STATUS[v.st][0]}</span></div>
     <div class="jno" style="margin-top:8px">${jobNo(j)}</div><h1 style="margin:2px 0 4px">${j.title}</h1><div class="meta"><span>甲方：${j.client}</span><span>⏱ 接单后 ${j.days} 天内交付</span><span>难度 ${'★'.repeat(j.stars)}${'☆'.repeat(3 - j.stars)}</span></div></div>
     <div class="c jd"><h3>📝 需求说明</h3><p>${j.brief}</p>
+    ${j.tool ? `<h3>🛠️ 指定工具</h3><p><b>${j.tool}</b>（必须用这个做，验收时会看）</p>` : ''}
     <h3>📦 要交什么</h3>${li(j.deliver)}
     <h3>📐 具体要求</h3>${li(j.spec)}
     <h3>✅ 验收标准</h3>${li(j.accept)}
@@ -292,7 +296,11 @@ function viewJob(j){
   else if (v.st === 'open'){
     const why = doingCount() >= CONFIG.JOB_LIMIT ? `手上已经有 ${CONFIG.JOB_LIMIT} 单了` : stale().length ? `有作业欠了超过 ${CONFIG.STALE} 天，先补完` : w.coins < 0 ? '金币是负数，先补作业' : !unlocked() ? '先完成今天的任务' : '';
     h += why ? `<div class="bar-msg">🔒 ${why}</div><button class="main" disabled>接单</button>` : `<button class="main" onclick="take('${j.id}')">接单（马上拿定金 ${dep} 金币）</button>`;
-  } else if (v.st === 'doing') h += `<div class="bar-msg">截止：${v.at ? dueOf(j, v) : '—'} · 已拿定金 ${v.dep}</div><button class="gold" onclick="submitJob('${j.id}')">我做完了，提交</button><button class="ghost" style="margin-top:0" onclick="dropJob('${j.id}')">放弃这单（退定金 + 赔付）</button>`;
+  } else if (v.st === 'doing' && j.write) h += `<div class="c"><h3 style="margin:0 0 4px">✍️ 在这里写（至少 ${j.write} 个词）</h3><p class="s" style="margin:0">不能粘贴；写的时间、有没有切出去都会记下来，一起交给姐姐。写一半可以先走，草稿会保存。</p>
+      <textarea class="fill wbox" style="min-height:220px" data-ws="job-${j.id}" id="jw-${j.id}" oninput="const d=load('jdraft',{});d['${j.id}']=this.value;save('jdraft',d);$('#wc-${j.id}').textContent=(this.value.match(/[A-Za-z']+/g)||[]).length">${esc(load('jdraft', {})[j.id] || '')}</textarea>
+      <div class="s" style="margin:4px 0 0">已写 <b id="wc-${j.id}">${((load('jdraft', {})[j.id] || '').match(/[A-Za-z']+/g) || []).length}</b> 个词</div></div>
+      <div class="bar-msg">截止：${v.at ? dueOf(j, v) : '—'} · 已拿定金 ${v.dep}</div><button class="gold" onclick="submitWriteJob('${j.id}')">写完了，提交</button><button class="ghost" style="margin-top:0" onclick="dropJob('${j.id}')">放弃这单（退定金 + 赔付）</button>`;
+  else if (v.st === 'doing') h += `<div class="bar-msg">截止：${v.at ? dueOf(j, v) : '—'} · 已拿定金 ${v.dep}</div><button class="gold" onclick="submitJob('${j.id}')">我做完了，提交</button><button class="ghost" style="margin-top:0" onclick="dropJob('${j.id}')">放弃这单（退定金 + 赔付）</button>`;
   else if (v.st === 'review') h += `<div class="bar-msg">已提交，等姐姐验收。不满意的话会让你返工。</div><button class="gold" onclick="askCode('${j.id}')">输入验收码</button>`;
   else h += `<div class="bar-msg ok">✅ 已完成${v.got ? '，拿到 ' + v.got + ' 金币' : ''}</div>`;
   return h;
@@ -316,7 +324,15 @@ function doDrop(id, pen){
 }
 function submitJob(id){
   modal(`<h3>提交「${job(id).title}」</h3><p>把作品发到飞书的<b>「工作室」群</b>：第一行写订单名，再附上要交的东西。姐姐验收后会给你 <b>6 位验收码</b>：满意码拿全额，一般码拿 60%，不行就要返工。</p>
-    <div class="row"><button class="ghost" onclick="closeM()">再改改</button><button class="main" onclick="jset('${id}',Object.assign(jget('${id}'),{st:'review'}));notify('📤 提交作品：${job(id).title}，等你验收');closeM();render()">已发给姐姐</button></div>`);
+    <div class="row"><button class="ghost" onclick="closeM()">再改改</button><button class="main" onclick="jset('${id}',Object.assign(jget('${id}'),{st:'review'}));notify('📤 提交作品：${jobNo(job(id))} ${job(id).title}，等你验收');closeM();render()">已发给姐姐</button></div>`);
+}
+function submitWriteJob(id){
+  const j = job(id), t = ($('#jw-' + id).value || '').trim(), n = (t.match(/[A-Za-z']+/g) || []).length;
+  if (n < j.write){ toast(`还差 ${j.write - n} 个词`); return; }
+  jset(id, Object.assign(jget(id), {st: 'review', text: t}));
+  notify(`📤 提交作品：${jobNo(j)} ${j.title}（${n} 词）\n${t}\n${writeStats('job-' + id, t)}`);
+  clearWrite('job-' + id); const d = load('jdraft', {}); delete d[id]; save('jdraft', d);
+  toast('已提交，等姐姐验收'); render();
 }
 function askCode(id){
   modal(`<h3>输入验收码</h3><p>「${job(id).title}」验收后，姐姐会告诉你 6 位数字。</p><input id="cin" inputmode="numeric" maxlength="6" autocomplete="off">
@@ -336,6 +352,7 @@ function checkCode(id){
 function viewBook(){
   return `<h1>学习手册</h1><p class="s">路线、目标学校、三年计划都在这里</p>
     <div class="c"><a class="go big" href="handbook.html">📘 打开成长手册 →</a><div class="d">从现在到上大学：要去哪、学什么、每个月做什么。</div></div>
+    <div class="c"><a class="go big" href="planner.html">📐 户型练习台 →</a><div class="d">按真实尺寸摆家具，自动检查通道够不够宽。手机上酷家乐太小时用它练布局。</div></div>
     <div class="c"><a class="go big" href="book.html">📗 每日手册 →</a><div class="d">每天要学的讲解都在这里：数学、英语语法、听力方法、软件课。按天翻。</div></div>
 `;
 }
@@ -376,6 +393,7 @@ function render(){
   const w = wallet(); $('#coin').textContent = w.coins; const L = level(w.earned); $('#lv').textContent = `Lv${L.lv} · ${L.name}`;
   $('#view').innerHTML = {today: viewToday, jobs: viewJobs, book: viewBook, me: viewMe}[tab]();
   document.querySelectorAll('.tabs button').forEach(b => b.classList.toggle('on', b.dataset.t === tab));
+  document.querySelectorAll('textarea[data-ws]').forEach(el => guardWrite(el, el.dataset.ws));
 }
 document.querySelectorAll('.tabs button').forEach(b => b.onclick = () => { tab = b.dataset.t; jobSel = null;  render(); scrollTo(0, 0); });
 </script></body></html>

@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<title>户型练习台</title>
+<script src="common.js?v=1791784480"></script>
+<link rel="stylesheet" href="style.css?v=1791784480">
+<style>
+.room-in{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:14px}.room-in input,.room-in select{width:70px;font:inherit;padding:6px 8px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink)}
+.room-in select{width:auto}
+#stage{width:100%;touch-action:none;background:#fff;border-radius:12px;border:1px solid var(--line);display:block}
+.pal{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}.pal button{width:auto;padding:7px 10px;font-size:13.5px;background:var(--card);border:1px solid var(--line);color:var(--ink);border-radius:10px;font-weight:500}
+.pal small{color:var(--faint)}
+.tools{display:flex;gap:6px;margin:8px 0}.tools button{flex:1;padding:10px;font-size:14px}
+.warns{font-size:14px}.warns div{padding:4px 0}
+</style>
+</head><body><div class="w">
+<a class="back" href="javascript:history.back()">← 返回</a>
+<h1>📐 户型练习台</h1>
+<p class="s">按真实尺寸摆家具（每格 0.5 米）。点家具选中，拖动移动，下面可以旋转、删除。会自动检查：家具重叠、通道不到 0.6 米、挡住开门。摆好了截图就是一张简单的平面图。</p>
+<div class="c">
+  <div class="room-in">房间 <input id="rw" type="number" step="0.1" min="2" max="15"> 米 × <input id="rl" type="number" step="0.1" min="2" max="15"> 米
+  · 门在 <select id="door"><option value="b">下墙左边</option><option value="t">上墙左边</option><option value="l">左墙下边</option><option value="r">右墙下边</option></select></div>
+</div>
+<svg id="stage"></svg>
+<div class="tools"><button class="ghost" onclick="rot()">↻ 旋转</button><button class="ghost" onclick="del()">🗑 删除</button><button class="ghost" onclick="if(confirm('清空所有家具？')){S.items=[];sel=-1;draw()}">清空</button></div>
+<div class="c"><b>加家具</b>（宽 × 深，米）
+  <div class="pal" id="pal"></div></div>
+<div class="c warns" id="warns"></div>
+</div>
+<script>
+// 尺寸单位：米。家具 {n 名字, x, y 左上角, w 宽, h 深}
+const FURN = [
+  ['双人床', 1.5, 2.0], ['单人床', 1.2, 2.0], ['床头柜', 0.45, 0.4], ['衣柜', 1.2, 0.6], ['书桌', 1.2, 0.6], ['椅子', 0.5, 0.5],
+  ['书架', 0.8, 0.3], ['沙发', 1.8, 0.85], ['茶几', 1.0, 0.5], ['梳妆台', 1.0, 0.45],
+  ['点单台', 2.0, 0.6], ['两人桌', 0.7, 0.7], ['四人桌', 1.2, 0.8], ['吧台', 2.4, 0.5], ['拍照墙', 1.5, 0.2], ['冰箱', 0.7, 0.7],
+];
+const COLORS = ['#fbe6df', '#e1ebf7', '#ece5f7', '#dff2e8', '#fdf0d6'];
+let S = load('planner', null) || {w: 4, l: 3.5, door: 'b', items: []}, sel = -1;
+const svg = document.getElementById('stage'), PAD = 0.3;
+const $i = id => document.getElementById(id);
+$i('rw').value = S.w; $i('rl').value = S.l; $i('door').value = S.door;
+['rw', 'rl', 'door'].forEach(id => $i(id).onchange = () => { S.w = Math.max(2, +$i('rw').value || 4); S.l = Math.max(2, +$i('rl').value || 3.5); S.door = $i('door').value; draw(); });
+$i('pal').innerHTML = FURN.map(([n, w, h], k) => `<button onclick="add(${k})">${n} <small>${w}×${h}</small></button>`).join('');
+
+function add(k){ const [n, w, h] = FURN[k]; S.items.push({n, w, h, x: Math.max(0, (S.w - w) / 2), y: Math.max(0, (S.l - h) / 2)}); sel = S.items.length - 1; draw(); }
+function rot(){ const it = S.items[sel]; if (!it) return toast('先点一件家具'); [it.w, it.h] = [it.h, it.w]; clamp(it); draw(); }
+function del(){ if (sel < 0) return toast('先点一件家具'); S.items.splice(sel, 1); sel = -1; draw(); }
+function clamp(it){ it.x = Math.min(Math.max(0, it.x), S.w - it.w); it.y = Math.min(Math.max(0, it.y), S.l - it.h); }
+const snap = v => Math.round(v * 20) / 20;  // 5 厘米
+
+// 门：宽 0.9 米，开门要留一个 0.9 米的扇形空间
+function doorBox(){
+  const d = 0.9, m = 0.15;
+  return {b: {x: m, y: S.l - d, w: d, h: d}, t: {x: m, y: 0, w: d, h: d}, l: {x: 0, y: S.l - m - d, w: d, h: d}, r: {x: S.w - d, y: S.l - m - d, w: d, h: d}}[S.door];
+}
+// 两个矩形之间的距离（重叠为负）
+function gap(a, b){
+  const dx = Math.max(b.x - (a.x + a.w), a.x - (b.x + b.w)), dy = Math.max(b.y - (a.y + a.h), a.y - (b.y + b.h));
+  return {dx, dy, overlap: dx < -0.001 && dy < -0.001};
+}
+function check(){
+  const bad = new Set(), msgs = [], it = S.items, D = doorBox();
+  for (let i = 0; i < it.length; i++){
+    if (gap(it[i], D).overlap){ bad.add(i); msgs.push(`🚪 ${it[i].n} 挡住开门了`); }
+    for (let j = i + 1; j < it.length; j++){
+      const g = gap(it[i], it[j]);
+      if (g.overlap){ bad.add(i); bad.add(j); msgs.push(`❌ ${it[i].n} 和 ${it[j].n} 重叠了`); continue; }
+      // 正对着、中间有缝但不到 0.6 米 → 人过不去
+      const side = (g.dx > 0.05 && g.dx < 0.6 && g.dy < 0) ? g.dx : (g.dy > 0.05 && g.dy < 0.6 && g.dx < 0) ? g.dy : 0;
+      if (side && !/椅子|床头柜/.test(it[i].n + it[j].n)){ bad.add(i); bad.add(j); msgs.push(`⚠️ ${it[i].n} 和 ${it[j].n} 之间只有 ${Math.round(side * 100)} 厘米，人走不过去（至少 60）`); }
+    }
+  }
+  return {bad, msgs};
+}
+function draw(){
+  save('planner', S);
+  const W = S.w + PAD * 2, H = S.l + PAD * 2;
+  svg.setAttribute('viewBox', `${-PAD} ${-PAD} ${W} ${H}`);
+  const {bad, msgs} = check(), D = doorBox();
+  let g = '';
+  for (let x = 0; x <= S.w + 1e-6; x += 0.5) g += `<line x1="${x}" y1="0" x2="${x}" y2="${S.l}" stroke="#eee" stroke-width="0.01"/>`;
+  for (let y = 0; y <= S.l + 1e-6; y += 0.5) g += `<line x1="0" y1="${y}" x2="${S.w}" y2="${y}" stroke="#eee" stroke-width="0.01"/>`;
+  g += `<rect x="0" y="0" width="${S.w}" height="${S.l}" fill="none" stroke="#2b2622" stroke-width="0.08"/>`;
+  // 门：断开墙 + 开门弧线
+  const dw = 0.9, arc = {b: `M${D.x} ${S.l} A${dw} ${dw} 0 0 1 ${D.x + dw} ${S.l - dw}`, t: `M${D.x} 0 A${dw} ${dw} 0 0 0 ${D.x + dw} ${dw}`, l: `M0 ${D.y + dw} A${dw} ${dw} 0 0 0 ${dw} ${D.y}`, r: `M${S.w} ${D.y + dw} A${dw} ${dw} 0 0 1 ${S.w - dw} ${D.y}`}[S.door];
+  const gapLine = {b: [D.x, S.l, D.x + dw, S.l], t: [D.x, 0, D.x + dw, 0], l: [0, D.y, 0, D.y + dw], r: [S.w, D.y, S.w, D.y + dw]}[S.door];
+  g += `<line x1="${gapLine[0]}" y1="${gapLine[1]}" x2="${gapLine[2]}" y2="${gapLine[3]}" stroke="#fff" stroke-width="0.1"/><path d="${arc}" fill="none" stroke="#8a7f74" stroke-width="0.02" stroke-dasharray="0.05 0.04"/>`;
+  g += `<text x="${S.w / 2}" y="-0.08" font-size="0.16" text-anchor="middle" fill="#5b524a">${Math.round(S.w * 1000)}</text><text x="${S.w + 0.08}" y="${S.l / 2}" font-size="0.16" fill="#5b524a" transform="rotate(90 ${S.w + 0.08} ${S.l / 2})" text-anchor="middle">${Math.round(S.l * 1000)}</text>`;
+  S.items.forEach((it, i) => {
+    const fs = Math.min(0.16, it.w / (it.n.length + 1), it.h / 2.2);
+    g += `<g data-i="${i}"><rect x="${it.x}" y="${it.y}" width="${it.w}" height="${it.h}" fill="${bad.has(i) ? '#fbe9e4' : COLORS[i % COLORS.length]}" stroke="${i === sel ? '#e07a5f' : bad.has(i) ? '#c4553d' : '#2b2622'}" stroke-width="${i === sel ? 0.05 : 0.02}"/>
+      <text x="${it.x + it.w / 2}" y="${it.y + it.h / 2 + fs / 3}" font-size="${fs}" text-anchor="middle" fill="#2b2622" pointer-events="none">${it.n}</text></g>`;
+  });
+  svg.innerHTML = g;
+  const it = S.items[sel];
+  $i('warns').innerHTML = (it ? `<div>选中：<b>${it.n}</b> ${Math.round(it.w * 100)} × ${Math.round(it.h * 100)} 厘米，离左墙 ${Math.round(it.x * 100)}、离上墙 ${Math.round(it.y * 100)} 厘米</div>` : '<div class="s" style="margin:0">点一件家具可以选中它</div>') +
+    (msgs.length ? msgs.map(m => `<div>${m}</div>`).join('') : S.items.length ? '<div style="color:var(--ok)">✅ 没有重叠，通道都够宽，门也开得开</div>' : '');
+}
+// 拖动（手指、鼠标都行）
+let drag = null;
+function pt(e){ const p = svg.createSVGPoint(); p.x = e.clientX; p.y = e.clientY; return p.matrixTransform(svg.getScreenCTM().inverse()); }
+svg.addEventListener('pointerdown', e => {
+  const g = e.target.closest('g[data-i]'); if (!g){ sel = -1; draw(); return; }
+  sel = +g.dataset.i; const p = pt(e), it = S.items[sel]; drag = {dx: p.x - it.x, dy: p.y - it.y};
+  svg.setPointerCapture(e.pointerId); draw();
+});
+svg.addEventListener('pointermove', e => { if (!drag || sel < 0) return; const p = pt(e), it = S.items[sel]; it.x = snap(p.x - drag.dx); it.y = snap(p.y - drag.dy); clamp(it); draw(); });
+svg.addEventListener('pointerup', () => { drag = null; });
+draw();
+</script></body></html>

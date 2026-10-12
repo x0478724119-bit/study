@@ -43,7 +43,7 @@ function notify(text){
 
 // 订单编号：类别缩写 + 序号，比如 画画 J04 → ART-04（只是显示用，内部还是用 id）
 const JOB_PREFIX = {室内: 'INT', 设计: 'DSN', 画画: 'ART', 编程: 'COD', 英语: 'ENG'};
-function jobNo(j){ return (JOB_PREFIX[j.type] || 'JOB') + '-' + String(j.id).replace(/\D/g, '').padStart(2, '0'); }
+function jobNo(j){ const m = String(j.id).match(/^J(\d+)$/); return (JOB_PREFIX[j.type] || 'JOB') + '-' + (m ? m[1].padStart(2, '0') : String(j.id).slice(-3)); }
 
 // 验收码校验：只存哈希，不存原码
 function fnv(s){ let h = 0x811c9dc5; for (const b of new TextEncoder().encode(s)){ h ^= b; h = Math.imul(h, 0x01000193) >>> 0; } return h.toString(16).padStart(8, '0'); }
@@ -53,3 +53,44 @@ function toast(m){
   if (!t){ t = document.createElement('div'); t.id = 'toast'; t.className = 'toast'; document.body.appendChild(t); }
   t.textContent = m; t.classList.add('show'); clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove('show'), 2000);
 }
+
+// ===== 任务金币：按时长给（任务说明里写"约 N 分钟"）=====
+// ≤10 分钟 1 · 15–20 分钟 2 · 30 分钟左右 3 · 45 分钟以上 4；没写时长的老任务 2。也可以在任务上直接写 c:3。
+function taskCoin(t){
+  if (t.c) return t.c;
+  const m = (String(t.d || '').match(/约\s*(\d+)\s*分钟/) || [])[1];
+  if (!m) return 2;
+  return +m <= 10 ? 1 : +m <= 20 ? 2 : +m <= 35 ? 3 : 4;
+}
+
+// ===== 写作防作弊：不能粘贴、记录切出页面、用时、一次冒出一大段 =====
+// guardWrite(输入框, 记录名) 绑上；提交时 writeStats(记录名, 正文) 得到一行说明，clearWrite(记录名) 清掉。
+let _wsActive = null;
+function _wsGet(key){ return load('ws', {})[key] || {ms: 0, keys: 0, del: 0, paste: 0, away: 0, chunk: 0}; }
+function _wsPut(key, st){ const s = load('ws', {}); s[key] = st; save('ws', s); }
+function guardWrite(el, key){
+  if (!el || el._g) return; el._g = 1;
+  let last = 0, len = el.value.length;
+  const bump = f => { const st = _wsGet(key), n = Date.now(); if (last && n - last < 60000) st.ms += n - last; last = n; f(st); _wsPut(key, st); };
+  el.addEventListener('focus', () => { _wsActive = key; });
+  el.addEventListener('paste', e => { e.preventDefault(); bump(st => st.paste++); toast('这里不能粘贴，要自己打哦'); });
+  el.addEventListener('drop', e => e.preventDefault());
+  el.addEventListener('beforeinput', e => {
+    if (e.inputType === 'insertFromPaste' || e.inputType === 'insertFromDrop'){ e.preventDefault(); bump(st => st.paste++); return; }
+    bump(st => { if (String(e.inputType).startsWith('delete')) st.del++; else st.keys++; });
+  });
+  el.addEventListener('input', () => { const d = el.value.length - len; len = el.value.length; if (d > 40) bump(st => st.chunk++); });
+}
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden && _wsActive){ const st = _wsGet(_wsActive); st.away++; _wsPut(_wsActive, st); }
+});
+function writeStats(key, text){
+  const st = _wsGet(key), min = Math.max(1, Math.round(st.ms / 60000)), n = String(text || '').length;
+  const flags = [];
+  if (st.away) flags.push(`切出页面 ${st.away} 次`);
+  if (st.paste) flags.push(`想粘贴 ${st.paste} 次（被拦下）`);
+  if (st.chunk) flags.push(`一次冒出一大段 ${st.chunk} 次`);
+  if (n > 120 && n / min > 150) flags.push('打字快得不正常');
+  return `⏱ 写了约 ${min} 分钟 · ${n} 字 · 删改 ${st.del} 次` + (flags.length ? `\n⚠️ ${flags.join('；')}` : ' · ✅ 没发现异常');
+}
+function clearWrite(key){ const s = load('ws', {}); delete s[key]; save('ws', s); if (_wsActive === key) _wsActive = null; }
