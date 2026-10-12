@@ -2,7 +2,7 @@
 <html lang="zh-CN"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>做题</title>
-<link rel="stylesheet" href="style.css?v=1791767533">
+<link rel="stylesheet" href="style.css?v=1791767738">
 </head><body><div class="w">
 <a class="back" id="back" href="./">← 回到任务</a>
 <h1 id="title">加载中…</h1>
@@ -12,7 +12,7 @@
 <div id="bar" class="bar"><button class="main" id="submit">交卷</button></div>
 <div id="result"></div>
 </div>
-<script src="common.js?v=1791767533"></script>
+<script src="common.js?v=1791767738"></script>
 <script>
 // ===== 通用做题引擎 =====
 // 题库放在 data/<id>.js，用 quiz.html?s=<id> 打开。
@@ -85,7 +85,7 @@ function render(){
     if (q.p && q.p !== lastP){ const cn = SET.passagesCn && SET.passagesCn[q.p]; h += `<div class="c passage">${SET.passages[q.p]}${cn ? `<details class="cn"><summary>看中文翻译</summary>${cn}</details>` : ''}</div>`; }
     lastP = q.p;
     h += `<div class="c q" id="q${i}"><div class="qn">${i+1}. ${q.q}</div>`;
-    if (q.t === 'fill') h += `<input class="fill" id="in${i}" autocomplete="off" autocapitalize="off" placeholder="填写答案">`;
+    if (q.t === 'fill') h += `<input class="fill" id="in${i}" autocomplete="off" autocapitalize="off" placeholder="填写答案（给了首字母的，写整个词或只写后面都行）">`;
     else h += q.opts.map((o,j)=>`<label class="opt"><input type="radio" name="r${i}" value="${j}"> <span>${String.fromCharCode(65+j)}. ${o}</span></label>`).join('');
     h += `<div class="ex" id="ex${i}"></div></div>`;
   }
@@ -107,7 +107,9 @@ function check(i){
   const q = SET.qs[i];
   if (q.t === 'fill'){
     const v = norm(document.getElementById('in'+i).value);
-    return [].concat(q.a).some(a => norm(a) === v);
+    // 题目给了首字母（如 a d________）时，只填后面的字母也算对
+    const pre = ((q.q.match(/([A-Za-z]+)_{2,}/) || [])[1] || '').toLowerCase();
+    return [].concat(q.a).some(a => norm(a) === v || (pre && norm(a).startsWith(pre) && norm(a).slice(pre.length) === v));
   }
   const r = document.querySelector(`input[name="r${i}"]:checked`);
   return !!r && +r.value === q.a;
