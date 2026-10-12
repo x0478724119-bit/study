@@ -107,7 +107,7 @@ window.BOOK = {
 <div class="warn">⚠️ 短暂动词不能和 for/since 连用（买、来、死、离开都是一瞬间的事）：<br>❌ I have bought this phone for two years. → ✅ I <b>have had</b> this phone for two years.（buy → have）<br>❌ He has come here for a week. → ✅ He <b>has been</b> here for a week.（come → be）</div>
 <p><b>gone to 和 been to：</b></p>
 <ul><li>He <b>has gone to</b> Beijing. 他去北京了（人现在<b>不在这里</b>）</li><li>He <b>has been to</b> Beijing. 他去过北京（<b>回来了</b>）</li></ul>
-<details class="try"><summary>试一试：I ___ (live) in Liuyang since 2023.</summary><div>have lived。since 2023 = 从 2023 年一直到现在。</div></details>
+<details class="try"><summary>试一试：I ___ (live) in this town since 2023.</summary><div>have lived。since 2023 = 从 2023 年一直到现在。</div></details>
 <details class="try"><summary>试一试：She ___ (finish) the book last night.</summary><div>finished。last night 是具体的过去时间，只能用过去时。</div></details>
 <div class="sum"><b>📌 一句话记住</b>：有具体过去时间 → 过去时；想说"到现在为止 / 对现在的影响" → 现在完成时。</div>
 <a data-quiz="en-04">语法 + 阅读练习</a></div>
