@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="学习站">
 <title>学习站</title>
-<link rel="stylesheet" href="style.css?v=1791784480">
+<link rel="stylesheet" href="style.css?v=1791785283">
 </head><body class="app">
 <header class="top">
   <div class="brand"><div class="logo" style="background:url(apple-touch-icon.png) center/cover"></div><div><b>我的设计工作室</b><small id="lv"></small></div></div>
@@ -21,7 +21,7 @@
 </nav>
 <div class="modal" id="modal"><div class="box" id="mbox"></div></div>
 
-<script src="common.js?v=1791784480"></script>
+<script src="common.js?v=1791785283"></script>
 <script>
 const LEVELS = [
   {lv:1, name:'设计学徒', need:0, icon:'🌱'},
@@ -287,6 +287,7 @@ function viewJob(j){
     <h3>📦 要交什么</h3>${li(j.deliver)}
     <h3>📐 具体要求</h3>${li(j.spec)}
     <h3>✅ 验收标准</h3>${li(j.accept)}
+    ${(j.pre || []).length ? `<h3>📚 前置课</h3><p>${j.pre.map(id => (load('lesson', {})[id] ? '✅ ' : '⬜️ ') + `<a class="go" href="book.html?k=skills#${id}">${id === 'd6-plan' ? '平面图' : id}</a>`).join('　')}</p>` : ''}
     ${j.ref ? `<h3>📖 参考</h3><a class="go" href="${j.ref}">打开相关教程 →</a>` : ''}</div>
     <div class="c jd"><h3>💰 报酬</h3>
     <div class="pay"><div><small>接单：先拿定金</small><b>+${dep}</b></div><div><small>满意：再拿尾款</small><b>+${j.reward - dep}</b></div><div><small>一般：尾款打折（总共 ${CONFIG.GOOD_ENOUGH * 100}%）</small><b>+${Math.round(j.reward * CONFIG.GOOD_ENOUGH) - dep}</b></div><div><small>放弃或超时：退定金 + 赔付</small><b>−${dep + breach(j)}</b></div></div>
@@ -294,8 +295,12 @@ function viewJob(j){
   // 最下面：操作
   if (lvLock) h += `<div class="bar-msg">🔒 累计赚到 <b>${LEVELS[j.minLv - 1].need}</b> 金币升到 Lv${j.minLv}「${LEVELS[j.minLv - 1].name}」才能接，还差 <b>${LEVELS[j.minLv - 1].need - w.earned}</b> 金币。多做作业、多接单就能升级！</div><button class="ghost" disabled>🔒 Lv${j.minLv} 解锁</button>`;
   else if (v.st === 'open'){
+    const need = (j.pre || []).filter(id => !load('lesson', {})[id]);
+    if (need.length) h += `<div class="bar-msg">📚 接这一单之前要先学完前置课，交了小测就能接。</div><a class="btn2" style="display:block;text-align:center" href="book.html?k=skills#${need[0]}">去上前置课 →</a><button class="main" disabled>接单</button>`;
+    else {
     const why = doingCount() >= CONFIG.JOB_LIMIT ? `手上已经有 ${CONFIG.JOB_LIMIT} 单了` : stale().length ? `有作业欠了超过 ${CONFIG.STALE} 天，先补完` : w.coins < 0 ? '金币是负数，先补作业' : !unlocked() ? '先完成今天的任务' : '';
     h += why ? `<div class="bar-msg">🔒 ${why}</div><button class="main" disabled>接单</button>` : `<button class="main" onclick="take('${j.id}')">接单（马上拿定金 ${dep} 金币）</button>`;
+    }
   } else if (v.st === 'doing' && j.write) h += `<div class="c"><h3 style="margin:0 0 4px">✍️ 在这里写（至少 ${j.write} 个词）</h3><p class="s" style="margin:0">不能粘贴；写的时间、有没有切出去都会记下来，一起交给姐姐。写一半可以先走，草稿会保存。</p>
       <textarea class="fill wbox" style="min-height:220px" data-ws="job-${j.id}" id="jw-${j.id}" oninput="const d=load('jdraft',{});d['${j.id}']=this.value;save('jdraft',d);$('#wc-${j.id}').textContent=(this.value.match(/[A-Za-z']+/g)||[]).length">${esc(load('jdraft', {})[j.id] || '')}</textarea>
       <div class="s" style="margin:4px 0 0">已写 <b id="wc-${j.id}">${((load('jdraft', {})[j.id] || '').match(/[A-Za-z']+/g) || []).length}</b> 个词</div></div>
@@ -352,6 +357,7 @@ function checkCode(id){
 function viewBook(){
   return `<h1>学习手册</h1><p class="s">路线、目标学校、三年计划都在这里</p>
     <div class="c"><a class="go big" href="handbook.html">📘 打开成长手册 →</a><div class="d">从现在到上大学：要去哪、学什么、每个月做什么。</div></div>
+    <div class="c"><a class="go big" href="book.html?k=skills">🎓 技能课 →</a><div class="d">接某些订单之前要先学的课（比如奶茶店要先学平面图）。</div></div>
     <div class="c"><a class="go big" href="planner.html">📐 户型练习台 →</a><div class="d">按真实尺寸摆家具，自动检查通道够不够宽。手机上酷家乐太小时用它练布局。</div></div>
     <div class="c"><a class="go big" href="book.html">📗 每日手册 →</a><div class="d">每天要学的讲解都在这里：数学、英语语法、听力方法、软件课。按天翻。</div></div>
 `;

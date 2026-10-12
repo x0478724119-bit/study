@@ -4,8 +4,8 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="icon" type="image/png" href="icon-512.png">
 <title>每日手册</title>
-<script src="common.js?v=1791784480"></script>
-<link rel="stylesheet" href="style.css?v=1791784480">
+<script src="common.js?v=1791785283"></script>
+<link rel="stylesheet" href="style.css?v=1791785283">
 <style>
 .dtabs{display:flex;gap:6px;overflow-x:auto;margin:10px 0 4px;padding-bottom:4px}
 .dtabs a{flex:0 0 auto;padding:6px 12px;border-radius:999px;background:var(--card);border:1px solid var(--line);color:var(--ink);text-decoration:none;font-size:14px}
@@ -62,25 +62,28 @@ svg.fig{display:block;width:100%;max-width:420px;margin:10px auto;background:#ff
 // 小测提交后存进 localStorage 的 lesson[<lessonId>]（首页任务 lesson:'d5-kjl' 会自动打勾），并推送给姐姐。
 const P = new URLSearchParams(location.search), WK = ['日','一','二','三','四','五','六'];
 const keys = Object.keys(window.DAYS || {}).sort();
+const SK = P.get('k');  // 技能课：book.html?k=skills
 const D = P.get('d') && DAYS[P.get('d')] ? P.get('d') : (keys.filter(k => DAYS[k].book && k <= dayStr()).pop() || keys.find(k => DAYS[k].book));
 document.querySelector('.back').href = './?d=' + D;
 function esc(x){ return String(x).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
 
-document.getElementById('tabs').innerHTML = keys.map((k, i) => DAYS[k].book ?
+if (SK) document.getElementById('tabs').style.display = 'none';
+else document.getElementById('tabs').innerHTML = keys.map((k, i) => DAYS[k].book ?
   `<a class="${k === D ? 'on' : ''}" href="?d=${k}">第 ${i + 1} 天 · ${+k.slice(5,7)}/${+k.slice(8)} 周${WK[new Date(k + 'T12:00').getDay()]}</a>` : '').join('');
 
 const sc = document.createElement('script');
-sc.src = 'data/book/' + D + '.js?v=' + Date.now();
+sc.src = 'data/book/' + (SK ? 'skills' : D) + '.js?v=' + Date.now();
 sc.onload = () => paint();
 sc.onerror = () => { document.getElementById('main').innerHTML = '<div class="c">这一天还没有手册。</div>'; };
 document.body.appendChild(sc);
 
 let B, cur;
 function paint(){
-  B = window.BOOK; const day = DAYS[D];
+  B = window.BOOK; const day = SK ? {name: '🎓 技能课'} : DAYS[D];
+  if (SK) document.querySelector('.back').href = './';
   document.getElementById('title').textContent = day.name;
   document.title = '手册 · ' + day.name;
-  document.getElementById('sub').innerHTML = `${D} 周${WK[new Date(D + 'T12:00').getDay()]} · ${B.intro || ''}`;
+  document.getElementById('sub').innerHTML = SK ? B.intro : `${D} 周${WK[new Date(D + 'T12:00').getDay()]} · ${B.intro || ''}`;
   // 链接里的 #小节id 决定打开哪一科
   const h = location.hash.slice(1), hit = h && B.parts.find(p => p.id === h || p.html.includes(`id="${h}"`));
   show(hit ? hit.id : B.parts[0].id, h);
@@ -112,7 +115,7 @@ function paintTodo(){
     const q = load('quiz-' + a.dataset.quiz, null), id = 'qz-' + a.dataset.quiz; a.id = id;
     items.push(`<a href="#" onclick="document.getElementById('${id}').scrollIntoView({block:'center'});return false"><span>${q && q.done ? '✅' : '⬜️'}</span>✏️ ${a.dataset.t}</a>`);
   });
-  document.getElementById('todo').innerHTML = '<b>这一科今天要做</b>' + items.join('');
+  document.getElementById('todo').innerHTML = (SK ? '<b>这一课要做</b>' : '<b>这一科今天要做</b>') + items.join('');
 }
 
 // "去做题"按钮：显示有没有做完

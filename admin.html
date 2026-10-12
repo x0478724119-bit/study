@@ -5,7 +5,7 @@
 <link rel="icon" type="image/png" href="icon-512.png">
 <meta name="robots" content="noindex">
 <title>管理后台</title>
-<link rel="stylesheet" href="style.css?v=1791784480">
+<link rel="stylesheet" href="style.css?v=1791785283">
 <style>
 .tabs2{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0 14px}.tabs2 button{width:auto;background:var(--card);border:1px solid var(--line);color:var(--ink);padding:8px 14px}.tabs2 button.on{background:var(--acc);color:#fff;border-color:var(--acc)}
 label{display:block;font-size:13px;color:var(--soft);margin:10px 0 4px}
@@ -19,7 +19,7 @@ textarea.in{min-height:72px}.grid3{display:grid;grid-template-columns:1fr 1fr 1f
 </head><body><div class="w">
 <div id="app"></div>
 </div>
-<script src="common.js?v=1791784480"></script>
+<script src="common.js?v=1791785283"></script>
 <script>
 // ===== 管理后台：只有存了 GitHub 钥匙的浏览器能改东西 =====
 const REPO = 'x0478724119-bit/study', API = 'https://api.github.com/repos/' + REPO + '/contents/';
@@ -126,7 +126,7 @@ function vEdit(){
     <label>要交什么（一行一条）</label><textarea class="in" id="f-deliver">${L(j.deliver)}</textarea>
     <label>具体要求（一行一条）</label><textarea class="in" id="f-spec">${L(j.spec)}</textarea>
     <label>验收标准（一行一条）</label><textarea class="in" id="f-accept">${L(j.accept)}</textarea>
-    <div class="grid3"><div><label>指定工具（可空，比如 酷家乐）</label><input class="in" id="f-tool" value="${esc(j.tool || '')}"></div><div><label>在网站上写（最少词数，可空）</label><input class="in" id="f-write" type="number" value="${j.write || ''}"></div></div>
+    <div class="grid3"><div><label>指定工具（可空，比如 酷家乐）</label><input class="in" id="f-tool" value="${esc(j.tool || '')}"></div><div><label>在网站上写（最少词数，可空）</label><input class="in" id="f-write" type="number" value="${j.write || ''}"></div><div><label>前置课 id（可空，如 d6-plan）</label><input class="in" id="f-pre" value="${esc((j.pre || []).join(','))}"></div></div>
     <label>参考链接（可空，比如 book.html?d=2026-10-16#d6-art）</label><input class="in" id="f-ref" value="${esc(j.ref)}">
     <button class="main" onclick="saveJob()">保存并发布</button><p class="s" id="msg"></p></div>`;
 }
@@ -139,6 +139,7 @@ async function saveJob(){
   if (v('minLv')) j.minLv = +v('minLv'); else delete j.minLv;
   if (v('tool')) j.tool = v('tool'); else delete j.tool;
   if (v('write')) j.write = +v('write'); else delete j.write;
+  if (v('pre')) j.pre = v('pre').split(/[,，\s]+/).filter(Boolean); else delete j.pre;
   if (!j.title || !j.reward){ $('#msg').textContent = '标题和报酬要填'; return; }
   j.h = await hashes(j.id);
   if (isNew) jobs.push(j);
