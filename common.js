@@ -12,7 +12,7 @@ const CONFIG = {
   GOOD_ENOUGH: 0.6,        // 验收"一般"：总共只拿到报酬的 60%
   JOB_LIMIT: 2,            // 同时最多 2 个进行中的单；可以放弃换别的
   STALE: 7,                // 作业欠超过 7 天：不能接单、不能兑换；请假的作业 7 天内没补完照样扣
-  FEISHU: 'https://open.feishu.cn/open-apis/bot/v2/hook/7ab344b3-6dc5-40f9-a39b-d73f3c5f5358',
+  FEISHU: 'https://open.feishu.cn/open-apis/bot/v2/hook/1af9d69f-acb2-491f-824e-037b5537a920',
 };
 
 const pad = n => String(n).padStart(2, '0');
