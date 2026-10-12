@@ -4,7 +4,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="学习站">
 <title>学习站</title>
-<link rel="stylesheet" href="style.css?v=1791767738">
+<link rel="stylesheet" href="style.css?v=1791768115">
 </head><body class="app">
 <header class="top">
   <div class="brand"><div class="logo">🏠</div><div><b>我的设计工作室</b><small id="lv"></small></div></div>
@@ -19,7 +19,7 @@
 </nav>
 <div class="modal" id="modal"><div class="box" id="mbox"></div></div>
 
-<script src="common.js?v=1791767738"></script>
+<script src="common.js?v=1791768115"></script>
 <script>
 const LEVELS = [
   {lv:1, name:'设计学徒', need:0, icon:'🌱'},
@@ -110,6 +110,8 @@ function dayComplete(key){ const d = DAYS[key]; return !!d && d.tasks.every((t,i
 function unlocked(){ return isWeekend(T) || !DAYS[T] || dayComplete(T); }
 
 let selDay = new URLSearchParams(location.search).get('d') || null;
+// 用完 ?d= 就从地址栏去掉，否则刷新时总跳回那一天（点过的日期由 sessionStorage 记住）
+if (selDay) try { history.replaceState(null, '', location.pathname); } catch(e){}
 function viewToday(){
   const hp = paused(T);
   if (hp && !selDay) return `<div class="c" style="text-align:center;padding:36px 16px"><div style="font-size:52px">🏖️</div><h1>假期中，好好玩！</h1><p class="s">${hp.why || ''}<br>${hp.from} ~ ${hp.to}<br>这几天不用学习、不用打卡、不扣金币</p></div>`;
