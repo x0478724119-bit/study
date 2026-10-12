@@ -3,8 +3,8 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <title>户型练习台</title>
-<script src="common.js?v=1791786538"></script>
-<link rel="stylesheet" href="style.css?v=1791786538">
+<script src="common.js?v=1791786853"></script>
+<link rel="stylesheet" href="style.css?v=1791786853">
 <style>
 .room-in{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:14px}.room-in input,.room-in select{width:70px;font:inherit;padding:6px 8px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink)}
 .room-in select{width:auto}
@@ -30,7 +30,7 @@
 <div class="mode"><button id="m2" class="on" onclick="setMode(2)">📐 平面图</button><button id="m3" onclick="setMode(3)">🧊 3D 效果</button></div>
 <svg id="stage"></svg>
 <div id="v3"><canvas id="c3"></canvas>
-  <p class="s" style="margin:6px 0">一根手指拖动：转着看 · 两根手指捏合（或滚轮）：放大缩小 · 点家具：选中后可以改颜色</p>
+  <p class="s" style="margin:6px 0">按住家具拖：移动家具 · 按住空地拖：转着看 · 两根手指捏合：放大缩小 · 点家具：选中，可以改颜色、旋转、删除</p>
   <div class="c">
     <div class="row3">改颜色：<button data-tg="wall" class="on" onclick="setTarget('wall')">墙</button><button data-tg="floor" onclick="setTarget('floor')">地板</button><button data-tg="item" onclick="setTarget('item')">选中的家具</button></div>
     <div class="sw" id="sw"></div>
@@ -112,6 +112,7 @@ function draw(){
   const it = S.items[sel];
   $i('warns').innerHTML = (it ? `<div>选中：<b>${it.n}</b> ${Math.round(it.w * 100)} × ${Math.round(it.h * 100)} 厘米，离左墙 ${Math.round(it.x * 100)}、离上墙 ${Math.round(it.y * 100)} 厘米</div>` : '<div class="s" style="margin:0">点一件家具可以选中它</div>') +
     (msgs.length ? msgs.map(m => `<div>${m}</div>`).join('') : S.items.length ? '<div style="color:var(--ok)">✅ 没有重叠，通道都够宽，门也开得开</div>' : '');
+  if (typeof mode !== 'undefined' && mode === 3 && R) build3d();
 }
 // 拖动（手指、鼠标都行）
 let drag = null;
@@ -138,7 +139,7 @@ document.getElementById('sw').innerHTML = SWATCH.map(c => `<button style="backgr
 
 function setMode(m){
   mode = m; $i('m2').classList.toggle('on', m === 2); $i('m3').classList.toggle('on', m === 3);
-  svg.style.display = $i('tools2').style.display = m === 2 ? '' : 'none';
+  svg.style.display = m === 2 ? '' : 'none';
   $i('v3').style.display = m === 3 ? 'block' : 'none';
   if (m === 3){ if (!window.THREE){ toast('3D 引擎没加载出来，检查网络后刷新'); return; } build3d(); }
 }
@@ -228,22 +229,36 @@ function render3(){
   walls.forEach(m => { const [nx, nz] = m.userData.n, [px, pz] = m.userData.p; m.visible = (cam.position.x - px) * nx + (cam.position.z - pz) * nz > 0; });
   R.render(scene, cam);
 }
+function hitAt(e){
+  const r = c3.getBoundingClientRect(), v = new THREE.Vector2((e.clientX - r.left) / r.width * 2 - 1, -(e.clientY - r.top) / r.height * 2 + 1), rc = new THREE.Raycaster();
+  rc.setFromCamera(v, cam); return rc;
+}
+function floorAt(e){ const p = new THREE.Vector3(); return hitAt(e).ray.intersectPlane(new THREE.Plane(new THREE.Vector3(0, 1, 0), 0), p) ? p : null; }
 function bindOrbit(){
-  const pts = new Map(); let pinch = 0, moved = 0;
-  c3.addEventListener('pointerdown', e => { c3.setPointerCapture(e.pointerId); pts.set(e.pointerId, [e.clientX, e.clientY]); moved = 0; });
+  const pts = new Map(); let pinch = 0, moved = 0, grab = null;
+  c3.addEventListener('pointerdown', e => {
+    c3.setPointerCapture(e.pointerId); pts.set(e.pointerId, [e.clientX, e.clientY]); moved = 0; grab = null;
+    if (pts.size === 1){
+      const hit = hitAt(e).intersectObjects(picks, true).find(h => h.object.userData.i !== undefined), f = floorAt(e);
+      if (hit && f){ const i = hit.object.userData.i, g = picks[i]; grab = {i, g, dx: g.position.x - f.x, dz: g.position.z - f.z}; }
+    }
+  });
   c3.addEventListener('pointermove', e => {
     if (!pts.has(e.pointerId)) return; const [x0, y0] = pts.get(e.pointerId); pts.set(e.pointerId, [e.clientX, e.clientY]);
-    if (pts.size === 1){ moved += Math.abs(e.clientX - x0) + Math.abs(e.clientY - y0); view.th -= (e.clientX - x0) * 0.008; view.ph = Math.min(1.45, Math.max(0.15, view.ph - (e.clientY - y0) * 0.008)); }
-    else if (pts.size === 2){ const [a, b] = [...pts.values()], dd = Math.hypot(a[0] - b[0], a[1] - b[1]); if (pinch) view.r = Math.min(20, Math.max(1.5, view.r * pinch / dd)); pinch = dd; moved = 99; }
+    if (pts.size === 1){
+      moved += Math.abs(e.clientX - x0) + Math.abs(e.clientY - y0);
+      if (grab && moved > 6){ const f = floorAt(e); if (f){ const it = S.items[grab.i]; it.x = snap(f.x + grab.dx + S.w / 2 - it.w / 2); it.y = snap(f.z + grab.dz + S.l / 2 - it.h / 2); clamp(it); grab.g.position.set(it.x + it.w / 2 - S.w / 2, 0, it.y + it.h / 2 - S.l / 2); } }
+      else if (!grab){ view.th -= (e.clientX - x0) * 0.008; view.ph = Math.min(1.45, Math.max(0.15, view.ph - (e.clientY - y0) * 0.008)); }
+    }
+    else if (pts.size === 2){ grab = null; const [a, b] = [...pts.values()], dd = Math.hypot(a[0] - b[0], a[1] - b[1]); if (pinch) view.r = Math.min(20, Math.max(1.5, view.r * pinch / dd)); pinch = dd; moved = 99; }
     render3();
   });
   const up = e => {
-    if (pts.size === 1 && moved < 6){ // 点一下 = 选家具
-      const r = c3.getBoundingClientRect(), v = new THREE.Vector2((e.clientX - r.left) / r.width * 2 - 1, -(e.clientY - r.top) / r.height * 2 + 1), rc = new THREE.Raycaster();
-      rc.setFromCamera(v, cam); const hit = rc.intersectObjects(picks, true).find(h => h.object.userData.i !== undefined);
-      sel = hit ? hit.object.userData.i : -1; if (hit) setTarget('item'); build3d(); draw();
+    if (pts.size === 1){
+      if (moved < 6){ sel = grab ? grab.i : -1; if (grab) setTarget('item'); draw(); }   // 点一下 = 选中
+      else if (grab){ sel = grab.i; draw(); }                                               // 拖完 = 保存位置、重新检查
     }
-    pts.delete(e.pointerId); if (pts.size < 2) pinch = 0;
+    grab = null; pts.delete(e.pointerId); if (pts.size < 2) pinch = 0;
   };
   c3.addEventListener('pointerup', up); c3.addEventListener('pointercancel', up);
   c3.addEventListener('wheel', e => { e.preventDefault(); view.r = Math.min(20, Math.max(1.5, view.r * (1 + e.deltaY * 0.001))); render3(); }, {passive: false});
