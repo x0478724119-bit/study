@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="学习站">
 <title>学习站</title>
-<link rel="stylesheet" href="style.css?v=1791787956">
+<link rel="stylesheet" href="style.css?v=1791848336">
 </head><body class="app">
 <header class="top">
   <div class="brand"><div class="logo" style="background:url(apple-touch-icon.png) center/cover"></div><div><b>我的设计工作室</b><small id="lv"></small></div></div>
@@ -21,7 +21,7 @@
 </nav>
 <div class="modal" id="modal"><div class="box" id="mbox"></div></div>
 
-<script src="common.js?v=1791787956"></script>
+<script src="common.js?v=1791848336"></script>
 <script>
 const LEVELS = [
   {lv:1, name:'设计学徒', need:0, icon:'🌱'},
@@ -39,7 +39,7 @@ const isWeekend = d => [0,6].includes(new Date(d + 'T12:00').getDay());
 
 // 加载数据文件（加时间戳，保证拿到最新的）
 function loadScript(src){ return new Promise(r => { const s = document.createElement('script'); s.src = src + '?v=' + Date.now(); s.onload = r; s.onerror = r; document.body.appendChild(s); }); }
-Promise.all([loadScript('data/days.js'), loadScript('data/jobs.js'), loadScript('data/pause.js'), loadScript('data/leave.js'), loadScript('data/adjust.js')]).then(() => { checkMissed(); render(); });
+Promise.all([loadScript('data/days.js'), loadScript('data/jobs.js'), loadScript('data/pause.js'), loadScript('data/leave.js'), loadScript('data/adjust.js'), loadScript('data/feedback.js')]).then(() => { checkMissed(); render(); });
 
 // 过去的工作日没做完：按没做完的项数扣金币（每天只结算一次）；补完按天数退还
 const okLeave = k => (window.LEAVE_OK || []).includes(k);
@@ -162,6 +162,9 @@ function viewToday(){
       : `<a class="btn2" href="quiz.html?s=${t.quiz}&d=${key}">开始 →</a>`;
     if (t.write) act += wv ? `<div class="wdone">✍️ ${esc(wv.text)}<br><small>${wv.time} 提交 · <a href="#" onclick="editWrite('${key}',${i});return false">修改</a></small></div>`
       : `<textarea class="fill wbox" data-ws="w-${key}-${i}" id="w-${key}-${i}" placeholder="${t.write}" oninput="draft('${key}',${i},this.value)">${esc(load('draft', {})[key + '-' + i] || '')}</textarea><button class="main sm" style="margin-top:8px" onclick="submitWrite('${key}',${i})">提交</button>`;
+    // 批改：data/feedback.js 里按 "日期-序号" 或教程 id 存
+    const fb = (window.FEEDBACK || {})[key + '-' + i] || (t.lesson && (window.FEEDBACK || {})[t.lesson]);
+    if (fb) act += `<details class="fb" ${load('fbSeen', {})[key + '-' + i] ? '' : 'open'}><summary onclick="const s=load('fbSeen',{});s['${key}-${i}']=1;save('fbSeen',s);this.querySelector('.new')?.remove()">📝 姐姐的批改${load('fbSeen', {})[key + '-' + i] ? '' : ' <span class="new">新</span>'}</summary>${fb.html}</details>`;
     const tick = !t.quiz && !t.write && !t.lesson ? `onclick="tog('${key}',${i})"` : '';
     return `<div class="c task ${on ? 'done' : ''}"><div class="chk ${on?'on':''}" ${tick}>${on?'✓':''}</div>
       <div style="flex:1"><div class="t"><span class="tag t-${t.tag}">${t.tag}</span>${t.t}<span class="tcoin">🪙${taskCoin(t)}</span></div><div class="d">${t.d}</div>${act}</div></div>`;

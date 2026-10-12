@@ -4,8 +4,8 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="icon" type="image/png" href="icon-512.png">
 <title>每日手册</title>
-<script src="common.js?v=1791787956"></script>
-<link rel="stylesheet" href="style.css?v=1791787956">
+<script src="common.js?v=1791848336"></script>
+<link rel="stylesheet" href="style.css?v=1791848336">
 <style>
 .dtabs{display:flex;gap:6px;overflow-x:auto;margin:10px 0 4px;padding-bottom:4px}
 .dtabs a{flex:0 0 auto;padding:6px 12px;border-radius:999px;background:var(--card);border:1px solid var(--line);color:var(--ink);text-decoration:none;font-size:14px}
@@ -54,6 +54,7 @@ svg.fig{display:block;width:100%;max-width:420px;margin:10px auto;background:#ff
 <div id="main"></div>
 </div>
 <script src="data/days.js"></script>
+<script>document.write('<script src="data/feedback.js?v=' + Date.now() + '"><\/script>')</script>
 <script>
 // ===== 每日手册 =====
 // 内容放在 data/book/<日期>.js（window.BOOK），用 book.html?d=<日期>#<小节id> 打开。
@@ -135,7 +136,7 @@ function paintChecks(){
   document.querySelectorAll('[data-ck]').forEach(box => {
     const id = box.dataset.ck, C = window.BOOK.checks[id], v = L[id];
     if (v){
-      box.innerHTML = `<div class="ck"><b>✍️ 小测</b><div class="ckdone">✅ ${v.time} 提交 · 要点 ${v.hit}/${v.total}\n${esc(v.text)}</div>
+      box.innerHTML = `<div class="ck"><b>✍️ 小测</b><div class="ckdone">✅ ${v.time} 提交 · 要点 ${v.hit}/${v.total}\n${esc(v.text)}</div>${(window.FEEDBACK || {})[id] ? `<div class="fb"><b>📝 姐姐的批改</b>${window.FEEDBACK[id].html}</div>` : ''}
         <a href="#" class="go" onclick="redoCk('${id}');return false">重新写</a></div>`;
       return;
     }
