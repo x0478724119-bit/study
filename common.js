@@ -94,3 +94,16 @@ function writeStats(key, text){
   return `⏱ 写了约 ${min} 分钟 · ${n} 字 · 删改 ${st.del} 次` + (flags.length ? `\n⚠️ ${flags.join('；')}` : ' · ✅ 没发现异常');
 }
 function clearWrite(key){ const s = load('ws', {}); delete s[key]; save('ws', s); if (_wsActive === key) _wsActive = null; }
+
+// ===== 课程 id → 名字 / 链接（订单前置课用）=====
+// d5-kjl 这种 = 第 5 天手册里的课；sk-xxx / d6-plan = 技能课
+const LESSON_NAMES = {'d6-plan': '平面图', 'sk-3v': '三视图', 'sk-canva': '可画入门', 'd6-kjl': '酷家乐第 5 课：灯光和效果图', 'd6-art': '美术第 1 课：一点透视', 'd5-kjl': '酷家乐第 4 课：材质和配色', 'd3-cv': '好 logo 的 4 条原则'};
+function lessonUrl(id){
+  const m = id.match(/^d(\d+)-/), ks = Object.keys(window.DAYS || {}).sort();
+  if (m && id !== 'd6-plan' && ks[+m[1] - 1]) return `book.html?d=${ks[+m[1] - 1]}#${id}`;
+  return `book.html?k=skills#${id}`;
+}
+function lessonName(id){
+  const m = id.match(/^d(\d+)-/), ks = Object.keys(window.DAYS || {}).sort(), day = m && id !== 'd6-plan' && ks[+m[1] - 1];
+  return (LESSON_NAMES[id] || id) + (day ? `（${+day.slice(5,7)}/${+day.slice(8)} 的课，可以提前学）` : '（技能课）');
+}

@@ -84,13 +84,16 @@ window.JOBS = [
    "两个方案风格明显不同",
    "缩小后依然清楚"
   ],
-  "ref": "lessons.html#cv1",
+  "ref": "book.html?k=skills#sk-canva",
   "h": [
    "63323804",
    "cc45bb12"
   ],
   "pub": "2026-10-12",
-  "tool": "可画"
+  "tool": "可画",
+  "pre": [
+   "sk-canva"
+  ]
  },
  {
   "id": "J06",
@@ -117,7 +120,8 @@ window.JOBS = [
    "b5faaa55",
    "f454b9e1"
   ],
-  "pub": "2026-10-12"
+  "pub": "2026-10-12",
+  "tool": "手机录视频"
  },
  {
   "id": "J07",
@@ -144,7 +148,8 @@ window.JOBS = [
    "8342926e",
    "c17052e6"
   ],
-  "pub": "2026-10-12"
+  "pub": "2026-10-12",
+  "tool": "手机录视频"
  },
  {
   "id": "J01",
@@ -172,13 +177,16 @@ window.JOBS = [
    "风格统一，配色协调",
    "效果图清楚、角度不重复"
   ],
-  "ref": "lessons.html#kjl1",
+  "ref": "book.html?d=2026-10-12#kjl1",
   "h": [
    "5fe39457",
    "7de0f6d1"
   ],
   "pub": "2026-10-12",
-  "tool": "酷家乐"
+  "tool": "酷家乐",
+  "pre": [
+   "d6-kjl"
+  ]
  },
  {
   "id": "J05",
@@ -214,7 +222,8 @@ window.JOBS = [
   "pub": "2026-10-12",
   "tool": "酷家乐",
   "pre": [
-   "d6-plan"
+   "d6-plan",
+   "d6-kjl"
   ]
  },
  {
@@ -269,13 +278,16 @@ window.JOBS = [
    "尺寸前后一致",
    "线条干净"
   ],
-  "ref": "",
+  "ref": "book.html?k=skills#sk-3v",
   "h": [
    "db6abad7",
    "e909def1"
   ],
   "pub": "2026-10-12",
-  "tool": "Procreate"
+  "tool": "Procreate",
+  "pre": [
+   "sk-3v"
+  ]
  },
  {
   "id": "J10",
@@ -363,7 +375,8 @@ window.JOBS = [
    "8b15e391",
    "9ea26ea0"
   ],
-  "pub": "2026-10-12"
+  "pub": "2026-10-12",
+  "tool": "手机录视频"
  },
  {
   "id": "J13",
@@ -390,7 +403,8 @@ window.JOBS = [
    "3ca5cde1",
    "e93f5594"
   ],
-  "pub": "2026-10-12"
+  "pub": "2026-10-12",
+  "tool": "手机录视频"
  },
  {
   "id": "J14",
@@ -417,7 +431,8 @@ window.JOBS = [
    "0a144ec3",
    "1553e1fb"
   ],
-  "pub": "2026-10-12"
+  "pub": "2026-10-12",
+  "tool": "手机录视频"
  },
  {
   "id": "J15",
@@ -449,6 +464,9 @@ window.JOBS = [
    "14cedd3f"
   ],
   "pub": "2026-10-12",
-  "tool": "Procreate 或纸笔（要用尺子）"
+  "tool": "Procreate 或纸笔（要用尺子）",
+  "pre": [
+   "d6-art"
+  ]
  }
 ];

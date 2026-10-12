@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="学习站">
 <title>学习站</title>
-<link rel="stylesheet" href="style.css?v=1791785283">
+<link rel="stylesheet" href="style.css?v=1791786087">
 </head><body class="app">
 <header class="top">
   <div class="brand"><div class="logo" style="background:url(apple-touch-icon.png) center/cover"></div><div><b>我的设计工作室</b><small id="lv"></small></div></div>
@@ -21,7 +21,7 @@
 </nav>
 <div class="modal" id="modal"><div class="box" id="mbox"></div></div>
 
-<script src="common.js?v=1791785283"></script>
+<script src="common.js?v=1791786087"></script>
 <script>
 const LEVELS = [
   {lv:1, name:'设计学徒', need:0, icon:'🌱'},
@@ -287,7 +287,7 @@ function viewJob(j){
     <h3>📦 要交什么</h3>${li(j.deliver)}
     <h3>📐 具体要求</h3>${li(j.spec)}
     <h3>✅ 验收标准</h3>${li(j.accept)}
-    ${(j.pre || []).length ? `<h3>📚 前置课</h3><p>${j.pre.map(id => (load('lesson', {})[id] ? '✅ ' : '⬜️ ') + `<a class="go" href="book.html?k=skills#${id}">${id === 'd6-plan' ? '平面图' : id}</a>`).join('　')}</p>` : ''}
+    ${(j.pre || []).length ? `<h3>📚 前置课（交了小测才能接单）</h3><div>${j.pre.map(id => `<div>${load('lesson', {})[id] ? '✅' : '⬜️'} <a class="go" href="${lessonUrl(id)}">${lessonName(id)}</a></div>`).join('')}</div>` : ''}
     ${j.ref ? `<h3>📖 参考</h3><a class="go" href="${j.ref}">打开相关教程 →</a>` : ''}</div>
     <div class="c jd"><h3>💰 报酬</h3>
     <div class="pay"><div><small>接单：先拿定金</small><b>+${dep}</b></div><div><small>满意：再拿尾款</small><b>+${j.reward - dep}</b></div><div><small>一般：尾款打折（总共 ${CONFIG.GOOD_ENOUGH * 100}%）</small><b>+${Math.round(j.reward * CONFIG.GOOD_ENOUGH) - dep}</b></div><div><small>放弃或超时：退定金 + 赔付</small><b>−${dep + breach(j)}</b></div></div>
@@ -296,7 +296,7 @@ function viewJob(j){
   if (lvLock) h += `<div class="bar-msg">🔒 累计赚到 <b>${LEVELS[j.minLv - 1].need}</b> 金币升到 Lv${j.minLv}「${LEVELS[j.minLv - 1].name}」才能接，还差 <b>${LEVELS[j.minLv - 1].need - w.earned}</b> 金币。多做作业、多接单就能升级！</div><button class="ghost" disabled>🔒 Lv${j.minLv} 解锁</button>`;
   else if (v.st === 'open'){
     const need = (j.pre || []).filter(id => !load('lesson', {})[id]);
-    if (need.length) h += `<div class="bar-msg">📚 接这一单之前要先学完前置课，交了小测就能接。</div><a class="btn2" style="display:block;text-align:center" href="book.html?k=skills#${need[0]}">去上前置课 →</a><button class="main" disabled>接单</button>`;
+    if (need.length) h += `<div class="bar-msg">📚 接这一单之前要先学完前置课，交了小测就能接。</div><a class="btn2" style="display:block;text-align:center" href="${lessonUrl(need[0])}">去上：${LESSON_NAMES[need[0]] || need[0]} →</a><button class="main" disabled>接单</button>`;
     else {
     const why = doingCount() >= CONFIG.JOB_LIMIT ? `手上已经有 ${CONFIG.JOB_LIMIT} 单了` : stale().length ? `有作业欠了超过 ${CONFIG.STALE} 天，先补完` : w.coins < 0 ? '金币是负数，先补作业' : !unlocked() ? '先完成今天的任务' : '';
     h += why ? `<div class="bar-msg">🔒 ${why}</div><button class="main" disabled>接单</button>` : `<button class="main" onclick="take('${j.id}')">接单（马上拿定金 ${dep} 金币）</button>`;
