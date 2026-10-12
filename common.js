@@ -41,6 +41,10 @@ function notify(text){
   try { fetch(CONFIG.FEISHU, {method: 'POST', mode: 'no-cors', headers: {'Content-Type': 'text/plain'}, body}); } catch(e){}
 }
 
+// 订单编号：类别缩写 + 序号，比如 画画 J04 → ART-04（只是显示用，内部还是用 id）
+const JOB_PREFIX = {室内: 'INT', 设计: 'DSN', 画画: 'ART', 编程: 'COD', 英语: 'ENG'};
+function jobNo(j){ return (JOB_PREFIX[j.type] || 'JOB') + '-' + String(j.id).replace(/\D/g, '').padStart(2, '0'); }
+
 // 验收码校验：只存哈希，不存原码
 function fnv(s){ let h = 0x811c9dc5; for (const b of new TextEncoder().encode(s)){ h ^= b; h = Math.imul(h, 0x01000193) >>> 0; } return h.toString(16).padStart(8, '0'); }
 
