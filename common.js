@@ -37,7 +37,8 @@ function addCoins(n, why){
 try { if (new URLSearchParams(location.search).get('me') === '1') localStorage.setItem('isAdmin', 'true'); } catch(e){}
 function notify(text){
   if (!CONFIG.FEISHU || load('isAdmin', false) || load('adminToken', '')) return;
-  const body = JSON.stringify({msg_type: 'text', content: {text: '【学习站】' + text}});
+  // 每条推送都带上当前余额，姐姐看最新一条就知道她有多少金币
+  const body = JSON.stringify({msg_type: 'text', content: {text: '【学习站】' + text + ` · 💰 余额 ${wallet().coins}`}});
   try { fetch(CONFIG.FEISHU, {method: 'POST', mode: 'no-cors', headers: {'Content-Type': 'text/plain'}, body}); } catch(e){}
 }
 
@@ -107,3 +108,6 @@ function lessonName(id){
   const m = id.match(/^d(\d+)-/), ks = Object.keys(window.DAYS || {}).sort(), day = m && id !== 'd6-plan' && ks[+m[1] - 1];
   return (LESSON_NAMES[id] || id) + (day ? `（${+day.slice(5,7)}/${+day.slice(8)} 的课，可以提前学）` : '（技能课）');
 }
+
+// 预览模式：姐姐的浏览器（开过后台或 ?me=1）什么都不锁，方便检查内容
+const PREVIEW = (() => { try { return load('isAdmin', false) || !!load('adminToken', ''); } catch(e){ return false; } })();

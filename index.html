@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="学习站">
 <title>学习站</title>
-<link rel="stylesheet" href="style.css?v=1791786853">
+<link rel="stylesheet" href="style.css?v=1791787956">
 </head><body class="app">
 <header class="top">
   <div class="brand"><div class="logo" style="background:url(apple-touch-icon.png) center/cover"></div><div><b>我的设计工作室</b><small id="lv"></small></div></div>
@@ -21,7 +21,7 @@
 </nav>
 <div class="modal" id="modal"><div class="box" id="mbox"></div></div>
 
-<script src="common.js?v=1791786853"></script>
+<script src="common.js?v=1791787956"></script>
 <script>
 const LEVELS = [
   {lv:1, name:'设计学徒', need:0, icon:'🌱'},
@@ -254,7 +254,7 @@ function checkJobs(){
   }
 }
 function viewJobs(){
-  if (jobSel && !(job(jobSel).minLv && level(wallet().earned).lv < job(jobSel).minLv)) return viewJob(job(jobSel));
+  if (jobSel && (PREVIEW || !(job(jobSel).minLv && level(wallet().earned).lv < job(jobSel).minLv))) return viewJob(job(jobSel));
   jobSel = null;
   let h = `<h1>接单大厅</h1><p class="s">点开订单看详情 · 接单先拿 ${CONFIG.DEPOSIT * 100}% 定金 · 同时最多 ${CONFIG.JOB_LIMIT} 单</p>`;
   // 排序：进行中 / 待验收在最上面，可接单在中间，已完成变灰放最下面
@@ -263,7 +263,7 @@ function viewJobs(){
   let shownDone = false, shownDoing = false, shownOpen = false;
   h += '<div class="chips">' + ['全部','室内','设计','画画','编程','英语'].map(t => `<button class="${jobType === t ? 'on' : ''}" onclick="jobType='${t}';render()">${t}</button>`).join('') + '</div>';
   for (const j of list.filter(j => jobType === '全部' || j.type === jobType)){
-    const v = jget(j.id), lvLock = j.minLv && level(wallet().earned).lv < j.minLv;
+    const v = jget(j.id), lvLock = !PREVIEW && j.minLv && level(wallet().earned).lv < j.minLv;
     if ((v.st === 'doing' || v.st === 'review') && !shownDoing){ h += '<h2>📌 进行中 · 待完成</h2>'; shownDoing = true; }
     if (v.st === 'open' && !shownOpen){ h += '<h2>🆕 可以接的单</h2>'; shownOpen = true; }
     if (v.st === 'done' && !shownDone){ h += '<h2 style="color:var(--faint)">已完成</h2>'; shownDone = true; }
@@ -277,7 +277,7 @@ function viewJobs(){
   return h;
 }
 function viewJob(j){
-  const v = jget(j.id), w = wallet(), dep = deposit(j), lvLock = j.minLv && level(w.earned).lv < j.minLv;
+  const v = jget(j.id), w = wallet(), dep = deposit(j), lvLock = !PREVIEW && j.minLv && level(w.earned).lv < j.minLv;
   const li = a => '<ul>' + a.map(x => `<li>${x}</li>`).join('') + '</ul>';
   let h = `<a class="back" href="#" onclick="jobSel=null;render();return false">← 返回接单大厅</a>
     <div class="c"><div class="row2"><span class="tag t-${j.type}">${j.type}</span><span class="${STATUS[v.st][1]}">● ${STATUS[v.st][0]}</span></div>
@@ -295,7 +295,7 @@ function viewJob(j){
   // 最下面：操作
   if (lvLock) h += `<div class="bar-msg">🔒 累计赚到 <b>${LEVELS[j.minLv - 1].need}</b> 金币升到 Lv${j.minLv}「${LEVELS[j.minLv - 1].name}」才能接，还差 <b>${LEVELS[j.minLv - 1].need - w.earned}</b> 金币。多做作业、多接单就能升级！</div><button class="ghost" disabled>🔒 Lv${j.minLv} 解锁</button>`;
   else if (v.st === 'open'){
-    const need = (j.pre || []).filter(id => !load('lesson', {})[id]);
+    const need = PREVIEW ? [] : (j.pre || []).filter(id => !load('lesson', {})[id]);
     if (need.length) h += `<div class="bar-msg">📚 接这一单之前要先学完前置课，交了小测就能接。</div><a class="btn2" style="display:block;text-align:center" href="${lessonUrl(need[0])}">去上：${LESSON_NAMES[need[0]] || need[0]} →</a><button class="main" disabled>接单</button>`;
     else {
     const why = doingCount() >= CONFIG.JOB_LIMIT ? `手上已经有 ${CONFIG.JOB_LIMIT} 单了` : stale().length ? `有作业欠了超过 ${CONFIG.STALE} 天，先补完` : w.coins < 0 ? '金币是负数，先补作业' : !unlocked() ? '先完成今天的任务' : '';
@@ -397,7 +397,7 @@ function render(){
   try { sessionStorage.setItem('nav', JSON.stringify({tab, job: jobSel, day: selDay})); } catch(e){}
   if (window.DAYS){ applyAdjust(); settle(); checkMissed(); weekly(); checkJobs(); }
   const w = wallet(); $('#coin').textContent = w.coins; const L = level(w.earned); $('#lv').textContent = `Lv${L.lv} · ${L.name}`;
-  $('#view').innerHTML = {today: viewToday, jobs: viewJobs, book: viewBook, me: viewMe}[tab]();
+  $('#view').innerHTML = (PREVIEW ? '<div class="bar-msg ok">👀 预览模式：你看到的是全部内容（不锁），诗予那边该锁的照样锁。这里的操作只改你自己浏览器的数据，不推送。</div>' : '') + {today: viewToday, jobs: viewJobs, book: viewBook, me: viewMe}[tab]();
   document.querySelectorAll('.tabs button').forEach(b => b.classList.toggle('on', b.dataset.t === tab));
   document.querySelectorAll('textarea[data-ws]').forEach(el => guardWrite(el, el.dataset.ws));
 }
