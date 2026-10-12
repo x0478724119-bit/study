@@ -76,6 +76,11 @@ window.BOOK = {
 <div class="ex"><b>例题</b>　直角三角形三边 3、4、5，求内切圆半径。<br>方法一：r = (3 + 4 − 5) ÷ 2 = <b>1</b>。<br>方法二：面积 S = 3 × 4 ÷ 2 = 6，周长 12，r = 2 × 6 ÷ 12 = <b>1</b>。两种方法答案一样，可以互相检查。</div>
 </div>
 
+<div class="why"><b>🔤 英文术语（A-Level 考试全是英文，先混个脸熟）</b><br>
+circle 圆 · centre 圆心 · radius 半径 · diameter 直径 · chord 弦<br>
+tangent 切线 · point of contact 切点 · perpendicular 垂直的<br>
+"The tangent is perpendicular to the radius." 切线垂直于半径<br>
+Pythagoras' theorem 勾股定理 · inscribed circle (incircle) 内切圆</div>
 <div class="sum"><b>📌 今天的小结</b><br>
 ① 看 d 和 r：d&gt;r 相离，d=r 相切，d&lt;r 相交<br>
 ② 看到切线 → 连圆心和切点 → 直角 → 勾股定理<br>

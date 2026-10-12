@@ -47,6 +47,11 @@ window.BOOK = {
 <div class="why">🤔 这和周二学的二次函数是同一件事：y = (x − 3)² + 2 的顶点就是 (3, 2)。配方 = 找顶点。</div>
 </div>
 
+<div class="why"><b>🔤 英文术语（A-Level 考试全是英文，先混个脸熟）</b><br>
+quadratic equation 一元二次方程 · root / solution 根 · coefficient 系数<br>
+discriminant 判别式（b² − 4ac）· real roots 实数根 · equal roots 相等的根<br>
+sum of roots 两根之和 · product of roots 两根之积<br>
+completing the square 配方 · minimum value 最小值 · percentage increase 增长率</div>
 <div class="sum"><b>📌 今天的小结</b><br>
 ① Δ = b² − 4ac：&gt;0 两个不等根，=0 两个相等根，&lt;0 没有实数根；二次项系数有字母要写 ≠ 0<br>
 ② x₁ + x₂ = −b/a，x₁x₂ = c/a；x₁² + x₂² = (和)² − 2积<br>
