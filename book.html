@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>每日手册</title>
+<script src="common.js?v=1791766433"></script>
+<link rel="stylesheet" href="style.css?v=1791766433">
+<style>
+.dtabs{display:flex;gap:6px;overflow-x:auto;margin:10px 0 4px;padding-bottom:4px}
+.dtabs a{flex:0 0 auto;padding:6px 12px;border-radius:999px;background:var(--card);border:1px solid var(--line);color:var(--ink);text-decoration:none;font-size:14px}
+.dtabs a.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}.dtabs a.off{opacity:.4;pointer-events:none}
+.toc{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 2px}.toc a{font-size:14px;color:var(--acc);text-decoration:none;font-weight:600}
+.part{margin-top:28px}.part>h2{display:flex;align-items:baseline;gap:8px;margin-bottom:2px}.part>h2 small{font-size:13px;color:var(--faint);font-weight:500}
+.sec{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin:12px 0}
+.sec h3{margin:0 0 6px;font-size:17px;display:flex;gap:8px;align-items:baseline}.sec h3 .n{color:var(--acc);font-size:14px;font-weight:800}
+.sec p{margin:8px 0}.sec ol,.sec ul{padding-left:20px;margin:6px 0}.sec li{margin:4px 0}
+.lede{color:var(--soft);font-size:14.5px}
+.why{background:var(--blue-soft);border-radius:10px;padding:8px 12px;font-size:14.5px;margin:10px 0}
+.tip{background:var(--gold-soft);border-radius:10px;padding:8px 12px;font-size:14.5px;margin:10px 0}
+.sum{background:var(--ok-soft);border-radius:10px;padding:8px 12px;font-size:14.5px;margin:10px 0}.sum b:first-child{color:var(--ok)}
+.warn{background:var(--bad-soft);border-radius:10px;padding:8px 12px;font-size:14.5px;margin:10px 0}
+.ex{display:block;background:var(--bg);border-radius:10px;padding:10px 12px;margin:10px 0;font-size:15px}
+.ex>b:first-child{color:var(--purple)}
+details.try{background:var(--bg);border:1px dashed var(--line);border-radius:10px;padding:10px 12px;margin:10px 0}
+details.try summary{cursor:pointer;font-weight:600}details.try summary::after{content:'  👉 点开看答案';color:var(--acc);font-size:13px;font-weight:500}
+details.try[open] summary::after{content:''}details.try>div{margin-top:8px;color:var(--soft)}
+table.t{width:100%;border-collapse:collapse;font-size:14px;margin:8px 0}table.t th,table.t td{border:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}table.t th{background:var(--bg)}table.t td:first-child,table.t th:first-child{white-space:nowrap}
+.step{display:flex;gap:10px;margin:8px 0}.step i{flex:none;width:24px;height:24px;border-radius:50%;background:var(--acc);color:#fff;font-style:normal;font-size:13px;font-weight:700;display:grid;place-items:center;margin-top:2px}
+.go2{display:block;text-align:center;background:var(--acc);color:#fff;text-decoration:none;font-weight:700;border-radius:12px;padding:12px;margin:12px 0}
+.go2.done{background:var(--ok-soft);color:var(--ok)}
+code{background:var(--bg);border-radius:5px;padding:1px 5px;font-size:14px}
+pre{background:#2b2622;color:#f6f1ea;border-radius:10px;padding:10px 12px;font-size:14px;overflow-x:auto;line-height:1.5}
+svg.fig{display:block;width:100%;max-width:420px;margin:10px auto;background:#fff;border-radius:10px}
+/* 小测：写答案 → 对答案 → 按要点自己勾 */
+.ck{border-top:2px dashed var(--line);margin-top:14px;padding-top:12px}.ck>b{display:block;margin-bottom:4px}
+.ckq{margin:12px 0}.ckq .qq{font-weight:600}.ckq textarea{min-height:64px;margin-top:6px;font-size:15px}
+.ref{display:none;background:var(--ok-soft);border-radius:10px;padding:8px 12px;margin-top:8px;font-size:14.5px}.show .ref{display:block}
+.ref label{display:flex;gap:8px;align-items:flex-start;margin:4px 0;cursor:pointer}.ref input{margin-top:5px;width:18px;height:18px}
+.ckdone{background:var(--ok-soft);color:var(--ok);border-radius:10px;padding:8px 12px;font-size:14px;white-space:pre-wrap}
+.lesson.focus,.part.focus>h2{outline:none}.sec.focus{border-color:var(--acc);box-shadow:0 0 0 3px var(--acc-soft)}
+</style>
+</head><body><div class="w">
+<a class="back" href="./">← 回到任务</a>
+<h1 id="title">每日手册</h1>
+<p class="s" id="sub">每天要学的东西都在这里：先读讲解 → 看例题 → 自己试一试 → 再去做题。</p>
+<div class="dtabs" id="tabs"></div>
+<div class="toc" id="toc"></div>
+<div id="main"></div>
+</div>
+<script src="data/days.js"></script>
+<script>
+// ===== 每日手册 =====
+// 内容放在 data/book/<日期>.js（window.BOOK），用 book.html?d=<日期>#<小节id> 打开。
+// BOOK = { parts: [{id, icon, title, time, html}], checks: {<lessonId>: {title, qs: [{q, a, pts: [要点]}]}} }
+// html 里写 <div data-ck="d5-kjl"></div> 放小测；<a data-quiz="math-04"> 会变成"去做题"按钮（做完显示✅）。
+// 小测提交后存进 localStorage 的 lesson[<lessonId>]（首页任务 lesson:'d5-kjl' 会自动打勾），并推送给姐姐。
+const P = new URLSearchParams(location.search), WK = ['日','一','二','三','四','五','六'];
+const keys = Object.keys(window.DAYS || {}).sort();
+const D = P.get('d') && DAYS[P.get('d')] ? P.get('d') : (keys.filter(k => DAYS[k].book && k <= dayStr()).pop() || keys.find(k => DAYS[k].book));
+document.querySelector('.back').href = './?d=' + D;
+function esc(x){ return String(x).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+
+document.getElementById('tabs').innerHTML = keys.map((k, i) =>
+  `<a class="${k === D ? 'on' : ''} ${DAYS[k].book ? '' : 'off'}" href="?d=${k}">第 ${i + 1} 天 · 周${WK[new Date(k + 'T12:00').getDay()]}</a>`).join('');
+
+const sc = document.createElement('script');
+sc.src = 'data/book/' + D + '.js?v=' + Date.now();
+sc.onload = () => paint();
+sc.onerror = () => { document.getElementById('main').innerHTML = '<div class="c">这一天还没有手册。</div>'; };
+document.body.appendChild(sc);
+
+function paint(){
+  const B = window.BOOK, day = DAYS[D];
+  document.getElementById('title').textContent = day.name;
+  document.title = '手册 · ' + day.name;
+  document.getElementById('sub').innerHTML = `${D} 周${WK[new Date(D + 'T12:00').getDay()]} · ${B.intro || ''}`;
+  document.getElementById('toc').innerHTML = B.parts.map(p => `<a href="#${p.id}">${p.icon} ${p.title}</a>`).join('');
+  document.getElementById('main').innerHTML = B.parts.map(p =>
+    `<div class="part" id="${p.id}"><h2>${p.icon} ${p.title} <small>${p.time || ''}</small></h2>${p.html}</div>`).join('');
+  paintQuiz(); paintChecks();
+  const h = location.hash && document.querySelector(location.hash);
+  if (h){ if (h.classList.contains('sec')) h.classList.add('focus'); setTimeout(() => h.scrollIntoView({block: 'start'}), 120); }
+}
+
+// "去做题"按钮：显示有没有做完
+function paintQuiz(){
+  document.querySelectorAll('a[data-quiz]').forEach(a => {
+    const id = a.dataset.quiz, q = load('quiz-' + id, null);
+    a.className = 'go2' + (q && q.done ? ' done' : '');
+    a.href = `quiz.html?s=${id}&d=${D}`;
+    a.dataset.t = a.dataset.t || a.textContent;
+    a.textContent = q && q.done ? `✅ ${a.dataset.t}（第一次 ${q.first}%）` : q && q.first != null ? `⏳ ${a.dataset.t}：还要订正` : a.dataset.t + ' →';
+  });
+}
+
+// 小测：写答案 → 对答案（显示参考答案和要点）→ 自己勾 → 提交
+function paintChecks(){
+  const L = load('lesson', {}), DR = load('ldraft', {});
+  document.querySelectorAll('[data-ck]').forEach(box => {
+    const id = box.dataset.ck, C = window.BOOK.checks[id], v = L[id];
+    if (v){
+      box.innerHTML = `<div class="ck"><b>✍️ 小测</b><div class="ckdone">✅ ${v.time} 提交 · 要点 ${v.hit}/${v.total}\n${esc(v.text)}</div>
+        <a href="#" class="go" onclick="redoCk('${id}');return false">重新写</a></div>`;
+      return;
+    }
+    box.innerHTML = `<div class="ck" id="ck-${id}"><b>✍️ 小测：先自己写，再点"对答案"</b>` + C.qs.map((q, i) =>
+      `<div class="ckq"><div class="qq">${i + 1}. ${q.q}</div>
+        <textarea class="fill" id="a-${id}-${i}" oninput="ckDraft('${id}',${i},this.value)">${esc((DR[id] || [])[i] || '')}</textarea>
+        <div class="ref"><b>参考答案：</b>${q.a}<br><small>答到了哪些要点？自己勾：</small>
+          ${q.pts.map((p, j) => `<label><input type="checkbox" id="p-${id}-${i}-${j}"> ${p}</label>`).join('')}</div></div>`).join('') +
+      `<button class="ghost" id="cb-${id}" onclick="reveal('${id}')">对答案</button></div>`;
+  });
+}
+function ckDraft(id, i, v){ const d = load('ldraft', {}); d[id] = d[id] || []; d[id][i] = v; save('ldraft', d); }
+function reveal(id){
+  const C = window.BOOK.checks[id];
+  const empty = C.qs.some((q, i) => document.getElementById(`a-${id}-${i}`).value.trim().length < 2);
+  if (empty){ toast('每题先写点什么，再对答案'); return; }
+  const box = document.getElementById('ck-' + id); box.classList.add('show');
+  C.qs.forEach((q, i) => document.getElementById(`a-${id}-${i}`).readOnly = true);
+  const b = document.getElementById('cb-' + id); b.className = 'main'; b.textContent = '勾好了，提交'; b.onclick = () => submitCk(id);
+}
+function submitCk(id){
+  const C = window.BOOK.checks[id]; let hit = 0, total = 0;
+  const lines = C.qs.map((q, i) => {
+    const a = document.getElementById(`a-${id}-${i}`).value.trim();
+    const h = q.pts.filter((p, j) => document.getElementById(`p-${id}-${i}-${j}`).checked).length;
+    hit += h; total += q.pts.length;
+    return `${i + 1}. ${q.q.replace(/<[^>]+>/g, '')}\n→ ${a}（要点 ${h}/${q.pts.length}）`;
+  });
+  const ans = C.qs.map((q, i) => document.getElementById(`a-${id}-${i}`).value.trim());
+  const L = load('lesson', {}); L[id] = {text: lines.join('\n'), ans, time: todayStr() + ' ' + hm(), hit, total}; save('lesson', L);
+  const d = load('ldraft', {}); delete d[id]; save('ldraft', d);
+  notify(`📖 ${C.title}（要点 ${hit}/${total}）\n` + lines.join('\n'));
+  toast('已提交 ✅'); paintChecks();
+}
+function redoCk(id){
+  const L = load('lesson', {}), d = load('ldraft', {});
+  d[id] = L[id].ans || [];
+  save('ldraft', d); delete L[id]; save('lesson', L); paintChecks();
+}
+addEventListener('pageshow', e => { if (e.persisted && window.BOOK) paintQuiz(); });
+</script></body></html>

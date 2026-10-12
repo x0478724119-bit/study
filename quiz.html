@@ -2,7 +2,7 @@
 <html lang="zh-CN"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>做题</title>
-<link rel="stylesheet" href="style.css?v=1791737670">
+<link rel="stylesheet" href="style.css?v=1791766433">
 </head><body><div class="w">
 <a class="back" id="back" href="./">← 回到任务</a>
 <h1 id="title">加载中…</h1>
@@ -12,7 +12,7 @@
 <div id="bar" class="bar"><button class="main" id="submit">交卷</button></div>
 <div id="result"></div>
 </div>
-<script src="common.js?v=1791737670"></script>
+<script src="common.js?v=1791766433"></script>
 <script>
 // ===== 通用做题引擎 =====
 // 题库放在 data/<id>.js，用 quiz.html?s=<id> 打开。
@@ -44,7 +44,18 @@ function init(){
   render();
 }
 
+// 听力：SET.audio 录音地址；SET.transcript / transcriptCn 原文和翻译，交卷后才能看
+function renderAudio(){
+  if (!SET.audio) return;
+  const done = state.first !== null || document.body.classList.contains('submitted');
+  const tr = done && SET.transcript ? `<details class="tr"><summary>📄 看原文</summary><div class="passage" style="margin-top:8px">${SET.transcript}</div>${SET.transcriptCn ? `<details class="tr"><summary>看中文翻译</summary><div style="margin-top:6px;color:var(--soft)">${SET.transcriptCn}</div></details>` : ''}</details>` : '';
+  document.getElementById('study').innerHTML = `<div class="c"><b>🎧 录音</b><audio controls preload="auto" src="${SET.audio}" style="width:100%;margin-top:8px"></audio>
+    <div class="speed">速度：${[0.75, 0.9, 1].map(r => `<button onclick="setRate(${r},this)" class="${r === 1 ? 'on' : ''}">${r}×</button>`).join('')}</div>
+    ${done ? tr : '<div class="s" style="margin:6px 0 0">原文交卷后才能看。</div>'}</div>`;
+}
+function setRate(r, b){ const a = document.querySelector('#study audio'); if (a){ a.playbackRate = r; a.defaultPlaybackRate = r; } document.querySelectorAll('.speed button').forEach(x => x.classList.toggle('on', x === b)); }
 function renderStudy(){
+  if (SET.audio) return renderAudio();
   if (!SET.study) return;
   const html = SET.study.replace(/\[\[([^|\]]+)\|([^\]]+)\]\]/g, '<span class="vw" onclick="this.classList.toggle(\'show\');say(\'$1\')">$1<em>$2</em></span>');
   const ready = state.studied || state.first !== null;
@@ -125,7 +136,7 @@ document.getElementById('submit').onclick = () => {
     practice = false; put(state);
     notify(`🔁 ${SET.title} 再刷一遍：${score}%`);
     document.body.classList.add('submitted'); document.getElementById('bar').style.display = 'none';
-    showResult(true); scrollTo({top:0, behavior:'smooth'}); return;
+    if (SET.audio) renderAudio(); showResult(true); scrollTo({top:0, behavior:'smooth'}); return;
   }
   if (state.first === null){
     state.first = Math.round(ok / SET.qs.length * 100);
@@ -145,6 +156,7 @@ document.getElementById('submit').onclick = () => {
   else if (state.done && !wasDone) notify(`✅ ${SET.title} 订正完成，现在 ${state.now}%`);
   document.body.classList.add('submitted');
   document.getElementById('bar').style.display = 'none';
+  if (SET.audio) renderAudio();
   showResult(true);
   scrollTo({top:0, behavior:'smooth'});
 };

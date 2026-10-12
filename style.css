@@ -103,3 +103,5 @@ details.report summary{font-weight:600;cursor:pointer}
 .pay{display:grid;grid-template-columns:1fr 1fr;gap:8px}.pay div{background:var(--bg);border-radius:10px;padding:8px 10px}.pay small{display:block;color:var(--faint);font-size:12px}.pay b{font-size:17px}
 .jdone{opacity:.45;filter:grayscale(1)}
 .chips{display:flex;gap:6px;overflow-x:auto;margin:6px 0 10px}.chips button{width:auto;flex:0 0 auto;background:var(--card);border:1px solid var(--line);color:var(--ink);padding:6px 14px;font-size:14px}.chips button.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.speed{display:flex;gap:6px;align-items:center;font-size:13px;color:var(--faint);margin-top:6px}.speed button{width:auto;padding:4px 10px;font-size:13px;background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:8px}.speed button.on{background:var(--ink);color:var(--bg)}
+details.tr summary{cursor:pointer;color:var(--acc);font-weight:600;margin-top:8px}
