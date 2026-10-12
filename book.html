@@ -2,14 +2,19 @@
 <html lang="zh-CN"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>每日手册</title>
-<script src="common.js?v=1791766477"></script>
-<link rel="stylesheet" href="style.css?v=1791766477">
+<script src="common.js?v=1791766970"></script>
+<link rel="stylesheet" href="style.css?v=1791766970">
 <style>
 .dtabs{display:flex;gap:6px;overflow-x:auto;margin:10px 0 4px;padding-bottom:4px}
 .dtabs a{flex:0 0 auto;padding:6px 12px;border-radius:999px;background:var(--card);border:1px solid var(--line);color:var(--ink);text-decoration:none;font-size:14px}
 .dtabs a.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}.dtabs a.off{opacity:.4;pointer-events:none}
-.toc{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 2px}.toc a{font-size:14px;color:var(--acc);text-decoration:none;font-weight:600}
-.part{margin-top:28px}.part>h2{display:flex;align-items:baseline;gap:8px;margin-bottom:2px}.part>h2 small{font-size:13px;color:var(--faint);font-weight:500}
+.toc{position:sticky;top:0;z-index:5;background:var(--bg);display:flex;gap:6px;padding:8px 0;margin:4px 0 0}
+.toc button{flex:1;width:auto;padding:10px 6px;font-size:15px;background:var(--card);border:1px solid var(--line);color:var(--ink);border-radius:12px}
+.toc button.on{background:var(--acc);border-color:var(--acc);color:#fff}
+.todo{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px 14px;margin:10px 0}.todo b{display:block;font-size:14px;margin-bottom:4px}
+.todo a{display:flex;gap:8px;padding:6px 0;border-top:1px solid var(--line);color:var(--ink);text-decoration:none;font-size:14.5px}.todo a:first-of-type{border-top:0}
+.part{margin-top:8px}
+.part>h2{display:flex;align-items:baseline;gap:8px;margin-bottom:2px}.part>h2 small{font-size:13px;color:var(--faint);font-weight:500}
 .sec{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin:12px 0}
 .sec h3{margin:0 0 6px;font-size:17px;display:flex;gap:8px;align-items:baseline}.sec h3 .n{color:var(--acc);font-size:14px;font-weight:800}
 .sec p{margin:8px 0}.sec ol,.sec ul{padding-left:20px;margin:6px 0}.sec li{margin:4px 0}
@@ -59,8 +64,8 @@ const D = P.get('d') && DAYS[P.get('d')] ? P.get('d') : (keys.filter(k => DAYS[k
 document.querySelector('.back').href = './?d=' + D;
 function esc(x){ return String(x).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
 
-document.getElementById('tabs').innerHTML = keys.map((k, i) =>
-  `<a class="${k === D ? 'on' : ''} ${DAYS[k].book ? '' : 'off'}" href="?d=${k}">第 ${i + 1} 天 · 周${WK[new Date(k + 'T12:00').getDay()]}</a>`).join('');
+document.getElementById('tabs').innerHTML = keys.map((k, i) => DAYS[k].book ?
+  `<a class="${k === D ? 'on' : ''}" href="?d=${k}">第 ${i + 1} 天 · ${+k.slice(5,7)}/${+k.slice(8)} 周${WK[new Date(k + 'T12:00').getDay()]}</a>` : '').join('');
 
 const sc = document.createElement('script');
 sc.src = 'data/book/' + D + '.js?v=' + Date.now();
@@ -68,17 +73,37 @@ sc.onload = () => paint();
 sc.onerror = () => { document.getElementById('main').innerHTML = '<div class="c">这一天还没有手册。</div>'; };
 document.body.appendChild(sc);
 
+let B, cur;
 function paint(){
-  const B = window.BOOK, day = DAYS[D];
+  B = window.BOOK; const day = DAYS[D];
   document.getElementById('title').textContent = day.name;
   document.title = '手册 · ' + day.name;
   document.getElementById('sub').innerHTML = `${D} 周${WK[new Date(D + 'T12:00').getDay()]} · ${B.intro || ''}`;
-  document.getElementById('toc').innerHTML = B.parts.map(p => `<a href="#${p.id}">${p.icon} ${p.title}</a>`).join('');
-  document.getElementById('main').innerHTML = B.parts.map(p =>
-    `<div class="part" id="${p.id}"><h2>${p.icon} ${p.title} <small>${p.time || ''}</small></h2>${p.html}</div>`).join('');
-  paintQuiz(); paintChecks();
-  const h = location.hash && document.querySelector(location.hash);
-  if (h){ if (h.classList.contains('sec')) h.classList.add('focus'); setTimeout(() => h.scrollIntoView({block: 'start'}), 120); }
+  // 链接里的 #小节id 决定打开哪一科
+  const h = location.hash.slice(1), hit = h && B.parts.find(p => p.id === h || p.html.includes(`id="${h}"`));
+  show(hit ? hit.id : B.parts[0].id, h);
+}
+function show(id, target){
+  cur = id; const p = B.parts.find(x => x.id === id);
+  document.getElementById('toc').innerHTML = B.parts.map(x => `<button class="${x.id === id ? 'on' : ''}" onclick="show('${x.id}');history.replaceState(null,'','#${x.id}');scrollTo(0,0)">${x.icon} ${x.title.split('：')[0]}</button>`).join('');
+  document.getElementById('main').innerHTML = `<div class="part" id="${p.id}"><h2>${p.icon} ${p.title} <small>${p.time || ''}</small></h2><div class="todo" id="todo"></div>${p.html}</div>`;
+  paintQuiz(); paintChecks(); paintTodo();
+  const el = target && target !== id && document.getElementById(target);
+  if (el){ if (el.classList.contains('sec')) el.classList.add('focus'); setTimeout(() => el.scrollIntoView({block: 'start'}), 120); }
+}
+// 这一科今天要做的事：小节 + 做题 + 小测，点了跳过去
+function paintTodo(){
+  const L = load('lesson', {}), items = [];
+  document.querySelectorAll('#main .sec').forEach(sec => {
+    const t = sec.querySelector('h3').textContent.replace(/^\d+/, '').replace(/（约.*?）/, '');
+    const qz = sec.querySelectorAll('a[data-quiz]'), ck = sec.querySelector('[data-ck]');
+    let st = '';
+    if (qz.length) st = [...qz].map(a => { const q = load('quiz-' + a.dataset.quiz, null); return q && q.done ? '✅' : '⬜️'; }).join('');
+    else if (ck) st = L[ck.dataset.ck] ? '✅' : '⬜️';
+    else st = '📖';
+    items.push(`<a href="#" onclick="document.getElementById('${sec.id}').scrollIntoView({block:'start'});return false"><span>${st}</span>${t}</a>`);
+  });
+  document.getElementById('todo').innerHTML = '<b>这一科今天要做</b>' + items.join('');
 }
 
 // "去做题"按钮：显示有没有做完
@@ -131,12 +156,12 @@ function submitCk(id){
   const L = load('lesson', {}); L[id] = {text: lines.join('\n'), ans, time: todayStr() + ' ' + hm(), hit, total}; save('lesson', L);
   const d = load('ldraft', {}); delete d[id]; save('ldraft', d);
   notify(`📖 ${C.title}（要点 ${hit}/${total}）\n` + lines.join('\n'));
-  toast('已提交 ✅'); paintChecks();
+  toast('已提交 ✅'); paintChecks(); paintTodo();
 }
 function redoCk(id){
   const L = load('lesson', {}), d = load('ldraft', {});
   d[id] = L[id].ans || [];
   save('ldraft', d); delete L[id]; save('lesson', L); paintChecks();
 }
-addEventListener('pageshow', e => { if (e.persisted && window.BOOK) paintQuiz(); });
+addEventListener('pageshow', e => { if (e.persisted && window.BOOK){ paintQuiz(); paintTodo(); } });
 </script></body></html>
