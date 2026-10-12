@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="学习站">
 <title>学习站</title>
-<link rel="stylesheet" href="style.css?v=1791782818">
+<link rel="stylesheet" href="style.css?v=1791783799">
 </head><body class="app">
 <header class="top">
   <div class="brand"><div class="logo" style="background:url(apple-touch-icon.png) center/cover"></div><div><b>我的设计工作室</b><small id="lv"></small></div></div>
@@ -21,7 +21,7 @@
 </nav>
 <div class="modal" id="modal"><div class="box" id="mbox"></div></div>
 
-<script src="common.js?v=1791782818"></script>
+<script src="common.js?v=1791783799"></script>
 <script>
 const LEVELS = [
   {lv:1, name:'设计学徒', need:0, icon:'🌱'},
@@ -145,7 +145,7 @@ function viewToday(){
   // ④ 标题 + 进度
   const late = key < T, onLeave = load('leave', {})[key] || okLeave(key), miss = load('missed', {})[key];
   const n = day.tasks.filter((t,i) => taskDone(key, i, t)).length, all = n === day.tasks.length, paid = load('paid', {})[key];
-  const note = key === T ? '今天' : key > T ? '可以提前做 · 截止到这天结束' : '已经过了';
+  const note = key === T ? '今天' : key > T ? '可以提前做 · 金币到这天才发' : '已经过了';
   h += `<div class="c head"><div class="row2"><div><h1>${day.name}</h1><span class="s">${key} 周${WK[new Date(key + 'T12:00').getDay()]} · ${note}</span></div><b class="big2">${n}/${day.tasks.length}</b></div><div class="prog"><i style="width:${n/day.tasks.length*100}%"></i></div></div>`;
   if (onLeave) h += `<div class="bar-msg ok">🙋 这一天请假了，不扣金币</div>`;
   else if (late && !all) h += `<div class="bar-msg">⏰ ${miss && miss.pen ? `扣了 ${miss.pen} 金币，<b>今天补完退 ${Math.round(miss.pen * Math.max(0, 1 - CONFIG.REFUND * daysBetween(key, T)))}</b>，越晚退得越少` : '补完不发金币'}</div>`;
@@ -155,7 +155,7 @@ function viewToday(){
     let act = '';
     if (t.link) act += `<a class="btn2 ${t.quiz && quizState(t.quiz) ? 'light' : ''}" href="${t.link.replace('{d}', key)}">${t.lt || '📖 打开教程'}</a>`;
     // 新教程在每日手册里（id 像 d5-kjl），老教程在 lessons.html
-    const lh = t.lesson && (/^d\d+-/.test(t.lesson) ? `book.html?d=${key}#${t.lesson}` : `lessons.html?d=${key}#${t.lesson}`);
+    const lh = t.lesson && (/^d\d+-/.test(t.lesson) ? `book.html?d=${key}#${t.lesson}` : `book.html?d=2026-10-12#${t.lesson}`);
     if (t.lesson){ const lv = load('lesson', {})[t.lesson]; act += lv ? `<div class="wdone">✍️ ${lv.total ? `小测要点 ${lv.hit}/${lv.total}` : esc(lv.text)}<br><small>${lv.time} · 在教程里提交</small></div><a class="btn2 light" href="${lh}">回教程看看</a>` : `<a class="btn2" href="${lh}">📖 去上课</a>`; }
     if (t.quiz) act += q && q.first != null
       ? `<div class="d">${q.done ? '✅ 已完成' : '⏳ 还要订正'} · 第一次 ${q.first}%</div><a class="btn2 ${q.done ? 'light' : ''}" href="quiz.html?s=${t.quiz}&d=${key}">${q.done ? '查看 / 再刷' : '继续订正'}</a>`
@@ -167,7 +167,7 @@ function viewToday(){
       <div style="flex:1"><div class="t"><span class="tag t-${t.tag}">${t.tag}</span>${t.t}</div><div class="d">${t.d}</div>${act}</div></div>`;
   }).join('');
   // ⑥ 完成 / 领奖
-  if (all) h += `<div class="c done-card"><b>🎉 ${late ? '补完了！' : key > T ? '提前做完了！' : '今天全部完成！'}</b>${paid ? '<div class="d">已领取 +' + CONFIG.DAILY_COIN + ' 金币，去接单吧</div>' : late ? (miss && miss.back > 0 ? '<div class="d">已退还 ' + miss.back + ' 金币</div>' : '<div class="d">补完了</div>') : `<button class="main" onclick="claimDay('${key}')">领取全勤奖励 +${CONFIG.DAILY_COIN} 金币</button>`}</div>`;
+  if (all) h += `<div class="c done-card"><b>🎉 ${late ? '补完了！' : key > T ? '提前做完了！' : '今天全部完成！'}</b>${paid ? '<div class="d">已领取 +' + CONFIG.DAILY_COIN + ' 金币，去接单吧</div>' : late ? (miss && miss.back > 0 ? '<div class="d">已退还 ' + miss.back + ' 金币</div>' : '<div class="d">补完了</div>') : key > T ? '<div class="d">金币（每项 +' + CONFIG.TASK_COIN + ' 和全勤 +' + CONFIG.DAILY_COIN + '）到那一天打开网站时发</div>' : `<button class="main" onclick="claimDay('${key}')">领取全勤奖励 +${CONFIG.DAILY_COIN} 金币</button>`}</div>`;
   // ⑦ 汇报（截图用）+ 请假，放最下面
   const wk2 = wake[key], got = wallet().log.filter(l => l.t.startsWith(key) && l.n > 0).reduce((a,l) => a + l.n, 0);
   h += `<details class="c report"><summary>📋 今日汇报（需要时截图）</summary>
@@ -198,7 +198,8 @@ function tog(key, i){ const d = load('day-' + key, {}); d[i] = !d[i]; save('day-
 // 当天完成的任务每项 +2，一项只给一次；补的不给
 function settle(){
   const got = load('taskpaid', {}); let did = false;
-  for (const key of Object.keys(window.DAYS || {}).filter(k => k >= T)){
+  // 提前做的任务也算完成，但金币到那一天打开网站时才发
+  for (const key of Object.keys(window.DAYS || {}).filter(k => k === T)){
     got[key] = got[key] || {};
     DAYS[key].tasks.forEach((t, i) => {
       if (got[key][i] || !taskDone(key, i, t)) return;
@@ -230,7 +231,7 @@ function checkWake(justDid){
   }
 }
 function claimDay(key){
-  const p = load('paid', {}); if (p[key] || key < T) return; p[key] = 1; save('paid', p);
+  const p = load('paid', {}); if (p[key] || key !== T) return; p[key] = 1; save('paid', p);
   addCoins(CONFIG.DAILY_COIN, '完成 ' + DAYS[key].name);
   notify(`🎉 ${DAYS[key].name} 全部完成，+${CONFIG.DAILY_COIN} 金币`); toast('+' + CONFIG.DAILY_COIN + ' 金币'); render();
 }
@@ -336,7 +337,7 @@ function viewBook(){
   return `<h1>学习手册</h1><p class="s">路线、目标学校、三年计划都在这里</p>
     <div class="c"><a class="go big" href="handbook.html">📘 打开成长手册 →</a><div class="d">从现在到上大学：要去哪、学什么、每个月做什么。</div></div>
     <div class="c"><a class="go big" href="book.html">📗 每日手册 →</a><div class="d">每天要学的讲解都在这里：数学、英语语法、听力方法、软件课。按天翻。</div></div>
-    <div class="c"><a class="go big" href="lessons.html">🛠️ 旧软件教程 →</a><div class="d">前几天的酷家乐第 1–3 课、Swift 第 1–3 课、可画第 1 课。</div></div>`;
+`;
 }
 
 // ===== 我的 =====

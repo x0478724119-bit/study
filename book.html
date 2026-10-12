@@ -4,8 +4,8 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="icon" type="image/png" href="icon-512.png">
 <title>每日手册</title>
-<script src="common.js?v=1791782818"></script>
-<link rel="stylesheet" href="style.css?v=1791782818">
+<script src="common.js?v=1791783799"></script>
+<link rel="stylesheet" href="style.css?v=1791783799">
 <style>
 .dtabs{display:flex;gap:6px;overflow-x:auto;margin:10px 0 4px;padding-bottom:4px}
 .dtabs a{flex:0 0 auto;padding:6px 12px;border-radius:999px;background:var(--card);border:1px solid var(--line);color:var(--ink);text-decoration:none;font-size:14px}
@@ -89,7 +89,7 @@ function show(id, target){
   cur = id; const p = B.parts.find(x => x.id === id);
   document.getElementById('toc').innerHTML = B.parts.map(x => `<button class="${x.id === id ? 'on' : ''}" onclick="show('${x.id}');history.replaceState(null,'','#${x.id}');scrollTo(0,0)">${x.icon} ${x.title.split('：')[0]}</button>`).join('');
   document.getElementById('main').innerHTML = `<div class="part" id="${p.id}"><h2>${p.icon} ${p.title} <small>${p.time || ''}</small></h2><div class="todo" id="todo"></div>${p.html}</div>`;
-  paintQuiz(); paintChecks(); paintTodo();
+  paintQuiz(); paintChecks(); paintOld(); paintTodo();
   const el = target && target !== id && document.getElementById(target);
   if (el){ if (el.classList.contains('sec')) el.classList.add('focus'); setTimeout(() => el.scrollIntoView({block: 'start'}), 120); }
 }
@@ -102,8 +102,15 @@ function paintTodo(){
     let st = '';
     if (qz.length) st = [...qz].map(a => { const q = load('quiz-' + a.dataset.quiz, null); return q && q.done ? '✅' : '⬜️'; }).join('');
     else if (ck) st = L[ck.dataset.ck] ? '✅' : '⬜️';
+    else if (sec.querySelector('[data-old]')) st = L[sec.querySelector('[data-old]').dataset.old] ? '✅' : '—';
     else st = '📖';
     items.push(`<a href="#" onclick="document.getElementById('${sec.id}').scrollIntoView({block:'start'});return false"><span>${st}</span>${t}</a>`);
+  });
+  // 不在小节里的做题按钮（比如小结后面的挑战题）也列出来
+  document.querySelectorAll('#main a[data-quiz]').forEach(a => {
+    if (a.closest('.sec')) return;
+    const q = load('quiz-' + a.dataset.quiz, null), id = 'qz-' + a.dataset.quiz; a.id = id;
+    items.push(`<a href="#" onclick="document.getElementById('${id}').scrollIntoView({block:'center'});return false"><span>${q && q.done ? '✅' : '⬜️'}</span>✏️ ${a.dataset.t}</a>`);
   });
   document.getElementById('todo').innerHTML = '<b>这一科今天要做</b>' + items.join('');
 }
@@ -135,6 +142,14 @@ function paintChecks(){
         <div class="ref"><b>参考答案：</b>${q.a}<br><small>答到了哪些要点？自己勾：</small>
           ${q.pts.map((p, j) => `<label><input type="checkbox" id="p-${id}-${i}-${j}"> ${p}</label>`).join('')}</div></div>`).join('') +
       `<button class="ghost" id="cb-${id}" onclick="reveal('${id}')">对答案</button></div>`;
+  });
+}
+// 旧教程（kjl1 这种）的记录：只显示她当时交的内容
+function paintOld(){
+  const L = load('lesson', {});
+  document.querySelectorAll('[data-old]').forEach(box => {
+    const v = L[box.dataset.old];
+    box.innerHTML = `<div class="ck"><b>✍️ 当时的小作业</b>${v ? `<div class="ckdone">✅ ${v.time} 提交\n${esc(v.text)}</div>` : '<div class="s">没有提交记录（这一课已经停用，不用补）。</div>'}</div>`;
   });
 }
 function ckDraft(id, i, v){ const d = load('ldraft', {}); d[id] = d[id] || []; d[id][i] = v; save('ldraft', d); }
