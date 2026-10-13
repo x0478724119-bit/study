@@ -28,7 +28,8 @@ function save(key, v){ try { localStorage.setItem(key, JSON.stringify(v)); } cat
 function wallet(){ return load('wallet', {coins:0, earned:0, log:[]}); }
 function addCoins(n, why){
   const w = wallet(); w.coins += n; if (n > 0) w.earned += n;
-  w.log.unshift({t: dayStr() + ' ' + hm(), n, why}); w.log = w.log.slice(0, 200);
+  w.seq = (w.seq || 0) + 1;
+  w.log.unshift({t: dayStr() + ' ' + hm(), n, why, q: w.seq}); w.log = w.log.slice(0, 200);
   save('wallet', w); return w;
 }
 
@@ -37,8 +38,7 @@ function addCoins(n, why){
 try { if (new URLSearchParams(location.search).get('me') === '1') localStorage.setItem('isAdmin', 'true'); } catch(e){}
 function notify(text){
   if (!CONFIG.FEISHU || load('isAdmin', false) || load('adminToken', '')) return;
-  // 每条推送都带上当前余额，姐姐看最新一条就知道她有多少金币
-  const body = JSON.stringify({msg_type: 'text', content: {text: '【学习站】' + text + ` · 💰 余额 ${wallet().coins}`}});
+  const body = JSON.stringify({msg_type: 'text', content: {text: '【学习站】' + text + '\n' + notifyTail()}});
   try { fetch(CONFIG.FEISHU, {method: 'POST', mode: 'no-cors', headers: {'Content-Type': 'text/plain'}, body}); } catch(e){}
 }
 
@@ -111,3 +111,40 @@ function lessonName(id){
 
 // 预览模式：姐姐的浏览器（开过后台或 ?me=1）什么都不锁，方便检查内容
 const PREVIEW = (() => { try { return load('isAdmin', false) || !!load('adminToken', ''); } catch(e){ return false; } })();
+
+// ===== 推送末尾：今天的进度 + 余额变化（和上一条推送比）=====
+function taskDoneLS(key, i, t){
+  if (t.lesson) return !!load('lesson', {})[t.lesson];
+  if (t.quiz){ const q = load('quiz-' + t.quiz, null); return !!(q && q.done); }
+  return !!load('day-' + key, {})[i];
+}
+function todayProgress(){
+  const D = window.DAYS || load('daysCache', null), key = dayStr();
+  if (!D || !D[key]) return '';
+  const ts = D[key].tasks, left = ts.filter((t, i) => !taskDoneLS(key, i, t));
+  return `📋 今天（${D[key].name}）完成 ${ts.length - left.length}/${ts.length} 项` + (left.length ? `，还剩 ${left.length} 项：${left.map(t => t.t.length > 12 ? t.t.slice(0, 12) + '…' : t.t).join('、')}` : ' 🎉 全部完成');
+}
+function notifyTail(){
+  const w = wallet(), last = load('lastNotify', null), seq = w.seq || 0;
+  let money = `💰 余额 ${w.coins}`;
+  if (last){
+    const d = w.coins - last.coins, items = w.log.filter(l => (l.q || 0) > last.seq).reverse();
+    if (d || items.length) money += `（${d >= 0 ? '+' : ''}${d}` + (items.length ? '：' + items.slice(-6).map(l => `${l.why.replace(/^完成：/, '')} ${l.n > 0 ? '+' : ''}${l.n}`).join('、') + (items.length > 6 ? ' 等' : '') : '') + '）';
+  }
+  save('lastNotify', {coins: w.coins, seq});
+  return [todayProgress(), money].filter(Boolean).join('\n');
+}
+
+// ===== 错题本：第一遍做错的题自动记下来，第二天复习 =====
+// mistakes = [{s: 题库 id, i: 题号, d: 做错那天, ok: 复习做对了}]
+function addMistakes(setId, idxs){
+  const m = load('mistakes', []), d = dayStr();
+  idxs.forEach(i => { if (!m.some(x => x.s === setId && x.i === i)) m.push({s: setId, i, d, ok: false}); });
+  save('mistakes', m);
+}
+// 第 D 天的复习题：D 之前做错、还没复习对的题（第一次打开时固定下来）
+function reviewList(D){
+  const fixed = load('reviewList', {});
+  if (fixed[D]) return fixed[D];
+  return load('mistakes', []).map((x, k) => ({...x, k})).filter(x => x.d < D && !x.ok).map(x => x.k);
+}

@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="学习站">
 <title>学习站</title>
-<link rel="stylesheet" href="style.css?v=1791848336">
+<link rel="stylesheet" href="style.css?v=1791878965">
 </head><body class="app">
 <header class="top">
   <div class="brand"><div class="logo" style="background:url(apple-touch-icon.png) center/cover"></div><div><b>我的设计工作室</b><small id="lv"></small></div></div>
@@ -21,7 +21,7 @@
 </nav>
 <div class="modal" id="modal"><div class="box" id="mbox"></div></div>
 
-<script src="common.js?v=1791848336"></script>
+<script src="common.js?v=1791878965"></script>
 <script>
 const LEVELS = [
   {lv:1, name:'设计学徒', need:0, icon:'🌱'},
@@ -39,7 +39,16 @@ const isWeekend = d => [0,6].includes(new Date(d + 'T12:00').getDay());
 
 // 加载数据文件（加时间戳，保证拿到最新的）
 function loadScript(src){ return new Promise(r => { const s = document.createElement('script'); s.src = src + '?v=' + Date.now(); s.onload = r; s.onerror = r; document.body.appendChild(s); }); }
-Promise.all([loadScript('data/days.js'), loadScript('data/jobs.js'), loadScript('data/pause.js'), loadScript('data/leave.js'), loadScript('data/adjust.js'), loadScript('data/feedback.js')]).then(() => { checkMissed(); render(); });
+Promise.all([loadScript('data/days.js'), loadScript('data/jobs.js'), loadScript('data/pause.js'), loadScript('data/leave.js'), loadScript('data/adjust.js'), loadScript('data/feedback.js')]).then(() => { addReviewTasks(); save('daysCache', window.DAYS); checkMissed(); render(); });
+// 错题复习：今天（或已经开始复习的那天）在最后加一项"复习错题"
+function addReviewTasks(){
+  const fixed = load('reviewList', {});
+  for (const k of Object.keys(DAYS)){
+    if (k > T || (k < T && !fixed[k])) continue;
+    const n = reviewList(k).length; if (!n) continue;
+    DAYS[k].tasks.push({tag: '复习', t: `复习错题（${n} 道）`, d: '约 10 分钟。前几天第一遍做错的题，再做一遍，做对了才算会了。', quiz: 'review-' + k, review: 1});
+  }
+}
 
 // 过去的工作日没做完：按没做完的项数扣金币（每天只结算一次）；补完按天数退还
 const okLeave = k => (window.LEAVE_OK || []).includes(k);
@@ -149,8 +158,8 @@ function viewToday(){
   h += `<div class="c head"><div class="row2"><div><h1>${day.name}</h1><span class="s">${key} 周${WK[new Date(key + 'T12:00').getDay()]} · ${note}</span></div><b class="big2">${n}/${day.tasks.length}</b></div><div class="prog"><i style="width:${n/day.tasks.length*100}%"></i></div></div>`;
   if (onLeave) h += `<div class="bar-msg ok">🙋 这一天请假了，不扣金币</div>`;
   else if (late && !all) h += `<div class="bar-msg">⏰ ${miss && miss.pen ? `扣了 ${miss.pen} 金币，<b>今天补完退 ${Math.round(miss.pen * Math.max(0, 1 - CONFIG.REFUND * daysBetween(key, T)))}</b>，越晚退得越少` : '补完不发金币'}</div>`;
-  // ⑤ 任务卡片：每个任务一个动作
-  h += day.tasks.map((t,i) => {
+  // ⑤ 任务卡片：按科目收成几张卡，点开看里面的小项
+  const cards = day.tasks.map((t,i) => {
     const on = taskDone(key, i, t), q = t.quiz ? quizState(t.quiz) : null, wv = t.write ? load('day-' + key, {})[i] : null;
     let act = '';
     if (t.link) act += `<a class="btn2 ${t.quiz && quizState(t.quiz) ? 'light' : ''}" href="${t.link.replace('{d}', key)}">${t.lt || '📖 打开教程'}</a>`;
@@ -167,7 +176,18 @@ function viewToday(){
     if (fb) act += `<details class="fb" ${load('fbSeen', {})[key + '-' + i] ? '' : 'open'}><summary onclick="const s=load('fbSeen',{});s['${key}-${i}']=1;save('fbSeen',s);this.querySelector('.new')?.remove()">📝 姐姐的批改${load('fbSeen', {})[key + '-' + i] ? '' : ' <span class="new">新</span>'}</summary>${fb.html}</details>`;
     const tick = !t.quiz && !t.write && !t.lesson ? `onclick="tog('${key}',${i})"` : '';
     return `<div class="c task ${on ? 'done' : ''}"><div class="chk ${on?'on':''}" ${tick}>${on?'✓':''}</div>
-      <div style="flex:1"><div class="t"><span class="tag t-${t.tag}">${t.tag}</span>${t.t}<span class="tcoin">🪙${taskCoin(t)}</span></div><div class="d">${t.d}</div>${act}</div></div>`;
+      <div style="flex:1"><div class="t">${t.t}<span class="tcoin">🪙${taskCoin(t)}</span></div><div class="d">${t.d}</div>${act}</div></div>`;
+  });
+  const groups = [];
+  day.tasks.forEach((t, i) => { let g = groups.find(x => x.tag === t.tag); if (!g) groups.push(g = {tag: t.tag, idx: []}); g.idx.push(i); });
+  const ICON = {英语: '🔤', 数学: '📐', 项目: '🛠️', 复习: '🔁'}, openG = JSON.parse(sessionStorage.getItem('openG') || '{}');
+  h += groups.map(g => {
+    const n = g.idx.filter(i => taskDone(key, i, day.tasks[i])).length, all2 = n === g.idx.length, gid = key + g.tag;
+    const dots = g.idx.map(i => taskDone(key, i, day.tasks[i]) ? '✅' : '⬜️').join('');
+    const coins = g.idx.reduce((a, i) => a + taskCoin(day.tasks[i]), 0);
+    return `<details class="c grp ${all2 ? 'gdone' : ''}" ${openG[gid] ? 'open' : ''} ontoggle="const o=JSON.parse(sessionStorage.getItem('openG')||'{}');o['${gid}']=this.open;sessionStorage.setItem('openG',JSON.stringify(o))">
+      <summary><span class="gicon">${ICON[g.tag] || '📌'}</span><span class="gname"><b>${g.tag}</b><small>${g.idx.length} 小项 · 🪙${coins}</small></span><span class="gdots">${dots}</span><b class="gnum">${n}/${g.idx.length}</b></summary>
+      ${g.idx.map(i => cards[i]).join('')}</details>`;
   }).join('');
   // ⑥ 完成 / 领奖
   if (all) h += `<div class="c done-card"><b>🎉 ${late ? '补完了！' : key > T ? '提前做完了！' : '今天全部完成！'}</b>${paid ? '<div class="d">已领取 +' + CONFIG.DAILY_COIN + ' 金币，去接单吧</div>' : late ? (miss && miss.back > 0 ? '<div class="d">已退还 ' + miss.back + ' 金币</div>' : '<div class="d">补完了</div>') : key > T ? '<div class="d">金币（每项的金币和全勤 +' + CONFIG.DAILY_COIN + '）到那一天打开网站时发</div>' : `<button class="main" onclick="claimDay('${key}')">领取全勤奖励 +${CONFIG.DAILY_COIN} 金币</button>`}</div>`;

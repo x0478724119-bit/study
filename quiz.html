@@ -4,7 +4,7 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="icon" type="image/png" href="icon-512.png">
 <title>做题</title>
-<link rel="stylesheet" href="style.css?v=1791848336">
+<link rel="stylesheet" href="style.css?v=1791878965">
 </head><body><div class="w">
 <a class="back" id="back" href="./">← 回到任务</a>
 <h1 id="title">加载中…</h1>
@@ -14,7 +14,7 @@
 <div id="bar" class="bar"><button class="main" id="submit">交卷</button></div>
 <div id="result"></div>
 </div>
-<script src="common.js?v=1791848336"></script>
+<script src="common.js?v=1791878965"></script>
 <script>
 // ===== 通用做题引擎 =====
 // 题库放在 data/<id>.js，用 quiz.html?s=<id> 打开。
@@ -25,7 +25,23 @@ const KEY = 'quiz-' + id, DAY = new URLSearchParams(location.search).get('d');
 if (DAY) document.getElementById('back').href = './?d=' + DAY;
 let SET, state, mode = 'all', start = Date.now(), practice = false;
 
+// 错题复习：quiz.html?s=review-<日期>，把错题从各自的题库里拿出来拼成一套
+async function loadReview(){
+  const D = id.slice(7), list = reviewList(D), m = load('mistakes', []);
+  const fixed = load('reviewList', {}); if (!fixed[D] && list.length){ fixed[D] = list; save('reviewList', fixed); }
+  const need = [...new Set(list.map(k => m[k].s))], sets = {};
+  for (const s of need) await new Promise(r => { const sc = document.createElement('script'); sc.src = 'data/' + s + '.js?v=' + Date.now(); sc.onload = () => { sets[s] = window.SET; r(); }; sc.onerror = r; document.body.appendChild(sc); });
+  const qs = [], passages = {}, passagesCn = {};
+  list.forEach(k => { const x = m[k], S2 = sets[x.s]; if (!S2 || !S2.qs[x.i]) return;
+    const q = {...S2.qs[x.i], src: k, sec: S2.title};
+    if (q.p){ const pk = x.s + ':' + q.p; passages[pk] = S2.passages[q.p]; if (S2.passagesCn) passagesCn[pk] = S2.passagesCn[q.p]; q.p = pk; }
+    qs.push(q); });
+  SET = {title: '复习错题', intro: '前几天第一遍做错的题，再做一遍。<b>做对的题就从错题本里划掉</b>，错的下次还会出现。到 80% 算完成。', sections: [...new Set(qs.map(q => q.sec))], passages, passagesCn, qs};
+  if (!qs.length){ document.getElementById('title').textContent = '没有要复习的错题 🎉'; return; }
+  init();
+}
 function loadSet(){
+  if (id.startsWith('review-')) return loadReview();
   const sc = document.createElement('script');
   sc.src = 'data/' + id + '.js?v=' + Date.now();
   sc.onload = () => { SET = window.SET; init(); };
@@ -141,6 +157,9 @@ document.getElementById('submit').onclick = () => {
     if (SET.audio) renderAudio(); showResult(true); scrollTo({top:0, behavior:'smooth'}); return;
   }
   if (state.first === null){
+    // 第一遍做错的题记进错题本（摸底不记）
+    state.wrong = ids.filter(i => !state.right[i]).map(i => i + 1);
+    if (SET.mode !== 'diag' && !id.startsWith('review-')) addMistakes(id, ids.filter(i => !state.right[i]));
     state.first = Math.round(ok / SET.qs.length * 100);
     state.firstTime = Math.round((Date.now()-start)/60000);
     state.date = new Date().toLocaleString('zh-CN');
@@ -149,12 +168,14 @@ document.getElementById('submit').onclick = () => {
       return [s, idx.filter(i=>state.right[i]).length, idx.length];
     });
   }
+  // 复习时做对的题，从错题本划掉
+  if (id.startsWith('review-')){ const m = load('mistakes', []); ids.forEach(i => { if (state.right[i] && SET.qs[i].src != null && m[SET.qs[i].src]) m[SET.qs[i].src].ok = true; }); save('mistakes', m); }
   const total = Object.keys(state.right).length;
   state.now = Math.round(total / SET.qs.length * 100);
   const wasDone = state.done;
   state.done = SET.mode === 'diag' || state.now >= 80;
   put(state);
-  if (mode !== 'redo') notify(`📝 ${SET.title}：第一次 ${state.first}%，用时 ${state.firstTime} 分钟` + (state.sec ? '（' + state.sec.map(([n,a,b])=>n+' '+a+'/'+b).join('，') + '）' : ''));
+  if (mode !== 'redo') notify(`📝 ${SET.title}：第一次 ${state.first}%，用时 ${state.firstTime} 分钟` + (state.sec ? '（' + state.sec.map(([n,a,b])=>n+' '+a+'/'+b).join('，') + '）' : '') + (state.wrong && state.wrong.length ? `\n❌ 错题：第 ${state.wrong.join('、')} 题（已记进错题本，下次复习）` : ''));
   else if (state.done && !wasDone) notify(`✅ ${SET.title} 订正完成，现在 ${state.now}%`);
   document.body.classList.add('submitted');
   document.getElementById('bar').style.display = 'none';
