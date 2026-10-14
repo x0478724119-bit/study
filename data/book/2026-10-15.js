@@ -5,27 +5,37 @@ window.BOOK = {
 
 // ======================= 数学 =======================
 {id: 'math', icon: '📐', title: '数学：直线和圆、切线', time: '约 75 分钟', html: `
-<p class="lede">昨天学了圆里面的东西（弦、圆周角），今天看圆和外面的直线是什么关系。<b>切线</b>是这一章最重要的考点，A-Level 数学的"圆的坐标几何"也天天用到它。</p>
+<p class="lede">昨天学了圆"里面"的东西（弦、圆周角），今天看圆"外面"的一条直线和圆是什么关系。最重要的是<b>切线</b>：直线刚好擦着圆过去。还是老规矩：大白话 → 一步一步的例题 → 自己试（先看提示）。前 4 节学完做基础题，第 5 节学完做挑战题。</p>
 
-<div class="sec" id="m1"><h3><span class="n">01</span>直线和圆的三种位置关系</h3>
-<p>拿一把尺子在圆旁边慢慢往圆心移：一开始碰不到，然后刚好擦到一个点，再往里就穿过去、和圆有两个交点。</p>
+<div class="sec" id="m1"><h3><span class="n">01</span>直线和圆的三种关系</h3>
+<p><b>先想象：</b>桌上放一个圆盘，拿一把尺子从远处慢慢推向圆盘。</p>
+<ol><li>一开始尺子碰不到圆盘：没有交点；</li><li>推到某个位置，尺子<b>刚好擦到</b>圆盘边上的一个点：一个交点；</li><li>再往里推，尺子就压在圆盘上了，和圆的边有两个交点。</li></ol>
 <svg class="fig" viewBox="0 0 420 160" font-size="13" font-family="sans-serif">
  <g fill="none" stroke="#e07a5f" stroke-width="2"><circle cx="70" cy="70" r="40"/><circle cx="210" cy="70" r="40"/><circle cx="350" cy="70" r="40"/></g>
  <g stroke="#2b2622" stroke-width="2"><line x1="10" y1="135" x2="130" y2="135"/><line x1="150" y1="110" x2="270" y2="110"/><line x1="290" y1="92" x2="410" y2="92"/></g>
  <g stroke="#4a7fc1" stroke-dasharray="4 3" stroke-width="1.5"><line x1="70" y1="70" x2="70" y2="135"/><line x1="210" y1="70" x2="210" y2="110"/><line x1="350" y1="70" x2="350" y2="92"/></g>
  <g fill="#2b2622"><circle cx="70" cy="70" r="2.5"/><circle cx="210" cy="70" r="2.5"/><circle cx="350" cy="70" r="2.5"/><circle cx="210" cy="110" r="3.5" fill="#3d9970"/><circle cx="317" cy="92" r="3.5" fill="#3d9970"/><circle cx="383" cy="92" r="3.5" fill="#3d9970"/></g>
  <g fill="#4a7fc1"><text x="75" y="108">d</text><text x="215" y="95">d</text><text x="355" y="86">d</text></g>
- <g text-anchor="middle" fill="#2b2622"><text x="70" y="155">相离 d &gt; r</text><text x="210" y="155">相切 d = r</text><text x="350" y="155">相交 d &lt; r</text></g>
+ <g text-anchor="middle" fill="#2b2622"><text x="70" y="155">相离：0 个交点</text><text x="210" y="155">相切：1 个交点</text><text x="350" y="155">相交：2 个交点</text></g>
 </svg>
-<p>判断方法只看一件事：<b>圆心到直线的距离 d</b> 和 <b>半径 r</b> 比大小。</p>
-<table class="t"><tr><th>关系</th><th>d 和 r</th><th>公共点</th></tr>
-<tr><td>相离</td><td>d &gt; r</td><td>0 个</td></tr><tr><td>相切</td><td>d = r</td><td>1 个（叫<b>切点</b>，这条直线叫<b>切线</b>）</td></tr><tr><td>相交</td><td>d &lt; r</td><td>2 个</td></tr></table>
-<div class="ex"><b>例题</b>　⊙O 半径是 5，圆心到直线 l 的距离是 3，l 和圆什么关系？<br>3 &lt; 5，d &lt; r → <b>相交</b>。</div>
-<details class="try"><summary>试一试：半径 6，圆心到直线距离 6.5，什么关系？</summary><div>6.5 &gt; 6 → 相离，没有公共点。</div></details>
+<p><b>怎么判断是哪种？</b>不用画图数交点，只要比较两个长度：</p>
+<ul><li><b>d</b> = 圆心到直线的距离（从圆心往直线画垂线，垂线有多长）；</li><li><b>r</b> = 半径。</li></ul>
+<table class="t"><tr><th>比较</th><th>关系</th><th>怎么理解</th></tr>
+<tr><td>d &gt; r</td><td>相离</td><td>直线离圆心比半径还远，够不着圆</td></tr>
+<tr><td>d = r</td><td>相切</td><td>直线离圆心正好一个半径，刚好擦到</td></tr>
+<tr><td>d &lt; r</td><td>相交</td><td>直线离圆心比半径近，穿进圆里去了</td></tr></table>
+<div class="ex"><b>例题</b>　圆的半径是 5，圆心到直线 l 的距离是 3，l 和圆是什么关系？<br><br>
+<b>第 1 步：找 d 和 r。</b>d = 3，r = 5。<br>
+<b>第 2 步：比大小。</b>3 &lt; 5，也就是 d &lt; r。<br>
+<b>第 3 步：下结论。</b>直线离圆心比半径近 → <b>相交</b>，有 2 个交点。</div>
+<details class="try"><summary>试一试：半径 6，圆心到直线的距离 6.5，什么关系？</summary><div>
+<details class="try"><summary>先看提示</summary><div>比一比 6.5 和 6 谁大。</div></details>
+答案：6.5 &gt; 6，d &gt; r，相离，没有交点。</div></details>
 </div>
 
-<div class="sec" id="m2"><h3><span class="n">02</span>切线的性质：切线 ⊥ 半径</h3>
-<p>最重要的一句话：<b>圆的切线垂直于经过切点的半径。</b></p>
+<div class="sec" id="m2"><h3><span class="n">02</span>切线最重要的性质：和半径垂直</h3>
+<p>直线和圆<b>刚好碰到一个点</b>的时候，这条直线叫<b>切线</b>，碰到的那个点叫<b>切点</b>。</p>
+<p>切线有一个最重要的性质：<b>连接圆心和切点（这是一条半径），这条半径一定和切线垂直，成 90°。</b></p>
 <svg class="fig" viewBox="0 0 320 170" font-size="14" font-family="sans-serif">
  <circle cx="110" cy="105" r="55" fill="none" stroke="#e07a5f" stroke-width="2"/>
  <line x1="20" y1="50" x2="300" y2="50" stroke="#2b2622" stroke-width="2"/>
@@ -33,26 +43,36 @@ window.BOOK = {
  <line x1="110" y1="105" x2="260" y2="50" stroke="#8a7f74" stroke-width="1.5" stroke-dasharray="5 3"/>
  <path d="M110 62 h12 v-12" fill="none" stroke="#2b2622"/>
  <circle cx="110" cy="105" r="3" fill="#2b2622"/><circle cx="110" cy="50" r="3" fill="#2b2622"/><circle cx="260" cy="50" r="3" fill="#2b2622"/>
- <text x="96" y="122">O</text><text x="100" y="42">A</text><text x="262" y="42">P</text><text x="88" y="82" fill="#4a7fc1">r</text><text x="150" y="160" fill="#5b524a" font-size="12">PA 是切线，A 是切点</text>
+ <text x="96" y="122">O</text><text x="100" y="42">A</text><text x="262" y="42">P</text><text x="88" y="82" fill="#4a7fc1">r</text><text x="120" y="160" fill="#5b524a" font-size="12">PA 是切线，A 是切点，OA ⊥ PA</text>
 </svg>
-<p>所以 <b>O、A、P 三点组成一个直角三角形，直角在切点 A</b>。一看到切线，就要条件反射：<b>连接圆心和切点</b>，马上得到一个直角，然后就能用勾股定理。</p>
-<div class="ex"><b>例题</b>　PA 切 ⊙O 于点 A，OA = 3，OP = 5，求 PA。<br>∠OAP = 90°，勾股定理：PA = √(5² − 3²) = √16 = <b>4</b>。</div>
-<details class="try"><summary>试一试：PA 切 ⊙O 于 A，半径 5，PA = 12，求 OP。</summary><div>OP = √(5² + 12²) = √169 = 13。（5-12-13 是常见的勾股数，记住它省时间）</div></details>
-<div class="tip">💡 常见勾股数：3-4-5、6-8-10、5-12-13、8-15-17。看到这几个数字，基本就是直角三角形。</div>
+<details class="try"><summary>为什么一定垂直？（选看）</summary><div>从圆心到切线上各个点，切点 A 是最近的（其他点都在圆外面，离圆心比半径远）。而"从一个点到一条直线，最短的就是垂线"，所以 OA 就是垂线，OA ⊥ 切线。</div></details>
+<p><b>这个性质怎么用？</b>只要看到切线，就把<b>圆心和切点连起来</b>，马上得到一个<b>直角</b>。有直角就能用<b>勾股定理</b>（两条直角边的平方和 = 斜边的平方）。</p>
+<div class="ex"><b>例题</b>　PA 切 ⊙O 于点 A，OA = 3，OP = 5，求 PA 的长。<br><br>
+<b>第 1 步：找直角。</b>PA 是切线，A 是切点 → OA ⊥ PA → ∠OAP = 90°，三角形 OAP 是直角三角形。<br>
+<b>第 2 步：分清斜边。</b>直角在 A，对着直角的边 OP 是斜边；OA 和 PA 是两条直角边。<br>
+<b>第 3 步：列勾股定理。</b>OA² + PA² = OP²，也就是 3² + PA² = 5²，9 + PA² = 25。<br>
+<b>第 4 步：解。</b>PA² = 16，PA = <b>4</b>。</div>
+<div class="tip">💡 常见勾股数：3-4-5、6-8-10、5-12-13、8-15-17。看到这些数字，基本就是直角三角形，可以直接写答案。</div>
+<details class="try"><summary>试一试：PA 切 ⊙O 于 A，半径 5，PA = 12，求 OP。</summary><div>
+<details class="try"><summary>先看提示</summary><div>OA ⊥ PA，OP 是斜边。5² + 12² = OP²。</div></details>
+答案：OP² = 25 + 144 = 169，OP = 13。（5-12-13）</div></details>
 </div>
 
-<div class="sec" id="m3"><h3><span class="n">03</span>怎么证明一条线是切线</h3>
-<p>判定定理：<b>经过半径的外端，并且垂直于这条半径的直线，是圆的切线。</b>两个条件缺一不可：①过半径的外端（就是在圆上）②和半径垂直。</p>
-<p>证明题只有两种套路，看题目给了什么：</p>
-<table class="t"><tr><th>题目情况</th><th>套路</th><th>口诀</th></tr>
-<tr><td>已经知道直线和圆<b>有公共点</b></td><td>连接圆心和这个点（得到半径），证明它和直线垂直</td><td><b>连半径，证垂直</b></td></tr>
-<tr><td><b>不知道</b>有没有公共点</td><td>从圆心向直线作垂线，证明垂线段长度 = 半径</td><td><b>作垂直，证半径</b></td></tr></table>
-<div class="ex"><b>例题</b>　D 是 ⊙O 上的一点，直线 CD 经过点 D，已知 ∠ODC = 90°，求证 CD 是 ⊙O 的切线。<br>D 是公共点 → 连 OD（已经是半径）→ ∠ODC = 90° 说明 OD ⊥ CD → 所以 CD 是切线。三步写完。</div>
-<div class="warn">⚠️ 常见错误：只说"CD 和 OD 垂直，所以是切线"，没说明 D 在圆上（OD 是半径）。两个条件都要写。</div>
+<div class="sec" id="m3"><h3><span class="n">03</span>怎么证明一条直线是切线</h3>
+<p>反过来：怎么判断一条直线是不是切线？要同时满足<b>两个条件</b>：</p>
+<ol><li>直线经过圆上的一个点（这个点和圆心连起来是一条<b>半径</b>）；</li><li>直线和这条半径<b>垂直</b>。</li></ol>
+<p>证明题只有两种情况，看题目给了什么：</p>
+<table class="t"><tr><th>题目情况</th><th>怎么做</th><th>口诀</th></tr>
+<tr><td>已经知道直线和圆<b>有一个公共点</b></td><td>把圆心和这个点连起来（就是半径），再证明它和直线垂直</td><td><b>连半径，证垂直</b></td></tr>
+<tr><td><b>不知道</b>有没有公共点</td><td>从圆心往直线画一条垂线，再证明这条垂线的长度等于半径（也就是 d = r）</td><td><b>作垂直，证半径</b></td></tr></table>
+<div class="ex"><b>例题</b>　D 是 ⊙O 上的一点，直线 CD 经过点 D，已知 ∠ODC = 90°。求证：CD 是 ⊙O 的切线。<br><br>
+<b>想：</b>题目说了 D 在圆上，是公共点 → 用"连半径，证垂直"。<br>
+<b>写：</b><br>① 连接 OD。因为 D 在 ⊙O 上，所以 OD 是半径。<br>② 因为 ∠ODC = 90°，所以 OD ⊥ CD。<br>③ 直线 CD 经过半径 OD 的外端 D，并且垂直于 OD，所以 <b>CD 是 ⊙O 的切线</b>。</div>
+<div class="warn">⚠️ 常见扣分：只写了"OD ⊥ CD 所以是切线"，忘了说明 D 在圆上（OD 是半径）。<b>两个条件都要写出来</b>。</div>
 </div>
 
-<div class="sec" id="m4"><h3><span class="n">04</span>切线长定理</h3>
-<p>从圆外一点 P 可以画<b>两条</b>切线，切点是 A 和 B。PA、PB 的长度叫<b>切线长</b>。</p>
+<div class="sec" id="m4"><h3><span class="n">04</span>切线长定理：两条切线一样长</h3>
+<p>从圆外一个点 P，可以给圆画<b>两条</b>切线，切点分别是 A 和 B。线段 PA、PB 的长度叫<b>切线长</b>。</p>
 <svg class="fig" viewBox="0 0 340 200" font-size="14" font-family="sans-serif">
  <circle cx="110" cy="100" r="50" fill="none" stroke="#e07a5f" stroke-width="2"/>
  <g stroke="#2b2622" stroke-width="2"><line x1="300" y1="100" x2="123.2" y2="51.8"/><line x1="300" y1="100" x2="123.2" y2="148.2"/></g>
@@ -61,34 +81,43 @@ window.BOOK = {
  <g fill="#2b2622"><circle cx="110" cy="100" r="3"/><circle cx="123.2" cy="51.8" r="3"/><circle cx="123.2" cy="148.2" r="3"/><circle cx="300" cy="100" r="3"/></g>
  <text x="94" y="105">O</text><text x="118" y="42">A</text><text x="118" y="168">B</text><text x="306" y="105">P</text>
 </svg>
-<p>切线长定理有两句：</p>
-<ol><li><b>PA = PB</b>（两条切线一样长）</li><li><b>PO 平分 ∠APB</b>（也平分 ∠AOB）</li></ol>
-<p>再加上 ∠OAP = ∠OBP = 90°，四边形 OAPB 的四个角加起来是 360°，所以 <b>∠AOB + ∠APB = 180°</b>。</p>
-<div class="ex"><b>例题</b>　PA、PB 切 ⊙O 于 A、B，∠APB = 60°，求 ∠AOB。<br>∠AOB = 180° − 60° = <b>120°</b>。</div>
-<details class="try"><summary>试一试：上题中如果 PA = 5，那么 AB 多长？</summary><div>PA = PB 而且 ∠APB = 60°，所以三角形 PAB 是等边三角形，AB = 5。</div></details>
+<p><b>结论：PA = PB，两条切线一样长。</b>并且 PO 正好把 ∠APB 分成相等的两半。</p>
+<details class="try"><summary>为什么？（选看）</summary><div>看两个三角形 OAP 和 OBP：OA = OB（都是半径），OP 是共同的边，∠OAP = ∠OBP = 90°（切线 ⊥ 半径）。两个直角三角形斜边和一条直角边对应相等，所以全等（HL），于是 PA = PB。</div></details>
+<p><b>再算一个角：</b>四边形 OAPB 有四个角，加起来是 360°。其中 ∠OAP 和 ∠OBP 都是 90°，加起来 180°，所以剩下两个角加起来也是 180°：</p>
+<p style="text-align:center;font-size:17px"><b>∠AOB + ∠APB = 180°</b></p>
+<div class="ex"><b>例题</b>　PA、PB 分别切 ⊙O 于 A、B，∠APB = 60°，求 ∠AOB。<br><br>
+<b>第 1 步：</b>∠OAP = ∠OBP = 90°（切线 ⊥ 半径）。<br>
+<b>第 2 步：</b>四边形内角和 360°：∠AOB = 360° − 90° − 90° − 60° = <b>120°</b>。<br>
+（熟练以后可以直接用 180° − 60° = 120°）</div>
+<details class="try"><summary>试一试：上题里如果 PA = 5，那么弦 AB 多长？</summary><div>
+<details class="try"><summary>先看提示</summary><div>PA = PB，∠APB = 60°。一个三角形两条边相等、夹角 60°，它是什么三角形？</div></details>
+答案：三角形 PAB 是等边三角形，AB = 5。</div></details>
 </div>
+
+<a data-quiz="math-04">基础练习：切线</a>
 
 <div class="sec" id="m5"><h3><span class="n">05</span>三角形的内切圆</h3>
-<p>和三角形三条边都相切的圆叫<b>内切圆</b>，圆心叫<b>内心</b>。内心是<b>三条角平分线的交点</b>（因为它到三条边距离都相等）。</p>
-<p>求内切圆半径 r，两个公式：</p>
-<ul><li>任意三角形：<b>r = 2S ÷ 周长</b>（S 是面积）。原理：把三角形从内心切成 3 个小三角形，高都是 r。</li>
-<li>直角三角形（a、b 是直角边，c 是斜边）：<b>r = (a + b − c) ÷ 2</b></li></ul>
-<div class="ex"><b>例题</b>　直角三角形三边 3、4、5，求内切圆半径。<br>方法一：r = (3 + 4 − 5) ÷ 2 = <b>1</b>。<br>方法二：面积 S = 3 × 4 ÷ 2 = 6，周长 12，r = 2 × 6 ÷ 12 = <b>1</b>。两种方法答案一样，可以互相检查。</div>
+<p>在三角形里面画一个圆，让它和三角形的<b>三条边都相切</b>（三条边都刚好擦到圆），这个圆就叫<b>内切圆</b>，圆心叫<b>内心</b>。</p>
+<p><b>内心在哪？</b>内心到三条边的距离都相等（都等于内切圆的半径），而"到一个角两边距离相等的点"都在这个角的平分线上，所以<b>内心是三条角平分线的交点</b>。</p>
+<p><b>怎么求内切圆的半径 r？</b>两种方法：</p>
+<p><b>方法一（所有三角形都能用）：r = 2 × 面积 ÷ 周长</b></p>
+<p class="s">为什么：从内心连向三个顶点，把大三角形切成 3 个小三角形。每个小三角形的底是大三角形的一条边，高都是 r。3 个小三角形面积加起来 = ½ × r × (三条边加起来) = ½ × r × 周长 = 大三角形面积。倒过来就是 r = 2 × 面积 ÷ 周长。</p>
+<p><b>方法二（只适用于直角三角形）：r = (两条直角边之和 − 斜边) ÷ 2</b></p>
+<div class="ex"><b>例题</b>　直角三角形三边是 3、4、5，求内切圆半径。<br><br>
+<b>方法二：</b>直角边 3 和 4，斜边 5：r = (3 + 4 − 5) ÷ 2 = <b>1</b>。<br>
+<b>方法一检查：</b>面积 = 3 × 4 ÷ 2 = 6，周长 = 3 + 4 + 5 = 12，r = 2 × 6 ÷ 12 = <b>1</b> ✓<br>
+两种方法答案一样，考试时可以用一种算、另一种检查。</div>
+<details class="try"><summary>试一试：直角三角形两条直角边是 6 和 8，内切圆半径是多少？</summary><div>
+<details class="try"><summary>先看提示</summary><div>先用勾股定理算斜边：6-8-10。</div></details>
+答案：r = (6 + 8 − 10) ÷ 2 = 2。</div></details>
 </div>
 
-<div class="why"><b>🔤 英文术语（A-Level 考试全是英文，先混个脸熟）</b><br>
-circle 圆 · centre 圆心 · radius 半径 · diameter 直径 · chord 弦<br>
-tangent 切线 · point of contact 切点 · perpendicular 垂直的<br>
-"The tangent is perpendicular to the radius." 切线垂直于半径<br>
-Pythagoras' theorem 勾股定理 · inscribed circle (incircle) 内切圆</div>
-<div class="sum"><b>📌 今天的小结</b><br>
-① 看 d 和 r：d&gt;r 相离，d=r 相切，d&lt;r 相交<br>
-② 看到切线 → 连圆心和切点 → 直角 → 勾股定理<br>
-③ 证切线：有公共点"连半径证垂直"，没有就"作垂直证半径"<br>
+<div class="sum"><b>📌 今天学了 5 件事</b><br>
+① 比 d 和 r：d &gt; r 相离，d = r 相切，d &lt; r 相交<br>
+② 看到切线 → 连圆心和切点 → 得到直角 → 勾股定理<br>
+③ 证切线：有公共点就"连半径，证垂直"；没有就"作垂直，证半径"<br>
 ④ 两条切线：PA = PB，∠AOB + ∠APB = 180°<br>
-⑤ 内切圆：r = 2S ÷ 周长；直角三角形 r = (a+b−c)÷2</div>
-<p>读完了就去做题。先做基础，再做挑战。草稿纸画图！</p>
-<a data-quiz="math-04">基础练习：切线</a>
+⑤ 内切圆：内心是角平分线的交点；r = 2 × 面积 ÷ 周长；直角三角形 r = (a + b − c) ÷ 2</div>
 <a data-quiz="math-05">挑战题：切线</a>
 `},
 
