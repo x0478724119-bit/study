@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="学习站">
 <title>学习站</title>
-<link rel="stylesheet" href="style.css?v=1791954882">
+<link rel="stylesheet" href="style.css?v=1791955161">
 </head><body class="app">
 <header class="top">
   <div class="brand"><div class="logo" style="background:url(apple-touch-icon.png) center/cover"></div><div><b>我的设计工作室</b><small id="lv"></small></div></div>
@@ -21,7 +21,7 @@
 </nav>
 <div class="modal" id="modal"><div class="box" id="mbox"></div></div>
 
-<script src="common.js?v=1791954882"></script>
+<script src="common.js?v=1791955161"></script>
 <script>
 const LEVELS = [
   {lv:1, name:'设计学徒', need:0, icon:'🌱'},
@@ -173,7 +173,7 @@ function viewToday(){
       : `<textarea class="fill wbox" data-ws="w-${key}-${i}" id="w-${key}-${i}" placeholder="${t.write}" oninput="draft('${key}',${i},this.value)">${esc(load('draft', {})[key + '-' + i] || '')}</textarea><button class="main sm" style="margin-top:8px" onclick="submitWrite('${key}',${i})">提交</button>`;
     // 批改：data/feedback.js 里按 "日期-序号" 或教程 id 存
     const fb = (window.FEEDBACK || {})[key + '-' + i] || (t.lesson && (window.FEEDBACK || {})[t.lesson]);
-    if (fb) act += `<details class="fb" ${load('fbSeen', {})[key + '-' + i] ? '' : 'open'}><summary onclick="const s=load('fbSeen',{});s['${key}-${i}']=1;save('fbSeen',s);this.querySelector('.new')?.remove()">📝 姐姐的批改${load('fbSeen', {})[key + '-' + i] ? '' : ' <span class="new">新</span>'}</summary>${fb.html}</details>`;
+    if (fb) act += `<details class="fb" ${load('fbSeen', {})[key + '-' + i] ? '' : 'open'}><summary onclick="const s=load('fbSeen',{});s['${key}-${i}']=1;save('fbSeen',s);this.querySelector('.new')?.remove()">📝 批改${load('fbSeen', {})[key + '-' + i] ? '' : ' <span class="new">新</span>'}</summary>${fb.html}</details>`;
     const tick = !t.quiz && !t.write && !t.lesson ? `onclick="tog('${key}',${i})"` : '';
     return `<div class="c task ${on ? 'done' : ''}"><div class="chk ${on?'on':''}" ${tick}>${on?'✓':''}</div>
       <div style="flex:1"><div class="t">${t.t}<span class="tcoin">🪙${taskCoin(t)}</span></div><div class="d">${t.d}</div>${act}</div></div>`;
@@ -312,7 +312,7 @@ function viewJob(j){
     <h3>✅ 验收标准</h3>${li(j.accept)}
     ${(j.pre || []).length ? `<h3>📚 前置课（交了小测才能接单）</h3><div>${j.pre.map(id => `<div>${load('lesson', {})[id] ? '✅' : '⬜️'} <a class="go" href="${lessonUrl(id)}">${lessonName(id)}</a></div>`).join('')}</div>` : ''}
     ${j.ref ? `<h3>📖 参考</h3><a class="go" href="${j.ref}">打开相关教程 →</a>` : ''}</div>
-    ${(window.FEEDBACK || {})[j.id] ? `<div class="c"><div class="fb" style="margin:0"><b>📝 姐姐的批改</b>${window.FEEDBACK[j.id].html}${v.text ? `<details style="margin-top:6px"><summary>看我交的原文</summary><div style="white-space:pre-wrap">${esc(v.text)}</div></details>` : ''}</div></div>` : ''}
+    ${(window.FEEDBACK || {})[j.id] ? `<div class="c"><div class="fb" style="margin:0"><b>📝 批改</b>${window.FEEDBACK[j.id].html}${v.text ? `<details style="margin-top:6px"><summary>看我交的原文</summary><div style="white-space:pre-wrap">${esc(v.text)}</div></details>` : ''}</div></div>` : ''}
     <div class="c jd"><h3>💰 报酬</h3>
     <div class="pay"><div><small>接单：先拿定金</small><b>+${dep}</b></div><div><small>满意：再拿尾款</small><b>+${j.reward - dep}</b></div><div><small>一般：尾款打折（总共 ${CONFIG.GOOD_ENOUGH * 100}%）</small><b>+${Math.round(j.reward * CONFIG.GOOD_ENOUGH) - dep}</b></div><div><small>放弃或超时：退定金 + 赔付</small><b>−${dep + breach(j)}</b></div></div>
     <p class="s" style="margin:10px 0 0">💬 觉得价格不合适、想改要求？去「工作室」群找甲方谈，谈好了订单会更新。</p></div>`;
