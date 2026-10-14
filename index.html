@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="学习站">
 <title>学习站</title>
-<link rel="stylesheet" href="style.css?v=1791955161">
+<link rel="stylesheet" href="style.css?v=1791955655">
 </head><body class="app">
 <header class="top">
   <div class="brand"><div class="logo" style="background:url(apple-touch-icon.png) center/cover"></div><div><b>我的设计工作室</b><small id="lv"></small></div></div>
@@ -21,7 +21,7 @@
 </nav>
 <div class="modal" id="modal"><div class="box" id="mbox"></div></div>
 
-<script src="common.js?v=1791955161"></script>
+<script src="common.js?v=1791955655"></script>
 <script>
 const LEVELS = [
   {lv:1, name:'设计学徒', need:0, icon:'🌱'},
@@ -147,6 +147,9 @@ function viewToday(){
     else if (hm() < '06:00') h += `<div class="c wake"><div><b>🌙 现在是 ${hm()}，该睡觉啦</b><div class="d">起床打卡 06:00 开放</div></div></div>`;
     else h += `<div class="c wake"><div><b>☀️ 起床打卡</b><div class="d">14:00 前 +5 · 15:00 前 +3（2 小时内要开始学习）</div></div><button class="main sm" onclick="wakeUp()">我起床了</button></div>`;
   }
+  // 新批改提醒：点一下直接跳过去
+  const unseen = newFeedback();
+  if (unseen.length) h += `<div class="bar-msg fbbar">📝 有 <b>${unseen.length}</b> 条新批改：${unseen.map(u => `<a class="go" href="#" onclick="openFb('${u.k}');return false">${u.name}</a>`).join(' · ')}</div>`;
   // ③ 欠账提醒
   const bl = backlog(), st = stale();
   if (bl.length) h += `<div class="bar-msg">📌 还欠 <b>${bl.length} 天</b>作业${st.length ? `（${st.length} 天超过 ${CONFIG.STALE} 天，<b>不能接单、不能兑换</b>）` : ''}：${bl.map(k => `<a class="go" href="#" onclick="selDay='${k}';render();scrollTo(0,0);return false">${+k.slice(5,7)}/${+k.slice(8)} 去补</a>`).join(' · ')}</div>`;
@@ -199,6 +202,30 @@ function viewToday(){
     <div>获得：🪙 ${got}</div></details>`;
   if (!onLeave && key === T && !isWeekend(T) && !all && leaveLeft() > 0) h += `<button class="ghost" onclick="askLeave()">今天请假（本月还剩 ${leaveLeft()} 次）</button>`;
   return h;
+}
+// 新批改：feedback.js 里还没看过的（任务"日期-序号"、教程 id、订单 id）
+function newFeedback(){
+  const F = window.FEEDBACK || {}, seen = load('fbSeen', {}), out = [];
+  for (const k of Object.keys(F)){
+    if (seen[k]) continue;
+    let m = k.match(/^(\d{4}-\d\d-\d\d)-(\d+)$/), name = '';
+    if (m && DAYS[m[1]] && DAYS[m[1]].tasks[+m[2]]) name = DAYS[m[1]].tasks[+m[2]].t;
+    else if (job(k)) name = job(k).title;
+    else { for (const d of Object.keys(DAYS)) DAYS[d].tasks.forEach((t, i) => { if (t.lesson === k){ name = t.t; if (seen[d + '-' + i]) seen[k] = 1; } }); }
+    if (name && !seen[k]) out.push({k, name});
+  }
+  return out;
+}
+function openFb(k){
+  const s = load('fbSeen', {}); s[k] = 1; save('fbSeen', s);
+  if (job(k)){ tab = 'jobs'; jobSel = k; render(); scrollTo(0, 0); return; }
+  let d = null, i = -1, m = k.match(/^(\d{4}-\d\d-\d\d)-(\d+)$/);
+  if (m){ d = m[1]; i = +m[2]; } else for (const x of Object.keys(DAYS)) DAYS[x].tasks.forEach((t, j) => { if (t.lesson === k){ d = x; i = j; } });
+  if (!d) return;
+  s[d + '-' + i] = 1; save('fbSeen', s);
+  const o = JSON.parse(sessionStorage.getItem('openG') || '{}'); o[d + DAYS[d].tasks[i].tag] = true; sessionStorage.setItem('openG', JSON.stringify(o));
+  tab = 'today'; selDay = d; wkStart = null; render();
+  setTimeout(() => { const el = document.querySelectorAll('.grp[open] .task')[0] && [...document.querySelectorAll('.task')].find(x => x.innerHTML.includes(DAYS[d].tasks[i].t)); if (el) el.scrollIntoView({block: 'center'}); }, 50);
 }
 let wkStart = null;
 function shiftWeek(n){
@@ -300,6 +327,7 @@ function viewJobs(){
   return h;
 }
 function viewJob(j){
+  if ((window.FEEDBACK || {})[j.id]){ const sn = load('fbSeen', {}); if (!sn[j.id]){ sn[j.id] = 1; save('fbSeen', sn); } }
   const v = jget(j.id), w = wallet(), dep = deposit(j), lvLock = !PREVIEW && j.minLv && level(w.earned).lv < j.minLv;
   const li = a => '<ul>' + a.map(x => `<li>${x}</li>`).join('') + '</ul>';
   let h = `<a class="back" href="#" onclick="jobSel=null;render();return false">← 返回接单大厅</a>
