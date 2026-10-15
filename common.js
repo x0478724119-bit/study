@@ -85,6 +85,8 @@ function guardWrite(el, key){
 document.addEventListener('visibilitychange', () => {
   if (document.hidden && _wsActive){ const st = _wsGet(_wsActive); st.away++; _wsPut(_wsActive, st); }
 });
+// 英文单词数（用于英文写作要求和推送统计）
+const wordCount = s => (String(s || '').match(/[A-Za-z]+(?:['’][A-Za-z]+)?/g) || []).length;
 function writeStats(key, text){
   const st = _wsGet(key), min = Math.max(1, Math.round(st.ms / 60000)), n = String(text || '').length;
   const flags = [];
@@ -92,7 +94,8 @@ function writeStats(key, text){
   if (st.paste) flags.push(`想粘贴 ${st.paste} 次（被拦下）`);
   if (st.chunk) flags.push(`一次冒出一大段 ${st.chunk} 次`);
   if (n > 120 && n / min > 150) flags.push('打字快得不正常');
-  return `⏱ 写了约 ${min} 分钟 · ${n} 字 · 删改 ${st.del} 次` + (flags.length ? `\n⚠️ ${flags.join('；')}` : ' · ✅ 没发现异常');
+  const cjk = (String(text || '').match(/[\u4e00-\u9fff]/g) || []).length, en = wordCount(text);
+  return `⏱ 写了约 ${min} 分钟 · ${en > cjk ? en + ' 个英文单词' : n + ' 字'} · 删改 ${st.del} 次` + (flags.length ? `\n⚠️ ${flags.join('；')}` : ' · ✅ 没发现异常');
 }
 function clearWrite(key){ const s = load('ws', {}); delete s[key]; save('ws', s); if (_wsActive === key) _wsActive = null; }
 

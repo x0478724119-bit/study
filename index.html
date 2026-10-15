@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="学习站">
 <title>学习站</title>
-<link rel="stylesheet" href="style.css?v=1791955914">
+<link rel="stylesheet" href="style.css?v=1792052091">
 </head><body class="app">
 <header class="top">
   <div class="brand"><div class="logo" style="background:url(apple-touch-icon.png) center/cover"></div><div><b>我的设计工作室</b><small id="lv"></small></div></div>
@@ -21,7 +21,7 @@
 </nav>
 <div class="modal" id="modal"><div class="box" id="mbox"></div></div>
 
-<script src="common.js?v=1791955914"></script>
+<script src="common.js?v=1792052091"></script>
 <script>
 const LEVELS = [
   {lv:1, name:'设计学徒', need:0, icon:'🌱'},
@@ -173,7 +173,7 @@ function viewToday(){
       ? `<div class="d">${q.done ? '✅ 已完成' : '⏳ 还要订正'} · 第一次 ${q.first}%</div><a class="btn2 ${q.done ? 'light' : ''}" href="quiz.html?s=${t.quiz}&d=${key}">${q.done ? '查看 / 再刷' : '继续订正'}</a>`
       : `<a class="btn2" href="quiz.html?s=${t.quiz}&d=${key}">开始 →</a>`;
     if (t.write) act += wv ? `<div class="wdone">✍️ ${esc(wv.text)}<br><small>${wv.time} 提交 · <a href="#" onclick="editWrite('${key}',${i});return false">修改</a></small></div>`
-      : `<textarea class="fill wbox" data-ws="w-${key}-${i}" id="w-${key}-${i}" placeholder="${t.write}" oninput="draft('${key}',${i},this.value)">${esc(load('draft', {})[key + '-' + i] || '')}</textarea><button class="main sm" style="margin-top:8px" onclick="submitWrite('${key}',${i})">提交</button>`;
+      : `<textarea class="fill wbox" data-ws="w-${key}-${i}" id="w-${key}-${i}" placeholder="${t.write}" oninput="draft('${key}',${i},this.value)${t.words ? `;this.nextElementSibling.textContent=wordCount(this.value)+' / ${t.words} 词'` : ''}">${esc(load('draft', {})[key + '-' + i] || '')}</textarea>${t.words ? `<small class="wc" style="display:block;color:#888;margin-top:4px">${wordCount(load('draft', {})[key + '-' + i])} / ${t.words} 词</small>` : ''}<button class="main sm" style="margin-top:8px" onclick="submitWrite('${key}',${i})">提交</button>`;
     // 批改：data/feedback.js 里按 "日期-序号" 或教程 id 存
     const fb = (window.FEEDBACK || {})[key + '-' + i] || (t.lesson && (window.FEEDBACK || {})[t.lesson]);
     if (fb) act += `<details class="fb" ${load('fbSeen', {})[key + '-' + i] ? '' : 'open'}><summary onclick="const s=load('fbSeen',{});s['${key}-${i}']=1;save('fbSeen',s);this.querySelector('.new')?.remove()">📝 批改${load('fbSeen', {})[key + '-' + i] ? '' : ' <span class="new">新</span>'}</summary>${fb.html}</details>`;
@@ -240,7 +240,8 @@ function draft(key, i, v){ const d = load('draft', {}); d[key + '-' + i] = v; sa
 const esc = x => String(x).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 function submitWrite(key, i){
   const v = document.getElementById(`w-${key}-${i}`).value.trim(), t = DAYS[key].tasks[i];
-  if (v.length < (t.min || 10)){ toast(`再多写一点（至少 ${t.min || 10} 个字）`); return; }
+  if (t.words){ const n = wordCount(v); if (n < t.words){ toast(`再多写一点（至少 ${t.words} 个英文单词，现在 ${n} 个）`); return; } }
+  else if (v.length < (t.min || 10)){ toast(`再多写一点（至少 ${t.min || 10} 个字）`); return; }
   const d = load('day-' + key, {}); d[i] = {text: v, time: todayStr() + ' ' + hm()}; save('day-' + key, d); const dr = load('draft', {}); delete dr[key + '-' + i]; save('draft', dr);
   notify(`✍️ ${t.t}：\n${v}\n${writeStats('w-' + key + '-' + i, v)}`); clearWrite('w-' + key + '-' + i); render();
 }
