@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="学习站">
 <title>学习站</title>
-<link rel="stylesheet" href="style.css?v=1792052091">
+<link rel="stylesheet" href="style.css?v=1792056196">
 </head><body class="app">
 <header class="top">
   <div class="brand"><div class="logo" style="background:url(apple-touch-icon.png) center/cover"></div><div><b>我的设计工作室</b><small id="lv"></small></div></div>
@@ -21,7 +21,7 @@
 </nav>
 <div class="modal" id="modal"><div class="box" id="mbox"></div></div>
 
-<script src="common.js?v=1792052091"></script>
+<script src="common.js?v=1792056196"></script>
 <script>
 const LEVELS = [
   {lv:1, name:'设计学徒', need:0, icon:'🌱'},
@@ -183,7 +183,7 @@ function viewToday(){
   });
   const groups = [];
   day.tasks.forEach((t, i) => { let g = groups.find(x => x.tag === t.tag); if (!g) groups.push(g = {tag: t.tag, idx: []}); g.idx.push(i); });
-  const ICON = {英语: '🔤', 数学: '📐', 项目: '🛠️', 复习: '🔁'}, openG = JSON.parse(sessionStorage.getItem('openG') || '{}');
+  const ICON = {英语: '🔤', 数学: '📐', 语文: '📖', 物理: '⚡', 化学: '🧪', 历史: '🏛️', 道法: '⚖️', 项目: '🛠️', 复习: '🔁'}, openG = JSON.parse(sessionStorage.getItem('openG') || '{}');
   h += groups.map(g => {
     const n = g.idx.filter(i => taskDone(key, i, day.tasks[i])).length, all2 = n === g.idx.length, gid = key + g.tag;
     const dots = g.idx.map(i => taskDone(key, i, day.tasks[i]) ? '✅' : '⬜️').join('');
