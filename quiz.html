@@ -4,7 +4,8 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="icon" type="image/png" href="icon-512.png">
 <title>做题</title>
-<link rel="stylesheet" href="style.css?v=1792464985">
+<link rel="stylesheet" href="style.css?v=1792470565">
+<style>.symk{display:flex;gap:6px;margin-top:6px}.symk button{width:auto;flex:0 0 auto;min-width:40px;padding:6px 10px;font-size:16px;background:var(--card);border:1px solid var(--line);color:var(--ink);border-radius:8px}</style>
 </head><body><div class="w">
 <a class="back" id="back" href="./">← 回到任务</a>
 <h1 id="title">加载中…</h1>
@@ -14,7 +15,7 @@
 <div id="bar" class="bar"><button class="main" id="submit">交卷</button></div>
 <div id="result"></div>
 </div>
-<script src="common.js?v=1792464985"></script>
+<script src="common.js?v=1792470565"></script>
 <script>
 // ===== 通用做题引擎 =====
 // 题库放在 data/<id>.js，用 quiz.html?s=<id> 打开。
@@ -50,7 +51,9 @@ function loadSet(){
 }
 function get(){ try { return JSON.parse(localStorage.getItem(KEY)) || null; } catch(e){ return null; } }
 function put(v){ try { localStorage.setItem(KEY, JSON.stringify(v)); } catch(e){} }
-const norm = s => String(s).replace(/\s+/g,'').replace(/，/g,',').replace(/．/g,'.').replace(/[−—–]/g,'-').replace(/（/g,'(').replace(/）/g,')').replace(/^x=/,'').toLowerCase();
+function symIns(i, k){ const el = document.getElementById('in' + i), a = el.selectionStart ?? el.value.length, b = el.selectionEnd ?? a; el.setRangeText(k, a, b, 'end'); el.focus(); el.dispatchEvent(new Event('input')); }
+// pi / 根号 / sqrt 也算对：统一换成 π、√ 再比较
+const norm = s => String(s).replace(/pi|Pi|PI/g,'π').replace(/根号|sqrt/gi,'√').replace(/\^2/g,'²').replace(/\^3/g,'³').replace(/\s+/g,'').replace(/[*×·](?=[√π(])/g,'').replace(/√\((\d+)\)/g,'√$1').replace(/，/g,',').replace(/．/g,'.').replace(/[−—–]/g,'-').replace(/（/g,'(').replace(/）/g,')').replace(/^x=/,'').toLowerCase();
 
 function init(){
   document.title = SET.title;
@@ -103,7 +106,11 @@ function render(){
     if (q.p && q.p !== lastP){ const cn = SET.passagesCn && SET.passagesCn[q.p]; h += `<div class="c passage">${SET.passages[q.p]}${cn ? `<details class="cn"><summary>看中文翻译</summary>${cn}</details>` : ''}</div>`; }
     lastP = q.p;
     h += `<div class="c q" id="q${i}"><div class="qn">${i+1}. ${q.q}</div>`;
-    if (q.t === 'fill') h += `<input class="fill" id="in${i}" autocomplete="off" autocapitalize="off" placeholder="填写答案（单词要写完整，包括首字母）">`;
+    if (q.t === 'fill'){
+      h += `<input class="fill" id="in${i}" autocomplete="off" autocapitalize="off" placeholder="填写答案（单词要写完整，包括首字母）">`;
+      // 答案里有 π、√ 这些符号：给一排按钮点出来（iPad 键盘打不出来）
+      if (/[π√²³°]/.test([].concat(q.a).join('') + q.q)) h += `<div class="symk">${['π','√','²','³','°','−','/'].map(k => `<button type="button" onclick="symIns(${i},'${k}')">${k}</button>`).join('')}</div>`;
+    }
     else h += q.opts.map((o,j)=>`<label class="opt"><input type="radio" name="r${i}" value="${j}"> <span>${String.fromCharCode(65+j)}. ${o}</span></label>`).join('');
     h += `<div class="ex" id="ex${i}"></div></div>`;
   }
