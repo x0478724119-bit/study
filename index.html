@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="学习站">
 <title>学习站</title>
-<link rel="stylesheet" href="style.css?v=1792739133">
+<link rel="stylesheet" href="style.css?v=1792741449">
 </head><body class="app">
 <header class="top">
   <div class="brand"><div class="logo" style="background:url(apple-touch-icon.png) center/cover"></div><div><b>我的设计工作室</b><small id="lv"></small></div></div>
@@ -21,7 +21,7 @@
 </nav>
 <div class="modal" id="modal"><div class="box" id="mbox"></div></div>
 
-<script src="common.js?v=1792739133"></script>
+<script src="common.js?v=1792741449"></script>
 <script>
 const LEVELS = [
   {lv:1, name:'设计学徒', need:0, icon:'🌱'},
@@ -181,8 +181,8 @@ function viewToday(){
     let act = '';
     if (t.link) act += `<a class="btn2 ${t.quiz && quizState(t.quiz) ? 'light' : ''}" href="${t.link.replace('{d}', key)}">${t.lt || '📖 打开教程'}</a>`;
     // 新教程在每日手册里（id 像 d5-kjl），老教程在 lessons.html
-    const lh = t.lesson && (/^d\d+-/.test(t.lesson) ? `book.html?d=${key}#${t.lesson}` : `book.html?d=2026-10-12#${t.lesson}`);
-    if (t.lesson){ const lv = load('lesson', {})[t.lesson]; act += lv ? `<div class="wdone">✍️ ${lv.total ? `小测要点 ${lv.hit}/${lv.total}` : esc(lv.text)}<br><small>${lv.time} · 在教程里提交</small></div><a class="btn2 light" href="${lh}">回教程看看</a>` : `<a class="btn2" href="${lh}">📖 去上课</a>`; }
+    const lh = t.lesson && (/^py\d/.test(t.lesson) ? `py.html?l=${t.lesson}` : /^d\d+-/.test(t.lesson) ? `book.html?d=${key}#${t.lesson}` : `book.html?d=2026-10-12#${t.lesson}`);
+    if (t.lesson){ const lv = load('lesson', {})[t.lesson]; act += lv ? `<div class="wdone">✍️ ${lv.total ? `小测要点 ${lv.hit}/${lv.total}` : esc(lv.text)}<br><small>${lv.time} · 在教程里提交</small></div><a class="btn2 light" href="${lh}">回教程看看</a>` : `<a class="btn2" href="${lh}">${/^py\d/.test(t.lesson) ? '🐍 去写代码' : '📖 去上课'}</a>`; }
     if (t.job){ const n = jobsInWeek(key); act += `<div class="d">这周已经交了 ${n} 单（要 ${t.job} 单）· 可以提前做</div><a class="btn2 ${n >= t.job ? 'light' : ''}" href="#" onclick="tab='jobs';jobSel=null;render();scrollTo(0,0);return false">${n >= t.job ? '再去看看订单' : '去接单 →'}</a>`; }
     if (t.quiz) act += q && q.first != null
       ? `<div class="d">${q.done ? '✅ 已完成' : '⏳ 还要订正'} · 第一次 ${q.first}%</div><a class="btn2 ${q.done ? 'light' : ''}" href="quiz.html?s=${t.quiz}&d=${key}">${q.done ? '查看 / 再刷' : '继续订正'}</a>`

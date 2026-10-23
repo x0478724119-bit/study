@@ -4,8 +4,8 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="icon" type="image/png" href="icon-512.png">
 <title>Python 练习台</title>
-<script src="common.js?v=1792739133"></script>
-<link rel="stylesheet" href="style.css?v=1792739133">
+<script src="common.js?v=1792741449"></script>
+<link rel="stylesheet" href="style.css?v=1792741449">
 <style>
 .sec{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin:12px 0}
 .sec h3{margin:0 0 6px;font-size:17px;display:flex;gap:8px;align-items:baseline}.sec h3 .n{color:var(--acc);font-size:14px;font-weight:800}
@@ -51,11 +51,11 @@ function boot(){
 }
 boot();
 // 运行一次：5 秒没结束就当死循环，关掉重开
-function run(code, stdin, after){
+function run(code, stdin, after, pre){
   return new Promise(r => {
     const id = ++seq;
     const t = setTimeout(() => { delete pend[id]; W.terminate(); ready = false; boot(); r({out: '', err: 'TIMEOUT', ok: false}); }, 5000);
-    pend[id] = {r, t}; W.postMessage({id, code, stdin, after});
+    pend[id] = {r, t}; W.postMessage({id, code, stdin, after, pre});
   });
 }
 // iPad 中文键盘会打出中文标点和弯引号：引号统一换成直的，字符串外面的中文标点换成英文的
@@ -98,13 +98,14 @@ function explain(err){
   return (ln ? `第 ${ln} 行：` : '') + esc(last);
 }
 const norm = s => String(s).replace(/[ \t]+$/gm, '').trim();
+const noEcho = s => String(s).split('\n').filter(l => !l.startsWith('\x01')).join('\n'), unmark = s => String(s).replace(/\x01/g, '');
 // 测试：in 输入；has 输出里要出现的内容；eq 输出完全一致；py 运行完以后再执行的检查代码（assert）
 async function check(ex, code){
   for (const [k, t] of ex.tests.entries()){
-    const r = await run(code, t.in || [], t.py);
+    const r = await run(code, t.in || [], t.py, t.pre);
     if (!r.ok) return {ok: false, msg: explain(r.err), out: r.out, t};
-    const o = norm(r.out);
-    if (t.eq != null && o !== norm(t.eq)) return {ok: false, msg: `输出和要求的不一样。`, out: r.out, t, want: t.eq};
+    const o = norm(unmark(r.out)), oq = norm(noEcho(r.out));
+    if (t.eq != null && oq !== norm(t.eq)) return {ok: false, msg: `输出和要求的不一样。`, out: r.out, t, want: t.eq};
     const loose = x => String(x).replace(/\s+/g, '').replace(/，/g, ',').replace(/！/g, '!').replace(/：/g, ':').replace(/？/g, '?');
     for (const h of t.has || []) if (!loose(o).includes(loose(h))) return {ok: false, msg: `输出里应该有「<b>${esc(h)}</b>」，但没找到。`, out: r.out, t};
     for (const h of t.not || []) if (o.includes(h)) return {ok: false, msg: `输出里不应该有「<b>${esc(h)}</b>」。`, out: r.out, t};
@@ -141,7 +142,7 @@ async function tryRun(id){
   const code = clean(document.getElementById('c-' + id).value), si = document.getElementById('i-' + id);
   const o = document.getElementById('o-' + id); o.hidden = false; o.textContent = '运行中……';
   const r = await run(code, si && si.value.trim() ? si.value.replace(/\n+$/, '').split('\n') : []);
-  o.innerHTML = esc(r.out) + (r.ok ? '' : `<span class="e">${r.out ? '\n' : ''}❌ 出错了</span>\n<span class="h">${explain(r.err)}</span>`);
+  o.innerHTML = esc(unmark(r.out)) + (r.ok ? '' : `<span class="e">${r.out ? '\n' : ''}❌ 出错了</span>\n<span class="h">${explain(r.err)}</span>`);
   if (!r.out && r.ok) o.innerHTML = '<span class="h">（程序运行完了，但没有输出任何东西。要用 print() 才会显示。）</span>';
 }
 async function submitEx(id){
@@ -153,7 +154,7 @@ async function submitEx(id){
   if (r.ok){ rec.ok = true; rec.code = code; saveST(s); box.innerHTML = `<div class="pres ok">✅ 通过！${ex.project ? '你的作品完成了 🎉' : '点「下一题 →」继续'}</div>`; const nb = document.getElementById('next-' + id); if (nb) nb.className = 'main'; paint(); finish(); return; }
   saveST(s);
   const t = r.t || {};
-  box.innerHTML = `<div class="pres no">❌ 还没通过（第 ${rec.tries} 次）。${r.msg}${t.in && t.in.length ? `<br>测试用的输入：<code>${t.in.map(esc).join(' / ')}</code>` : ''}${r.want ? `<br>要求输出：<pre style="margin:4px 0">${esc(r.want)}</pre>` : ''}${r.out ? `<br>你的程序输出：<pre style="margin:4px 0">${esc(r.out)}</pre>` : ''}</div>${rec.tries >= 3 && ex.hint ? `<div class="tip">💡 提示：${ex.hint}</div>` : ''}`;
+  box.innerHTML = `<div class="pres no">❌ 还没通过（第 ${rec.tries} 次）。${r.msg}${t.in && t.in.length ? `<br>测试用的输入：<code>${t.in.map(esc).join(' / ')}</code>` : ''}${r.want ? `<br>要求输出：<pre style="margin:4px 0">${esc(r.want)}</pre>` : ''}${r.out ? `<br>你的程序输出：<pre style="margin:4px 0">${esc(unmark(r.out))}</pre>` : ''}</div>${rec.tries >= 3 && ex.hint ? `<div class="tip">💡 提示：${ex.hint}</div>` : ''}`;
 }
 function resetEd(id){ const ex = findEx(id), d = findDemo(id), s = ST(); if (s.draft) delete s.draft[LID + '/' + id]; saveST(s); document.getElementById('c-' + id).value = ex ? ex.starter : d; }
 let CUR = null;

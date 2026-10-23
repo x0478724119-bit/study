@@ -14,5 +14,13 @@ window.FEEDBACK = {
  "2026-10-15-1": {
   "date": "2026-10-15",
   "html": "<table class=\"t\"><tr><td>1. She is a game developer.</td><td>✅ 对，但太简单。可以加：My cousin is a game developer <b>and he makes phone games</b>.（加上具体的事）</td></tr><tr><td>2. I like the characters because she is beautiful.</td><td>❌ characters 是复数，不能用 she。改：<b>I like this character because she is beautiful.</b> 或 I like the characters because <b>they are</b> beautiful.</td></tr><tr><td>3.This game has ten level.</td><td>❌ ten 后面要复数：<b>ten levels</b>。另外 3. 后面要空一格。</td></tr><tr><td>4. let’s test the new game.</td><td>❌ 句首要大写：<b>Let’s</b> test the new game.</td></tr><tr><td>5. The game is very popular.</td><td>✅ 对，但太短。加个原因：The game is very popular <b>because</b> it is free.</td></tr></table><p><b>总评：</b>5 句错了 3 句，都是单复数和大写这种粗心错，写完再检查一遍就能发现。句子都太短（一共才 30 个词左右），从今天开始造句要至少 40 个词。今天任务最后有 8 道订正填空。</p>"
+ },
+ "2026-10-21-1": {
+  "date": "2026-10-23",
+  "html": "<table class=\"t\"><tr><td>1. my father bought a new inventions for our kitchen.</td><td>❌ 两处：句首大写 <b>My</b>；有 a 就用单数 <b>a new invention</b>。</td></tr><tr><td>2. My best friend has a good influence on me.</td><td>✅ 对！have an influence on 用得很好</td></tr><tr><td>3. We can buy things online because it is very convenient.</td><td>✅ 对，还加了 because 👍</td></tr><tr><td>4. I want buy a digital watch.</td><td>❌ want 后面要加 to：<b>I want to buy</b> a digital watch.</td></tr><tr><td>5. He found a good dilution to his math problem.</td><td>❌ dilution 是「稀释」，这里要用 <b>solution</b>（解决办法）。</td></tr></table><p><b>总评：</b>43 个词，句子比上周长了，第 2、3 句很好。错的都是小细节：句首大写、a + 单数、want to do。</p>"
+ },
+ "2026-10-22-1": {
+  "date": "2026-10-23",
+  "html": "<table class=\"t\"><tr><td>1. There is no gravity in space, so we can float.</td><td>✅ 对，用 so 连起来很好</td></tr><tr><td>2. we did some interesting experiment in our silence class yesterday.</td><td>❌ 三处：句首 <b>We</b>；some + 复数 <b>experiments</b>；科学课是 <b>science</b>（silence 是「安静」）。</td></tr><tr><td>3. We can't live without oxygen.</td><td>✅ 对</td></tr><tr><td>4. The astronauts are working hard on the space station.</td><td>✅ 对</td></tr><tr><td>5. The ball can float on the water.</td><td>✅ 对</td></tr></table><p><b>总评：</b>5 句对 4 句，进步很明显！还是要注意句首大写和单复数。这两天的错误放进了周一的订正题。</p>"
  }
 };

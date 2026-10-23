@@ -4,8 +4,9 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="icon" type="image/png" href="icon-512.png">
 <title>做题</title>
-<link rel="stylesheet" href="style.css?v=1792739133">
-<style>.symk{display:flex;gap:6px;margin-top:6px}.symk button{width:auto;flex:0 0 auto;min-width:40px;padding:6px 10px;font-size:16px;background:var(--card);border:1px solid var(--line);color:var(--ink);border-radius:8px}</style>
+<link rel="stylesheet" href="style.css?v=1792741449">
+<style>.ordsel{min-height:44px;border:1px dashed var(--line);border-radius:10px;padding:6px;margin:6px 0}.ordtip{color:var(--faint);font-size:13.5px}.ordit{border:1px solid var(--line);border-radius:10px;padding:8px 10px;margin:4px 0;background:var(--card);cursor:pointer;font-size:15px}.ordit.on{background:var(--blue-soft)}.ordit b{color:var(--acc);margin-right:4px}
+.symk{display:flex;gap:6px;margin-top:6px}.symk button{width:auto;flex:0 0 auto;min-width:40px;padding:6px 10px;font-size:16px;background:var(--card);border:1px solid var(--line);color:var(--ink);border-radius:8px}</style>
 </head><body><div class="w">
 <a class="back" id="back" href="./">← 回到任务</a>
 <h1 id="title">加载中…</h1>
@@ -15,7 +16,7 @@
 <div id="bar" class="bar"><button class="main" id="submit">交卷</button></div>
 <div id="result"></div>
 </div>
-<script src="common.js?v=1792739133"></script>
+<script src="common.js?v=1792741449"></script>
 <script>
 // ===== 通用做题引擎 =====
 // 题库放在 data/<id>.js，用 quiz.html?s=<id> 打开。
@@ -137,6 +138,7 @@ function render(){
       // 答案里有 π、√ 这些符号：给一排按钮点出来（iPad 键盘打不出来）
       if (/[π√²³°]/.test([].concat(q.a).join('') + q.q)) h += `<div class="symk">${['π','√','²','³','°','−','/'].map(k => `<button type="button" onclick="symIns(${i},'${k}')">${k}</button>`).join('')}</div>`;
     }
+    else if (q.t === 'order') h += `<div class="ordsel" id="os${i}"><span class="ordtip">按顺序点下面的句子；点错了，点这里的句子放回去</span></div><div class="ordpick" id="op${i}"></div>`;
     else h += q.opts.map((o,j)=>`<label class="opt"><input type="radio" name="r${i}" value="${j}"> <span>${String.fromCharCode(65+j)}. ${o}</span></label>`).join('');
     h += `<div class="ex" id="ex${i}"></div></div>`;
   }
@@ -148,14 +150,27 @@ function render(){
     const dr = load('qdraft-' + id, {});
     for (const i of window._list){
       const q = SET.qs[i];
+      if (q.t === 'order'){ window._ord = window._ord || {}; window._ord[i] = Array.isArray(dr[i]) ? dr[i] : []; ordPaint(i); continue; }
       if (q.t === 'fill'){ const el = document.getElementById('in'+i); if (dr[i] != null) el.value = dr[i]; el.oninput = () => { const d = load('qdraft-' + id, {}); d[i] = el.value; save('qdraft-' + id, d); }; }
       else document.querySelectorAll(`input[name="r${i}"]`).forEach(r => { if (dr[i] != null && +r.value === dr[i]) r.checked = true; r.onchange = () => { const d = load('qdraft-' + id, {}); d[i] = +r.value; save('qdraft-' + id, d); }; });
     }
   }
 }
 
+// 排顺序题：items 按正确顺序写，页面上打乱显示（每题固定打乱，刷新不变）
+function ordPerm(i, n){ const a = [...Array(n).keys()]; let x = (i + 1) * 9301 + n * 49297; for (let k = n - 1; k > 0; k--){ x = (x * 9301 + 49297) % 233280; const j = Math.floor(x / 233280 * (k + 1)); [a[k], a[j]] = [a[j], a[k]]; } if (a.every((v, k) => v === k) && n > 1) [a[0], a[1]] = [a[1], a[0]]; return a; }
+function ordPaint(i){
+  const q = SET.qs[i], sel = window._ord[i], lock = document.getElementById('q' + i).classList.contains('good') || document.getElementById('q' + i).classList.contains('badq');
+  document.getElementById('os' + i).innerHTML = sel.length ? sel.map((k, n) => `<div class="ordit on" ${lock ? '' : `onclick="ordTap(${i},${k},false)"`}><b>${n + 1}</b> ${q.items[k]}</div>`).join('') : '<span class="ordtip">按顺序点下面的句子；点错了，点这里的句子放回去</span>';
+  document.getElementById('op' + i).innerHTML = ordPerm(i, q.items.length).filter(k => !sel.includes(k)).map(k => `<div class="ordit" ${lock ? '' : `onclick="ordTap(${i},${k},true)"`}>${q.items[k]}</div>`).join('');
+}
+function ordTap(i, k, add){
+  const sel = window._ord[i]; if (add) sel.push(k); else sel.splice(sel.indexOf(k), 1);
+  const d = load('qdraft-' + id, {}); d[i] = sel; save('qdraft-' + id, d); ordPaint(i);
+}
 function check(i){
   const q = SET.qs[i];
+  if (q.t === 'order'){ const sel = (window._ord || {})[i] || []; return sel.length === q.items.length && sel.every((k, n) => k === n); }
   if (q.t === 'fill'){
     const v = norm(document.getElementById('in'+i).value);
     return [].concat(q.a).some(a => norm(a) === v);
@@ -166,17 +181,18 @@ function check(i){
 
 document.getElementById('submit').onclick = () => {
   const ids = window._list;
-  const blank = ids.filter(i => SET.qs[i].t==='fill' ? !document.getElementById('in'+i).value.trim() : !document.querySelector(`input[name="r${i}"]:checked`));
+  const blank = ids.filter(i => SET.qs[i].t==='order' ? ((window._ord || {})[i] || []).length < SET.qs[i].items.length : SET.qs[i].t==='fill' ? !document.getElementById('in'+i).value.trim() : !document.querySelector(`input[name="r${i}"]:checked`));
   if (blank.length && !confirm(`还有 ${blank.length} 道没做，确定交卷吗？`)) return;
   let ok = 0;
   for (const i of ids){
     const good = check(i); if (good){ ok++; state.right[i] = true; }
     const q = SET.qs[i], box = document.getElementById('q'+i), ex = document.getElementById('ex'+i);
     box.classList.add(good ? 'good' : 'badq');
-    const ans = q.t==='fill' ? [].concat(q.a)[0] : String.fromCharCode(65+q.a)+'. '+q.opts[q.a];
+    const ans = q.t==='order' ? '<br>' + q.items.map((t, n) => `${n + 1}. ${t}`).join('<br>') : q.t==='fill' ? [].concat(q.a)[0] : String.fromCharCode(65+q.a)+'. '+q.opts[q.a];
     ex.innerHTML = (good ? '✅ 正确' : `❌ 正确答案：<b>${ans}</b>`) + (q.e ? `<br>💡 ${q.e}` : '');
     ex.style.display = 'block';
     box.querySelectorAll('input').forEach(x=>x.disabled = true);
+    if (q.t === 'order') ordPaint(i);
   }
   try { localStorage.removeItem('qdraft-' + id); } catch(e){}
   // 每一次提交都记一笔
@@ -242,7 +258,7 @@ function renderReview(){
   render();
   for (const i of window._list){
     const q=SET.qs[i], ex=document.getElementById('ex'+i);
-    const ans = q.t==='fill' ? [].concat(q.a)[0] : String.fromCharCode(65+q.a)+'. '+q.opts[q.a];
+    const ans = q.t==='order' ? '<br>' + q.items.map((t, n) => `${n + 1}. ${t}`).join('<br>') : q.t==='fill' ? [].concat(q.a)[0] : String.fromCharCode(65+q.a)+'. '+q.opts[q.a];
     ex.innerHTML = `答案：<b>${ans}</b>` + (q.e ? `<br>💡 ${q.e}` : ''); ex.style.display='block';
     document.getElementById('q'+i).querySelectorAll('input').forEach(x=>x.disabled=true);
   }

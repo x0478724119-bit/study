@@ -10,12 +10,12 @@ const ready = (async () => {
 import builtins
 _inq = []
 def _input(prompt=''):
-    print(prompt, end='')
+    # 输入回显的那一行开头加 \x01，判题时跳过（显示时去掉）
     if not _inq:
-        print()
+        print('\x01' + str(prompt))
         raise EOFError('程序要输入，但输入框里已经没有内容了')
     v = _inq.pop(0)
-    print(v)
+    print('\x01' + str(prompt) + v)
     return v
 builtins.input = _input
 `);
@@ -24,7 +24,7 @@ builtins.input = _input
 
 onmessage = async e => {
   await ready;
-  const {id, code, stdin, after} = e.data;
+  const {id, code, stdin, after, pre} = e.data;
   out = '';
   let err = null, ok = true;
   try {
@@ -32,6 +32,7 @@ onmessage = async e => {
     for (const s of stdin || []) py.globals.get('_inq').append(s);
     const ns = py.globals.get('dict')();
     ns.set('__name__', '__main__');
+    if (pre) py.runPython(pre, {globals: ns});
     py.runPython(code, {globals: ns});
     if (after){ try { py.runPython(after, {globals: ns}); } catch (x){ ok = false; err = 'CHECK:' + String(x.message || x); } }
     ns.destroy();

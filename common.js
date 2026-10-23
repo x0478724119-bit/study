@@ -104,7 +104,7 @@ function clearWrite(key){ const s = load('ws', {}); delete s[key]; save('ws', s)
 
 // ===== 课程 id → 名字 / 链接（订单前置课用）=====
 // d5-kjl 这种 = 第 5 天手册里的课；sk-xxx / d6-plan = 技能课
-const LESSON_NAMES = {'d6-plan': '平面图', 'sk-3v': '三视图', 'sk-canva': '可画入门', 'd6-kjl': '酷家乐第 5 课：灯光和效果图', 'd6-art': '美术第 1 课：一点透视', 'd5-kjl': '酷家乐第 4 课：材质和配色', 'd3-cv': '好 logo 的 4 条原则', 'd7-sw': 'Swift 第 5 课：逻辑运算符', 'd8-art': '美术第 2 课：两点透视', 'd9-kjl': '酷家乐第 6 课：客厅布局和动线', 'd10-cv': '设计第 2 课：字体和排版', 'd11-art': '美术第 3 课：明暗', 'py1': 'Python 第 1 课：游戏角色卡'};
+const LESSON_NAMES = {'d6-plan': '平面图', 'sk-3v': '三视图', 'sk-canva': '可画入门', 'd6-kjl': '酷家乐第 5 课：灯光和效果图', 'd6-art': '美术第 1 课：一点透视', 'd5-kjl': '酷家乐第 4 课：材质和配色', 'd3-cv': '好 logo 的 4 条原则', 'd7-sw': 'Swift 第 5 课：逻辑运算符', 'd8-art': '美术第 2 课：两点透视', 'd9-kjl': '酷家乐第 6 课：客厅布局和动线', 'd10-cv': '设计第 2 课：字体和排版', 'd11-art': '美术第 3 课：明暗', 'py1': 'Python 第 1 课：游戏角色卡', 'py2': 'Python 第 2 课：if 判断', 'py3': 'Python 第 3 课：猜数字游戏', 'py4': 'Python 第 4 课：星星金字塔', 'd12-yd': '课外阅读 1：外婆的旧缝纫机', 'd13-art': '美术第 4 课：色彩基础', 'd14-yd': '课外阅读 2：楼下的那棵桂花树', 'd15-kjl': '酷家乐第 7 课：设计一个学习角'};
 function lessonUrl(id){
   if (/^py\d/.test(id)) return `py.html?l=${id}`;
   const m = id.match(/^d(\d+)-/), ks = Object.keys(window.DAYS || {}).sort();
@@ -113,7 +113,7 @@ function lessonUrl(id){
 }
 function lessonName(id){
   const m = id.match(/^d(\d+)-/), ks = Object.keys(window.DAYS || {}).sort(), day = m && id !== 'd6-plan' && ks[+m[1] - 1];
-  return (LESSON_NAMES[id] || id) + (day ? `（${+day.slice(5,7)}/${+day.slice(8)} 的课，可以提前学）` : '（技能课）');
+  return (LESSON_NAMES[id] || id) + (day ? `（${+day.slice(5,7)}/${+day.slice(8)} 的课，可以提前学）` : /^py\d/.test(id) ? '（Python 练习台）' : '（技能课）');
 }
 
 // 预览模式：姐姐的浏览器（开过后台或 ?me=1）什么都不锁，方便检查内容
