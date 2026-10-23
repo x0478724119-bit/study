@@ -4,8 +4,8 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="icon" type="image/png" href="icon-512.png">
 <title>Python 练习台</title>
-<script src="common.js?v=1792731785"></script>
-<link rel="stylesheet" href="style.css?v=1792731785">
+<script src="common.js?v=1792736872"></script>
+<link rel="stylesheet" href="style.css?v=1792736872">
 <style>
 .sec{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin:12px 0}
 .sec h3{margin:0 0 6px;font-size:17px;display:flex;gap:8px;align-items:baseline}.sec h3 .n{color:var(--acc);font-size:14px;font-weight:800}
@@ -155,7 +155,7 @@ async function submitEx(id){
 function resetEd(id){ const ex = findEx(id), d = findDemo(id), s = ST(); if (s.draft) delete s.draft[LID + '/' + id]; saveST(s); document.getElementById('c-' + id).value = ex ? ex.starter : d; }
 function paint(){
   const s = (ST()[LID]) || {};
-  document.getElementById('pyprog').innerHTML = P.ex.map((x, i) => `<span class="${s[x.id] && s[x.id].ok ? 'ok' : ''}">${s[x.id] && s[x.id].ok ? '✅' : '⬜️'} ${x.project ? '🎮 作品' : '练习 ' + (i + 1)}</span>`).join('');
+  document.getElementById('pyprog').innerHTML = '<b style="font-size:13px;color:var(--soft);align-self:center">点一下跳到练习：</b>' + P.ex.map((x, i) => `<span style="cursor:pointer" onclick="document.getElementById('${x.id}').scrollIntoView({behavior:'smooth',block:'start'})" class="${s[x.id] && s[x.id].ok ? 'ok' : ''}">${s[x.id] && s[x.id].ok ? '✅' : '⬜️'} ${x.project ? '🎮 作品' : '练习 ' + (i + 1)}</span>`).join('');
   P.ex.forEach(x => { const el = document.getElementById('st-' + x.id); if (el) el.textContent = s[x.id] && s[x.id].ok ? '✅' : ''; });
 }
 // 全部通过：记进 lesson（首页任务自动打勾），推送给姐姐
@@ -170,7 +170,7 @@ function finish(){
 function render(){
   document.title = P.title; document.getElementById('title').textContent = '🐍 ' + P.title;
   const s = ST(), dr = s.draft || {};
-  let h = `<p class="lede">${P.intro}</p><div class="pyprog" id="pyprog"></div>`;
+  let h = `<p class="lede">${P.intro}</p><div class="pyprog" id="pyprog"></div><div class="tip">📖 <b>怎么学：</b>从上往下看。先看 01–04 四小节讲解（每段黑色代码框都能点 ▶ 运行，也可以自己改了再运行），看完往下滑就是练习。</div>`;
   let n = 0;
   for (const sec of P.secs){
     const html = sec.html.replace(/<demo>([\s\S]*?)<\/demo>/g, (_, c) => { const id = 'd' + (++n); DEMOS[id] = c.replace(/^\n/, ''); return editor(id, dr[LID + '/' + id] ?? DEMOS[id], {stdin: /input\(/.test(c) ? '' : null}); });
