@@ -126,7 +126,7 @@ function todayProgress(){
   const D = window.DAYS || load('daysCache', null), key = dayStr();
   if (!D || !D[key]) return '';
   const ts = D[key].tasks, left = ts.filter((t, i) => !taskDoneLS(key, i, t));
-  return `📋 今天（${D[key].name}）完成 ${ts.length - left.length}/${ts.length} 项` + (left.length ? `，还剩 ${left.length} 项：${left.map(t => t.t.length > 12 ? t.t.slice(0, 12) + '…' : t.t).join('、')}` : ' 🎉 全部完成');
+  return `📋 今天 ${ts.length - left.length}/${ts.length} 项` + (left.length ? '' : ' 🎉');  // 详细的看每天的「📅 日报」
 }
 function notifyTail(){
   const w = wallet(), last = load('lastNotify', null), seq = w.seq || 0;

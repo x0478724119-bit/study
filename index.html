@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="学习站">
 <title>学习站</title>
-<link rel="stylesheet" href="style.css?v=1792730436">
+<link rel="stylesheet" href="style.css?v=1792730694">
 </head><body class="app">
 <header class="top">
   <div class="brand"><div class="logo" style="background:url(apple-touch-icon.png) center/cover"></div><div><b>我的设计工作室</b><small id="lv"></small></div></div>
@@ -21,7 +21,7 @@
 </nav>
 <div class="modal" id="modal"><div class="box" id="mbox"></div></div>
 
-<script src="common.js?v=1792730436"></script>
+<script src="common.js?v=1792730694"></script>
 <script>
 const LEVELS = [
   {lv:1, name:'设计学徒', need:0, icon:'🌱'},
@@ -71,7 +71,7 @@ function checkMissed(){
     const lv = !!leave[k];
     missed[k] = {pen, back: lv ? -1 : 0}; save('missed', missed);
     addCoins(-pen, `${DAYS[k].name} ${lv ? '请假超过 ' + CONFIG.STALE + ' 天没补' : '有 ' + left + ' 项没完成'}`);
-    notify(`⚠️ ${k} ${DAYS[k].name} ${lv ? '请假超过 ' + CONFIG.STALE + ' 天还没补' : '有 ' + left + ' 项没完成'}，扣 ${pen} 金币`);
+    notify(`⚠️ 日报 ${k.slice(5)} ${DAYS[k].name}：${lv ? '请假超过 ' + CONFIG.STALE + ' 天还没补' : '没做完，差 ' + left + ' 项'}，扣 ${pen} 金币\n${dayReport(k)}`);
   }
   // 补完了：按晚了几天退还
   for (const [k, m] of Object.entries(missed)){
@@ -259,6 +259,7 @@ function settle(){
     });
   }
   checkWake(did);
+  autoReport();
 }
 const mins = t => +t.slice(0,2) * 60 + +t.slice(3,5);
 function wakeLeft(wt){ return Math.max(0, 120 - (mins(hm()) - mins(wt.time))); }
@@ -280,6 +281,25 @@ function checkWake(justDid){
     wt.ok = 'fail'; save('wake', w);
     notify(`😴 ${wt.time} 打卡后 2 小时没开始学习，起床打卡作废`);
   }
+}
+// 日报：按科目列出每项的结果，姐姐一眼看清
+function taskResult(key, i, t){
+  if (t.quiz){ const q = quizState(t.quiz); return q && q.first != null ? `${q.first}%` : '✓'; }
+  if (t.lesson){ const l = load('lesson', {})[t.lesson]; return l && l.total ? `要点 ${l.hit}/${l.total}` : '✓'; }
+  if (t.write){ const w = load('day-' + key, {})[i]; return w && w.text ? `${t.words ? wordCount(w.text) + ' 词' : w.text.length + ' 字'}` : '✓'; }
+  return '✓';
+}
+function dayReport(key){
+  const d = DAYS[key], groups = {};
+  d.tasks.forEach((t, i) => { const g = groups[t.tag] = groups[t.tag] || []; const short = /挑战/.test(t.t) ? '挑战题' : /基础练习/.test(t.t) ? '基础题' : /周测/.test(t.t) ? '周测' : t.t.replace(/[：:].*$/, '').slice(0, 24); g.push(`${taskDone(key, i, t) ? '' : '❌'}${short} ${taskDone(key, i, t) ? taskResult(key, i, t) : '没做'}`); });
+  const wk = load('wake', {})[key];
+  return Object.entries(groups).map(([g, a]) => `${g}：${a.join(' · ')}`).join('\n') + (wk ? `\n☀️ 起床 ${wk.time}` : '');
+}
+function autoReport(){
+  const r = load('reported', {});
+  if (!DAYS[T] || r[T] || !dayComplete(T)) return;
+  r[T] = 1; save('reported', r);
+  notify(`📅 日报 ${T.slice(5)} ${DAYS[T].name}：✅ ${DAYS[T].tasks.length}/${DAYS[T].tasks.length} 全部完成（最后一项 ${hm()}）\n${dayReport(T)}`);
 }
 function claimDay(key){
   const p = load('paid', {}); if (p[key] || key !== T) return; p[key] = 1; save('paid', p);

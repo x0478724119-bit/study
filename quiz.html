@@ -4,7 +4,7 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="icon" type="image/png" href="icon-512.png">
 <title>做题</title>
-<link rel="stylesheet" href="style.css?v=1792730436">
+<link rel="stylesheet" href="style.css?v=1792730694">
 <style>.symk{display:flex;gap:6px;margin-top:6px}.symk button{width:auto;flex:0 0 auto;min-width:40px;padding:6px 10px;font-size:16px;background:var(--card);border:1px solid var(--line);color:var(--ink);border-radius:8px}</style>
 </head><body><div class="w">
 <a class="back" id="back" href="./">← 回到任务</a>
@@ -15,7 +15,7 @@
 <div id="bar" class="bar"><button class="main" id="submit">交卷</button></div>
 <div id="result"></div>
 </div>
-<script src="common.js?v=1792730436"></script>
+<script src="common.js?v=1792730694"></script>
 <script>
 // ===== 通用做题引擎 =====
 // 题库放在 data/<id>.js，用 quiz.html?s=<id> 打开。
@@ -62,9 +62,20 @@ function awayBadge(){
   if (r.away > 3) b.style.background = 'var(--bad-soft)';
 }
 document.addEventListener('visibilitychange', () => {
-  if (document.visibilityState !== 'hidden' || !state || state.first !== null || practice) return;
-  const QS = load('qstart', {}); if (!QS[id]) return; QS[id].away++; save('qstart', QS); awayBadge();
+  if (!state || state.first !== null || practice) return;
+  const QS = load('qstart', {}), r = QS[id]; if (!r) return; r.segs = r.segs || [];
+  if (document.visibilityState === 'hidden'){ r.away++; r.segs.push([Date.now(), null]); }
+  else { const g = r.segs[r.segs.length - 1]; if (g && !g[1]) g[1] = Date.now(); }
+  save('qstart', QS); awayBadge();
 });
+// 离开的时间段：14:02–14:05（3 分钟）
+const hhmm = t => new Date(t).toTimeString().slice(0, 5);
+function awayText(r){
+  const segs = (r.segs || []).map(([a, b]) => [a, b || Date.now()]);
+  if (!segs.length) return '';
+  const tot = Math.round(segs.reduce((x, [a, b]) => x + (b - a), 0) / 60000);
+  return `\n🚪 中途离开 ${segs.length} 次，共 ${tot} 分钟${segs.length > 3 ? ' ⚠️' : ''}：` + segs.slice(0, 8).map(([a, b]) => `${hhmm(a)}–${hhmm(b)}（${Math.max(0, Math.round((b - a) / 60000))} 分）`).join('、') + (segs.length > 8 ? ' 等' : '');
+}
 function init(){
   document.title = SET.title;
   document.getElementById('title').textContent = SET.title;
@@ -184,7 +195,7 @@ document.getElementById('submit').onclick = () => {
     if (SET.mode !== 'diag' && !id.startsWith('review-')) addMistakes(id, ids.filter(i => !state.right[i]));
     state.first = Math.round(ok / SET.qs.length * 100);
     const QS = load('qstart', {}), qr = QS[id] || {t: start, away: 0};
-    state.firstTime = Math.round((Date.now() - qr.t)/60000); state.away = qr.away;
+    state.firstTime = Math.round((Date.now() - qr.t)/60000); state.away = qr.away; state.awayTxt = awayText(qr); state.t0 = hhmm(qr.t);
     delete QS[id]; save('qstart', QS); const ab = document.getElementById('awayb'); if (ab) ab.remove();
     state.date = new Date().toLocaleString('zh-CN');
     if (SET.sections) state.sec = SET.sections.map(s => {
@@ -199,7 +210,7 @@ document.getElementById('submit').onclick = () => {
   const wasDone = state.done;
   state.done = SET.mode === 'diag' || state.now >= 80;
   put(state);
-  if (mode !== 'redo') notify(`📝 ${SET.title}：第一次 ${state.first}%，用时 ${state.firstTime} 分钟（从第一次打开算）` + (state.away != null ? `，中途离开 ${state.away} 次${state.away > 3 ? ' ⚠️' : ''}` : '') + (state.sec ? '（' + state.sec.map(([n,a,b])=>n+' '+a+'/'+b).join('，') + '）' : '') + (state.wrong && state.wrong.length ? `\n❌ 错题：第 ${state.wrong.join('、')} 题（已记进错题本，下次复习）` : ''));
+  if (mode !== 'redo') notify(`📝 ${SET.title}：第一次 ${state.first}%，用时 ${state.firstTime} 分钟（${state.t0 || ''}–${hhmm(Date.now())}）` + (state.sec ? '（' + state.sec.map(([n,a,b])=>n+' '+a+'/'+b).join('，') + '）' : '') + (state.awayTxt || (state.away === 0 ? '\n🚪 中途没离开' : '')) + (state.wrong && state.wrong.length ? `\n❌ 错题：第 ${state.wrong.join('、')} 题（已记进错题本，下次复习）` : ''));
   else if (state.done && !wasDone) notify(`✅ ${SET.title} 订正完成，现在 ${state.now}%`);
   document.body.classList.add('submitted');
   document.getElementById('bar').style.display = 'none';
