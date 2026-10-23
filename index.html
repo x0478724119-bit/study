@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="学习站">
 <title>学习站</title>
-<link rel="stylesheet" href="style.css?v=1792730694">
+<link rel="stylesheet" href="style.css?v=1792731415">
 </head><body class="app">
 <header class="top">
   <div class="brand"><div class="logo" style="background:url(apple-touch-icon.png) center/cover"></div><div><b>我的设计工作室</b><small id="lv"></small></div></div>
@@ -21,7 +21,7 @@
 </nav>
 <div class="modal" id="modal"><div class="box" id="mbox"></div></div>
 
-<script src="common.js?v=1792730694"></script>
+<script src="common.js?v=1792731415"></script>
 <script>
 const LEVELS = [
   {lv:1, name:'设计学徒', need:0, icon:'🌱'},
@@ -116,7 +116,7 @@ function dayKey(){
   return next || (DAYS[T] ? T : (ks.filter(k => k <= T).pop() || ks[0]));
 }
 function quizState(id){ return load('quiz-' + id, null); }
-function taskDone(key, i, t){ if (t.lesson) return !!load('lesson', {})[t.lesson]; if (t.quiz){ const q = quizState(t.quiz); return !!(q && q.done); } return !!load('day-' + key, {})[i]; }
+function taskDone(key, i, t){ if (t.job) return jobsInWeek(key) >= t.job; if (t.lesson) return !!load('lesson', {})[t.lesson]; if (t.quiz){ const q = quizState(t.quiz); return !!(q && q.done); } return !!load('day-' + key, {})[i]; }
 function dayComplete(key){ const d = DAYS[key]; return !!d && d.tasks.every((t,i) => taskDone(key, i, t)); }
 function unlocked(){ return isWeekend(T) || !DAYS[T] || dayComplete(T); }
 
@@ -169,6 +169,7 @@ function viewToday(){
     // 新教程在每日手册里（id 像 d5-kjl），老教程在 lessons.html
     const lh = t.lesson && (/^d\d+-/.test(t.lesson) ? `book.html?d=${key}#${t.lesson}` : `book.html?d=2026-10-12#${t.lesson}`);
     if (t.lesson){ const lv = load('lesson', {})[t.lesson]; act += lv ? `<div class="wdone">✍️ ${lv.total ? `小测要点 ${lv.hit}/${lv.total}` : esc(lv.text)}<br><small>${lv.time} · 在教程里提交</small></div><a class="btn2 light" href="${lh}">回教程看看</a>` : `<a class="btn2" href="${lh}">📖 去上课</a>`; }
+    if (t.job){ const n = jobsInWeek(key); act += `<div class="d">这周已经交了 ${n} 单（要 ${t.job} 单）· 可以提前做</div><a class="btn2 ${n >= t.job ? 'light' : ''}" href="#" onclick="tab='jobs';jobSel=null;render();scrollTo(0,0);return false">${n >= t.job ? '再去看看订单' : '去接单 →'}</a>`; }
     if (t.quiz) act += q && q.first != null
       ? `<div class="d">${q.done ? '✅ 已完成' : '⏳ 还要订正'} · 第一次 ${q.first}%</div><a class="btn2 ${q.done ? 'light' : ''}" href="quiz.html?s=${t.quiz}&d=${key}">${q.done ? '查看 / 再刷' : '继续订正'}</a>`
       : `<a class="btn2" href="quiz.html?s=${t.quiz}&d=${key}">开始 →</a>`;
@@ -177,7 +178,7 @@ function viewToday(){
     // 批改：data/feedback.js 里按 "日期-序号" 或教程 id 存
     const fb = (window.FEEDBACK || {})[key + '-' + i] || (t.lesson && (window.FEEDBACK || {})[t.lesson]);
     if (fb) act += `<details class="fb" ${load('fbSeen', {})[key + '-' + i] ? '' : 'open'}><summary onclick="const s=load('fbSeen',{});s['${key}-${i}']=1;save('fbSeen',s);this.querySelector('.new')?.remove()">📝 批改${load('fbSeen', {})[key + '-' + i] ? '' : ' <span class="new">新</span>'}</summary>${fb.html}</details>`;
-    const tick = !t.quiz && !t.write && !t.lesson ? `onclick="tog('${key}',${i})"` : '';
+    const tick = !t.quiz && !t.write && !t.lesson && !t.job ? `onclick="tog('${key}',${i})"` : '';
     return `<div class="c task ${on ? 'done' : ''}"><div class="chk ${on?'on':''}" ${tick}>${on?'✓':''}</div>
       <div style="flex:1"><div class="t">${t.t}<span class="tcoin">🪙${taskCoin(t)}</span></div><div class="d">${t.d}</div>${act}</div></div>`;
   });
@@ -402,12 +403,12 @@ function doDrop(id, pen){
 }
 function submitJob(id){
   modal(`<h3>提交「${job(id).title}」</h3><p>把作品发到飞书的<b>「工作室」群</b>：第一行写订单名，再附上要交的东西。姐姐验收后会给你 <b>6 位验收码</b>：满意码拿全额，一般码拿 60%，不行就要返工。</p>
-    <div class="row"><button class="ghost" onclick="closeM()">再改改</button><button class="main" onclick="jset('${id}',Object.assign(jget('${id}'),{st:'review'}));notify('📤 提交作品：${jobNo(job(id))} ${job(id).title}，等你验收');closeM();render()">已发给姐姐</button></div>`);
+    <div class="row"><button class="ghost" onclick="closeM()">再改改</button><button class="main" onclick="jset('${id}',Object.assign(jget('${id}'),{st:'review',sub:dayStr()}));notify('📤 提交作品：${jobNo(job(id))} ${job(id).title}，等你验收');closeM();render()">已发给姐姐</button></div>`);
 }
 function submitWriteJob(id){
   const j = job(id), t = ($('#jw-' + id).value || '').trim(), n = (t.match(/[A-Za-z']+/g) || []).length;
   if (n < j.write){ toast(`还差 ${j.write - n} 个词`); return; }
-  jset(id, Object.assign(jget(id), {st: 'review', text: t}));
+  jset(id, Object.assign(jget(id), {st: 'review', text: t, sub: dayStr()}));
   notify(`📤 提交作品：${jobNo(j)} ${j.title}（${n} 词）\n${t}\n${writeStats('job-' + id, t)}`);
   clearWrite('job-' + id); const d = load('jdraft', {}); delete d[id]; save('jdraft', d);
   toast('已提交，等姐姐验收'); render();

@@ -117,7 +117,11 @@ function lessonName(id){
 const PREVIEW = (() => { try { return load('isAdmin', false) || !!load('adminToken', ''); } catch(e){ return false; } })();
 
 // ===== 推送末尾：今天的进度 + 余额变化（和上一条推送比）=====
+// 每周必做订单：这一周（周一到周日）提交过几单（提交时记了 sub 日期）
+function weekMon(key){ const d = new Date(key + 'T12:00'); return todayStr(new Date(d - ((d.getDay() + 6) % 7) * 864e5)); }
+function jobsInWeek(key){ const a = weekMon(key), b = todayStr(new Date(new Date(a + 'T12:00').getTime() + 6 * 864e5)); return Object.values(load('jobs', {})).filter(v => v && v.sub && v.sub >= a && v.sub <= b).length; }
 function taskDoneLS(key, i, t){
+  if (t.job) return jobsInWeek(key) >= t.job;
   if (t.lesson) return !!load('lesson', {})[t.lesson];
   if (t.quiz){ const q = load('quiz-' + t.quiz, null); return !!(q && q.done); }
   return !!load('day-' + key, {})[i];
