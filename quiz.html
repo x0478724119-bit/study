@@ -4,7 +4,7 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="icon" type="image/png" href="icon-512.png">
 <title>做题</title>
-<link rel="stylesheet" href="style.css?v=1792470565">
+<link rel="stylesheet" href="style.css?v=1792730436">
 <style>.symk{display:flex;gap:6px;margin-top:6px}.symk button{width:auto;flex:0 0 auto;min-width:40px;padding:6px 10px;font-size:16px;background:var(--card);border:1px solid var(--line);color:var(--ink);border-radius:8px}</style>
 </head><body><div class="w">
 <a class="back" id="back" href="./">← 回到任务</a>
@@ -15,7 +15,7 @@
 <div id="bar" class="bar"><button class="main" id="submit">交卷</button></div>
 <div id="result"></div>
 </div>
-<script src="common.js?v=1792470565"></script>
+<script src="common.js?v=1792730436"></script>
 <script>
 // ===== 通用做题引擎 =====
 // 题库放在 data/<id>.js，用 quiz.html?s=<id> 打开。
@@ -55,12 +55,27 @@ function symIns(i, k){ const el = document.getElementById('in' + i), a = el.sele
 // pi / 根号 / sqrt 也算对：统一换成 π、√ 再比较
 const norm = s => String(s).replace(/pi|Pi|PI/g,'π').replace(/根号|sqrt/gi,'√').replace(/\^2/g,'²').replace(/\^3/g,'³').replace(/\s+/g,'').replace(/[*×·](?=[√π(])/g,'').replace(/√\((\d+)\)/g,'√$1').replace(/，/g,',').replace(/．/g,'.').replace(/[−—–]/g,'-').replace(/（/g,'(').replace(/）/g,')').replace(/^x=/,'').toLowerCase();
 
+function awayBadge(){
+  const r = load('qstart', {})[id]; if (!r) return;
+  let b = document.getElementById('awayb'); if (!b){ b = document.createElement('div'); b.id = 'awayb'; b.style.cssText = 'position:fixed;top:8px;right:8px;z-index:20;font-size:12.5px;padding:4px 10px;border-radius:999px;background:var(--card);border:1px solid var(--line)'; document.body.appendChild(b); }
+  b.textContent = `中途离开 ${r.away} 次` + (r.away > 3 ? ' ⚠️ 会告诉姐姐' : '（超过 3 次会告诉姐姐）');
+  if (r.away > 3) b.style.background = 'var(--bad-soft)';
+}
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState !== 'hidden' || !state || state.first !== null || practice) return;
+  const QS = load('qstart', {}); if (!QS[id]) return; QS[id].away++; save('qstart', QS); awayBadge();
+});
 function init(){
   document.title = SET.title;
   document.getElementById('title').textContent = SET.title;
   document.getElementById('intro').innerHTML = SET.intro || '';
   state = get() || { right: {}, first: null, firstTime: null, done: false };
   if (state.first !== null) { mode = 'review'; showResult(); }
+  // 第一次做：从第一次打开算时间，中途切出去（看别的页面、别的 App）记一次
+  if (state.first === null){
+    const QS = load('qstart', {}); if (!QS[id]){ QS[id] = {t: Date.now(), away: 0}; save('qstart', QS); }
+    awayBadge();
+  }
   renderStudy();
   render();
 }
@@ -168,7 +183,9 @@ document.getElementById('submit').onclick = () => {
     state.wrong = ids.filter(i => !state.right[i]).map(i => i + 1);
     if (SET.mode !== 'diag' && !id.startsWith('review-')) addMistakes(id, ids.filter(i => !state.right[i]));
     state.first = Math.round(ok / SET.qs.length * 100);
-    state.firstTime = Math.round((Date.now()-start)/60000);
+    const QS = load('qstart', {}), qr = QS[id] || {t: start, away: 0};
+    state.firstTime = Math.round((Date.now() - qr.t)/60000); state.away = qr.away;
+    delete QS[id]; save('qstart', QS); const ab = document.getElementById('awayb'); if (ab) ab.remove();
     state.date = new Date().toLocaleString('zh-CN');
     if (SET.sections) state.sec = SET.sections.map(s => {
       const idx = SET.qs.map((q,i)=>i).filter(i=>SET.qs[i].sec===s);
@@ -182,7 +199,7 @@ document.getElementById('submit').onclick = () => {
   const wasDone = state.done;
   state.done = SET.mode === 'diag' || state.now >= 80;
   put(state);
-  if (mode !== 'redo') notify(`📝 ${SET.title}：第一次 ${state.first}%，用时 ${state.firstTime} 分钟` + (state.sec ? '（' + state.sec.map(([n,a,b])=>n+' '+a+'/'+b).join('，') + '）' : '') + (state.wrong && state.wrong.length ? `\n❌ 错题：第 ${state.wrong.join('、')} 题（已记进错题本，下次复习）` : ''));
+  if (mode !== 'redo') notify(`📝 ${SET.title}：第一次 ${state.first}%，用时 ${state.firstTime} 分钟（从第一次打开算）` + (state.away != null ? `，中途离开 ${state.away} 次${state.away > 3 ? ' ⚠️' : ''}` : '') + (state.sec ? '（' + state.sec.map(([n,a,b])=>n+' '+a+'/'+b).join('，') + '）' : '') + (state.wrong && state.wrong.length ? `\n❌ 错题：第 ${state.wrong.join('、')} 题（已记进错题本，下次复习）` : ''));
   else if (state.done && !wasDone) notify(`✅ ${SET.title} 订正完成，现在 ${state.now}%`);
   document.body.classList.add('submitted');
   document.getElementById('bar').style.display = 'none';
