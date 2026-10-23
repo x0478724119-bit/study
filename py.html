@@ -4,8 +4,8 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="icon" type="image/png" href="icon-512.png">
 <title>Python 练习台</title>
-<script src="common.js?v=1792737327"></script>
-<link rel="stylesheet" href="style.css?v=1792737327">
+<script src="common.js?v=1792737574"></script>
+<link rel="stylesheet" href="style.css?v=1792737574">
 <style>
 .sec{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin:12px 0}
 .sec h3{margin:0 0 6px;font-size:17px;display:flex;gap:8px;align-items:baseline}.sec h3 .n{color:var(--acc);font-size:14px;font-weight:800}
@@ -155,7 +155,7 @@ async function submitEx(id){
 function resetEd(id){ const ex = findEx(id), d = findDemo(id), s = ST(); if (s.draft) delete s.draft[LID + '/' + id]; saveST(s); document.getElementById('c-' + id).value = ex ? ex.starter : d; }
 function paint(){
   const s = (ST()[LID]) || {};
-  document.getElementById('pyprog').innerHTML = '<b style="font-size:13px;color:var(--soft);align-self:center">点一下跳到练习：</b>' + P.ex.map((x, i) => `<span style="cursor:pointer" onclick="document.getElementById('${x.id}').scrollIntoView({behavior:'smooth',block:'start'})" class="${s[x.id] && s[x.id].ok ? 'ok' : ''}">${s[x.id] && s[x.id].ok ? '✅' : '⬜️'} ${x.project ? '🎮 作品' : '练习 ' + (i + 1)}</span>`).join('');
+  document.getElementById('pyprog').innerHTML = '<b style="font-size:13px;color:var(--soft);align-self:center">点一下跳到练习：</b>' + P.ex.map((x, i) => `<a href="#${x.id}" style="text-decoration:none;color:inherit" onclick="event.preventDefault();const el=document.getElementById('${x.id}');window.scrollTo({top:el.getBoundingClientRect().top+window.pageYOffset-10,behavior:'smooth'});history.replaceState(null,'','#${x.id}')"><span class="${s[x.id] && s[x.id].ok ? 'ok' : ''}">${s[x.id] && s[x.id].ok ? '✅' : '⬜️'} ${x.project ? '🎮 作品' : '练习 ' + (i + 1)}</span></a>`).join('');
   P.ex.forEach(x => { const el = document.getElementById('st-' + x.id); if (el) el.textContent = s[x.id] && s[x.id].ok ? '✅' : ''; });
 }
 // 全部通过：记进 lesson（首页任务自动打勾），推送给姐姐
