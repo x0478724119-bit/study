@@ -10,6 +10,8 @@ const CONFIG = {
   DEPOSIT: 0.3,            // 接单时甲方先付定金 = 报酬的 30%
   BREACH: 0.2,             // 放弃或超时：退还定金，另外赔付报酬的 20%
   GOOD_ENOUGH: 0.6,        // 验收"一般"：总共只拿到报酬的 60%
+  WEEK_JOBS: 2,            // 周作业：每周（周一到周日）要交 2 单订单，哪天交都行
+  WEEK_JOBS_FROM: '2026-10-26',
   JOB_LIMIT: 2,            // 同时最多 2 个进行中的单；可以放弃换别的
   STALE: 7,                // 作业欠超过 7 天：不能接单、不能兑换；请假的作业 7 天内没补完照样扣
   FEISHU: 'https://open.feishu.cn/open-apis/bot/v2/hook/1af9d69f-acb2-491f-824e-037b5537a920',
