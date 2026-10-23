@@ -4,8 +4,8 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="icon" type="image/png" href="icon-512.png">
 <title>每日手册</title>
-<script src="common.js?v=1792731415"></script>
-<link rel="stylesheet" href="style.css?v=1792731415">
+<script src="common.js?v=1792731471"></script>
+<link rel="stylesheet" href="style.css?v=1792731471">
 <style>
 .dtabs{display:flex;gap:6px;overflow-x:auto;margin:10px 0 4px;padding-bottom:4px}
 .dtabs a{flex:0 0 auto;padding:6px 12px;border-radius:999px;background:var(--card);border:1px solid var(--line);color:var(--ink);text-decoration:none;font-size:14px}
@@ -177,9 +177,13 @@ function submitCk(id){
   });
   const ans = C.qs.map((q, i) => document.getElementById(`a-${id}-${i}`).value.trim());
   const L = load('lesson', {}); L[id] = {text: lines.join('\n'), ans, time: todayStr() + ' ' + hm(), hit, total}; save('lesson', L);
-  // 订单的前置课：第一次交小测奖励 5 金币
+  // 订单的前置课：第一次交小测开一个金币盲盒（3–15 个，大多是小的，偶尔出大的）
   const PC = load('preCoin', {});
-  if (!PC[id] && (window.JOBS || []).some(j => (j.pre || []).includes(id))){ PC[id] = 1; save('preCoin', PC); addCoins(5, '上完前置课：' + C.title); setTimeout(() => toast('+5 金币 · 前置课完成，可以去接单了'), 600); }
+  if (!PC[id] && (window.JOBS || []).some(j => (j.pre || []).includes(id))){
+    const r = Math.random(), n = r < 0.6 ? 3 + Math.floor(Math.random() * 3) : r < 0.9 ? 6 + Math.floor(Math.random() * 4) : 10 + Math.floor(Math.random() * 6);
+    PC[id] = n; save('preCoin', PC); addCoins(n, '🎁 前置课盲盒：' + C.title);
+    setTimeout(() => toast(`🎁 开盲盒：+${n} 金币${n >= 10 ? ' ✨ 大奖！' : ''}`), 600);
+  }
   const d = load('ldraft', {}); delete d[id]; save('ldraft', d);
   notify(`📖 ${C.title}（要点 ${hit}/${total}）\n` + lines.join('\n') + '\n' + writeStats('ck-' + id, ans.join('')));
   clearWrite('ck-' + id);
