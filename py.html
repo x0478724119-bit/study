@@ -4,8 +4,8 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="icon" type="image/png" href="icon-512.png">
 <title>Python 练习台</title>
-<script src="common.js?v=1792737713"></script>
-<link rel="stylesheet" href="style.css?v=1792737713">
+<script src="common.js?v=1792739133"></script>
+<link rel="stylesheet" href="style.css?v=1792739133">
 <style>
 .sec{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin:12px 0}
 .sec h3{margin:0 0 6px;font-size:17px;display:flex;gap:8px;align-items:baseline}.sec h3 .n{color:var(--acc);font-size:14px;font-weight:800}
@@ -28,6 +28,9 @@ code{background:var(--bg);border-radius:5px;padding:1px 5px;font-size:14px}
 .out .e{color:#ff9a8a}.out .h{color:#ffd479}
 .pres{margin-top:6px;font-size:14.5px;padding:8px 12px;border-radius:10px}.pres.ok{background:var(--ok-soft);color:var(--ok)}.pres.no{background:var(--bad-soft)}
 .pyex h3 .st{margin-left:auto;font-size:18px}
+.pyprog span.cur{border-color:var(--acc);box-shadow:0 0 0 2px var(--acc) inset}
+.exnav{display:flex;justify-content:space-between;margin-top:12px}.exnav button{width:auto;padding:10px 18px}
+.tryit{background:var(--blue-soft);border-radius:10px;padding:8px 12px;font-size:14.5px;margin:8px 0}
 #load{position:sticky;top:0;z-index:5;background:var(--gold-soft);padding:8px 12px;border-radius:10px;font-size:14px;margin:8px 0}
 .pyprog{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}.pyprog span{padding:4px 10px;border-radius:999px;background:var(--card);border:1px solid var(--line);font-size:13px}.pyprog span.ok{background:var(--ok-soft);color:var(--ok);border-color:transparent}
 details.hint{margin:8px 0}details.hint summary{cursor:pointer;color:var(--acc);font-size:14px}
@@ -147,16 +150,27 @@ async function submitEx(id){
   box.innerHTML = '<div class="pres">检查中……</div>';
   const s = ST(); s[LID] = s[LID] || {}; const rec = s[LID][id] = s[LID][id] || {tries: 0}; rec.tries++;
   const r = await check(ex, code);
-  if (r.ok){ rec.ok = true; rec.code = code; saveST(s); box.innerHTML = `<div class="pres ok">✅ 通过！${ex.project ? '你的作品完成了 🎉' : ''}</div>`; paint(); finish(); return; }
+  if (r.ok){ rec.ok = true; rec.code = code; saveST(s); box.innerHTML = `<div class="pres ok">✅ 通过！${ex.project ? '你的作品完成了 🎉' : '点「下一题 →」继续'}</div>`; const nb = document.getElementById('next-' + id); if (nb) nb.className = 'main'; paint(); finish(); return; }
   saveST(s);
   const t = r.t || {};
   box.innerHTML = `<div class="pres no">❌ 还没通过（第 ${rec.tries} 次）。${r.msg}${t.in && t.in.length ? `<br>测试用的输入：<code>${t.in.map(esc).join(' / ')}</code>` : ''}${r.want ? `<br>要求输出：<pre style="margin:4px 0">${esc(r.want)}</pre>` : ''}${r.out ? `<br>你的程序输出：<pre style="margin:4px 0">${esc(r.out)}</pre>` : ''}</div>${rec.tries >= 3 && ex.hint ? `<div class="tip">💡 提示：${ex.hint}</div>` : ''}`;
 }
 function resetEd(id){ const ex = findEx(id), d = findDemo(id), s = ST(); if (s.draft) delete s.draft[LID + '/' + id]; saveST(s); document.getElementById('c-' + id).value = ex ? ex.starter : d; }
+let CUR = null;
 function paint(){
   const s = (ST()[LID]) || {};
-  document.getElementById('pyprog').innerHTML = '<b style="font-size:13px;color:var(--soft);align-self:center">点一下跳到练习：</b>' + P.ex.map((x, i) => `<a href="#${x.id}" style="text-decoration:none;color:inherit" onclick="event.preventDefault();const el=document.getElementById('${x.id}');window.scrollTo({top:el.getBoundingClientRect().top+window.pageYOffset-10,behavior:'smooth'});history.replaceState(null,'','#${x.id}')"><span class="${s[x.id] && s[x.id].ok ? 'ok' : ''}">${s[x.id] && s[x.id].ok ? '✅' : '⬜️'} ${x.project ? '🎮 作品' : '练习 ' + (i + 1)}</span></a>`).join('');
-  P.ex.forEach(x => { const el = document.getElementById('st-' + x.id); if (el) el.textContent = s[x.id] && s[x.id].ok ? '✅' : ''; });
+  document.getElementById('pyprog').innerHTML = P.ex.map((x, i) => `<span style="cursor:pointer" onclick="showEx('${x.id}')" class="${s[x.id] && s[x.id].ok ? 'ok' : ''}${x.id === CUR ? ' cur' : ''}">${s[x.id] && s[x.id].ok ? '✅' : '⬜️'} ${x.project ? '🎮 作品' : '练习 ' + (i + 1)}</span>`).join('');
+}
+// 练习区一次只显示一题
+function showEx(id, scroll = true){
+  const s = ST(), dr = s.draft || {}, i = P.ex.findIndex(x => x.id === id), x = P.ex[i], ok = ((s[LID] || {})[id] || {}).ok;
+  CUR = id;
+  document.getElementById('exbox').innerHTML = `<div class="pyex" id="${x.id}"><h3 style="margin:10px 0 4px"><span class="n">${x.project ? '🎮 作品' : '练习 ' + (i + 1) + ' / ' + P.ex.filter(e => !e.project).length}</span> ${x.title}${ok ? ' ✅' : ''}</h3><div>${x.desc}</div>
+    ${editor(x.id, dr[LID + '/' + x.id] ?? x.starter, {stdin: x.stdin ?? null, check: true})}
+    ${x.hint ? `<details class="hint"><summary>卡住了？看提示</summary><div class="tip">${x.hint}</div></details>` : ''}
+    <div class="exnav">${i > 0 ? `<button class="ghost" onclick="showEx('${P.ex[i - 1].id}')">← 上一题</button>` : '<span></span>'}${i < P.ex.length - 1 ? `<button class="${ok ? 'main' : 'ghost'}" id="next-${x.id}" onclick="showEx('${P.ex[i + 1].id}')">下一题 →</button>` : ''}</div></div>`;
+  paint();
+  if (scroll){ const el = document.getElementById('practice'); window.scrollTo({top: el.getBoundingClientRect().top + window.pageYOffset - 10, behavior: 'smooth'}); }
 }
 // 全部通过：记进 lesson（首页任务自动打勾），推送给姐姐
 function finish(){
@@ -170,18 +184,15 @@ function finish(){
 function render(){
   document.title = P.title; document.getElementById('title').textContent = '🐍 ' + P.title;
   const s = ST(), dr = s.draft || {};
-  let h = `<p class="lede">${P.intro}</p><div class="pyprog" id="pyprog"></div><div class="tip">📖 <b>怎么学：</b>从上往下看。先看 01–04 四小节讲解（每段黑色代码框都能点 ▶ 运行，也可以自己改了再运行），看完往下滑就是练习。</div>`;
+  let h = `<p class="lede">${P.intro}</p><div class="tip">📖 <b>怎么学：</b>先从上往下看 01–04 四小节讲解（黑色代码框能点 ▶ 运行，每节后面有「✏️ 改一改」，自己动手改了再运行）。看完到最下面的<b>「✍️ 练习区」</b>，一次做一题。 <a href="#" onclick="event.preventDefault();showEx(CUR)">直接去练习区 ↓</a></div>`;
   let n = 0;
   for (const sec of P.secs){
     const html = sec.html.replace(/<demo>([\s\S]*?)<\/demo>/g, (_, c) => { const id = 'd' + (++n); DEMOS[id] = c.replace(/^\n/, ''); return editor(id, dr[LID + '/' + id] ?? DEMOS[id], {stdin: /input\(/.test(c) ? '' : null}); });
     h += `<div class="sec" id="${sec.id}"><h3><span class="n">${sec.n}</span>${sec.title}</h3>${html}</div>`;
   }
-  P.ex.forEach((x, i) => {
-    h += `<div class="sec pyex" id="${x.id}"><h3><span class="n">${x.project ? '🎮' : '练习 ' + (i + 1)}</span>${x.title}<span class="st" id="st-${x.id}"></span></h3><div>${x.desc}</div>
-    ${editor(x.id, dr[LID + '/' + x.id] ?? x.starter, {stdin: x.stdin ?? null, check: true})}
-    ${x.hint ? `<details class="hint"><summary>卡住了？看提示</summary><div class="tip">${x.hint}</div></details>` : ''}</div>`;
-  });
-  document.getElementById('main').innerHTML = h; paint();
+  h += `<div class="sec" id="practice"><h3><span class="n">✍️</span>练习区</h3><div class="pyprog" id="pyprog"></div><div id="exbox"></div></div>`;
+  document.getElementById('main').innerHTML = h;
+  const done = (ST()[LID]) || {}; showEx((P.ex.find(x => !(done[x.id] && done[x.id].ok)) || P.ex[0]).id, false);
 }
 const sc = document.createElement('script'); sc.src = `data/py/${LID}.js?v=${Date.now()}`;
 sc.onload = () => { P = window.PY; render(); }; sc.onerror = () => { document.getElementById('main').innerHTML = '<p>找不到这一课。</p>'; };
