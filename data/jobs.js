@@ -927,7 +927,9 @@ window.JOBS = [
   "tool": "Procreate 或纸笔",
   "pre": [
    "d11-art"
-  ]
+  ],
+  "closed": "2026-10-25",
+  "tier": "full"
  },
  {
   "client": "姐姐",
