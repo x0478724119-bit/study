@@ -4,8 +4,8 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="icon" type="image/png" href="icon-512.png">
 <title>Python 练习台</title>
-<script src="common.js?v=1792741449"></script>
-<link rel="stylesheet" href="style.css?v=1792741449">
+<script src="common.js?v=1793098538"></script>
+<link rel="stylesheet" href="style.css?v=1793098538">
 <style>
 .sec{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin:12px 0}
 .sec h3{margin:0 0 6px;font-size:17px;display:flex;gap:8px;align-items:baseline}.sec h3 .n{color:var(--acc);font-size:14px;font-weight:800}
@@ -44,10 +44,20 @@ details.hint{margin:8px 0}details.hint summary{cursor:pointer;color:var(--acc);f
 const esc = x => String(x).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const LID = new URLSearchParams(location.search).get('l') || 'py1';
 let W, ready = false, pend = {}, seq = 0, T0 = Date.now();
+// 先走国内镜像，60 秒没加载好或者出错，自动换本站线路
+let SRCI = 0, bootT = null; const SRCS = ['cn', 'gh'], SRCNAME = {cn: '国内线路', gh: '备用线路'};
 function boot(){
-  W = new Worker('py-worker.js');
-  W.onmessage = e => { if (e.data.ready){ ready = true; const l = document.getElementById('load'); l.textContent = '✅ Python 准备好了'; setTimeout(() => l.remove(), 1500); return; } const p = pend[e.data.id]; if (p){ clearTimeout(p.t); delete pend[e.data.id]; p.r(e.data); } };
-  W.onerror = () => { document.getElementById('load').innerHTML = '❌ Python 加载失败。换个网络再试，或者告诉姐姐。'; };
+  const src = SRCS[Math.min(SRCI, SRCS.length - 1)], l = document.getElementById('load');
+  if (l) l.textContent = `🐍 正在加载 Python（${SRCNAME[src]}，第一次要下载约 13MB，请稍等；以后会快很多）……`;
+  W = new Worker('py-worker.js?src=' + src);
+  const next = why => { clearTimeout(bootT); if (ready) return; W.terminate(); if (SRCI < SRCS.length - 1){ SRCI++; boot(); } else { const l2 = document.getElementById('load'); if (l2) l2.innerHTML = '❌ Python 加载不出来（' + why + '）。换个网络（比如 Wi-Fi 换成流量）再刷新试试，或者截图告诉姐姐。'; } };
+  bootT = setTimeout(() => next('太慢了'), 60000);
+  W.onmessage = e => {
+    if (e.data.fail) return next(e.data.fail);
+    if (e.data.ready){ clearTimeout(bootT); ready = true; const l = document.getElementById('load'); if (l){ l.textContent = '✅ Python 准备好了'; setTimeout(() => l.remove(), 1500); } return; }
+    const p = pend[e.data.id]; if (p){ clearTimeout(p.t); delete pend[e.data.id]; p.r(e.data); }
+  };
+  W.onerror = ev => { ev.preventDefault && ev.preventDefault(); next('出错了'); };
 }
 boot();
 // 运行一次：5 秒没结束就当死循环，关掉重开
