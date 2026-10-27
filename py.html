@@ -4,8 +4,8 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="icon" type="image/png" href="icon-512.png">
 <title>Python 练习台</title>
-<script src="common.js?v=1793098538"></script>
-<link rel="stylesheet" href="style.css?v=1793098538">
+<script src="common.js?v=1793099451"></script>
+<link rel="stylesheet" href="style.css?v=1793099451">
 <style>
 .sec{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin:12px 0}
 .sec h3{margin:0 0 6px;font-size:17px;display:flex;gap:8px;align-items:baseline}.sec h3 .n{color:var(--acc);font-size:14px;font-weight:800}
@@ -37,36 +37,40 @@ details.hint{margin:8px 0}details.hint summary{cursor:pointer;color:var(--acc);f
 </style></head><body><div class="w">
 <a class="back" href="index.html">← 回到任务</a>
 <h1 id="title">Python 练习台</h1>
-<div id="load">🐍 正在加载 Python（第一次大约要下载 13MB，请稍等；以后会快很多）……</div>
+<div id="load">🐍 正在加载 Python……</div>
 <div id="main"></div>
 </div>
 <script>
 const esc = x => String(x).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const LID = new URLSearchParams(location.search).get('l') || 'py1';
-let W, ready = false, pend = {}, seq = 0, T0 = Date.now();
-// 先走国内镜像，60 秒没加载好或者出错，自动换本站线路
-let SRCI = 0, bootT = null; const SRCS = ['cn', 'gh'], SRCNAME = {cn: '国内线路', gh: '备用线路'};
-function boot(){
-  const src = SRCS[Math.min(SRCI, SRCS.length - 1)], l = document.getElementById('load');
-  if (l) l.textContent = `🐍 正在加载 Python（${SRCNAME[src]}，第一次要下载约 13MB，请稍等；以后会快很多）……`;
-  W = new Worker('py-worker.js?src=' + src);
-  const next = why => { clearTimeout(bootT); if (ready) return; W.terminate(); if (SRCI < SRCS.length - 1){ SRCI++; boot(); } else { const l2 = document.getElementById('load'); if (l2) l2.innerHTML = '❌ Python 加载不出来（' + why + '）。换个网络（比如 Wi-Fi 换成流量）再刷新试试，或者截图告诉姐姐。'; } };
-  bootT = setTimeout(() => next('太慢了'), 60000);
-  W.onmessage = e => {
-    if (e.data.fail) return next(e.data.fail);
-    if (e.data.ready){ clearTimeout(bootT); ready = true; const l = document.getElementById('load'); if (l){ l.textContent = '✅ Python 准备好了'; setTimeout(() => l.remove(), 1500); } return; }
-    const p = pend[e.data.id]; if (p){ clearTimeout(p.t); delete pend[e.data.id]; p.r(e.data); }
-  };
-  W.onerror = ev => { ev.preventDefault && ev.preventDefault(); next('出错了'); };
-}
-boot();
-// 运行一次：5 秒没结束就当死循环，关掉重开
-function run(code, stdin, after, pre){
-  return new Promise(r => {
-    const id = ++seq;
-    const t = setTimeout(() => { delete pend[id]; W.terminate(); ready = false; boot(); r({out: '', err: 'TIMEOUT', ok: false}); }, 5000);
-    pend[id] = {r, t}; W.postMessage({id, code, stdin, after, pre});
-  });
+let ready = false, T0 = Date.now();
+// Python 引擎：Skulpt（纯 JavaScript，约 1MB，iPad 旧版 Safari 也能跑）。本站文件加载失败就换国内镜像
+const SKSRC = [['vendor/skulpt/skulpt.min.js', 'vendor/skulpt/skulpt-stdlib.js'], ['https://registry.npmmirror.com/skulpt/1.2.0/files/dist/skulpt.min.js', 'https://registry.npmmirror.com/skulpt/1.2.0/files/dist/skulpt-stdlib.js']];
+function loadJS(src){ return new Promise((ok, no) => { const sc = document.createElement('script'); sc.src = src; sc.onload = ok; sc.onerror = no; document.head.appendChild(sc); }); }
+(async () => {
+  for (const [a, b] of SKSRC){
+    try { await loadJS(a); await loadJS(b); if (window.Sk){ ready = true; const l = document.getElementById('load'); if (l){ l.textContent = '✅ Python 准备好了'; setTimeout(() => l.remove(), 1500); } return; } } catch (e){}
+  }
+  const l = document.getElementById('load'); if (l) l.innerHTML = '❌ Python 加载不出来。换个网络（比如 Wi-Fi 换成流量）再刷新试试，或者截图告诉姐姐。';
+})();
+// 运行一次：pre（测试前准备）+ 她的代码 + after（检查用的 assert）拼在一起跑；超过 5 秒当死循环
+async function run(code, stdin, after, pre){
+  let out = ''; const q = [...(stdin || [])];
+  const preN = pre ? pre.split('\n').length : 0, codeN = code.split('\n').length;
+  const prog = (pre ? pre + '\n' : '') + code + (after ? '\n' + after : '');
+  Sk.configure({__future__: Sk.python3, output: t => { out += t; },
+    read: x => { if (Sk.builtinFiles === undefined || Sk.builtinFiles.files[x] === undefined) throw "File not found: '" + x + "'"; return Sk.builtinFiles.files[x]; },
+    inputfun: p => { if (!q.length){ out += '\x01' + p + '\n'; throw new Sk.builtin.EOFError('程序要输入，但输入框里已经没有内容了'); } const v = q.shift(); out += '\x01' + p + v + '\n'; return v; },
+    inputfunTakesPrompt: true, execLimit: 5000, yieldLimit: 100});
+  try { await Sk.misceval.asyncToPromise(() => Sk.importMainWithBody('<stdin>', false, prog, true)); return {out, ok: true}; }
+  catch (e){
+    let msg = String(e && e.toString ? e.toString() : e);
+    if (/TimeLimitError/.test(msg)) return {out, ok: false, err: 'TIMEOUT'};
+    const m = msg.match(/on line (\d+)/); let ln = m ? +m[1] - preN : 0;
+    if (after && ln > codeN) return {out, ok: false, err: 'CHECK:' + msg.replace(/^AssertionError:\s*/, '').replace(/ on line \d+/, '')};
+    if (m) msg = msg.replace(/ on line \d+/, '') + (ln > 0 ? `\n@line ${ln}` : '');
+    return {out, ok: false, err: msg};
+  }
 }
 // iPad 中文键盘会打出中文标点和弯引号：引号统一换成直的，字符串外面的中文标点换成英文的
 function clean(src){
@@ -88,16 +92,17 @@ function clean(src){
 function explain(err){
   if (err === 'TIMEOUT') return '程序跑了 5 秒还没停，可能是<b>死循环</b>（while 的条件一直成立）。';
   if (err.startsWith('CHECK:')) return '检查没通过：' + esc(err.slice(6).trim().split('\n').pop());
-  const last = err.trim().split('\n').filter(x => !/^\s*File "<exec>"|^\s*\^|^Traceback/.test(x)).pop() || err;
-  const line = (err.match(/File "<exec>", line (\d+)/g) || []).pop(), ln = line ? line.match(/\d+/)[0] : '';
+  const lm = err.match(/@line (\d+)/), ln = lm ? lm[1] : '';
+  const last = err.replace(/\n@line \d+/, '').trim();
   const H = [
     [/EOFError/, '程序要用 input() 读输入，但输入框里的内容不够。在「程序的输入」框里多写几行。'],
     [/IndentationError|unexpected indent|expected an indented block/, '<b>缩进</b>不对：if、for、def 后面那一行要往里空 4 格；不该空格的地方别空。'],
     [/SyntaxError.*(EOL|unterminated string)/, '<b>引号没配对</b>：文字要用一对英文引号包起来，比如 "你好"。'],
     [/SyntaxError.*'\(' was never closed|never closed/, '<b>括号没配对</b>：数一数 ( 和 ) 是不是一样多。'],
     [/SyntaxError.*expected ':'/, '这一行末尾少了<b>冒号 :</b>（if、for、while、def 后面都要有）。'],
-    [/SyntaxError/, '<b>语法错误</b>：检查这一行的拼写、括号、引号、冒号。'],
+    [/SyntaxError/, '<b>语法错误</b>：检查这一行（和上一行）：冒号 : 有没有漏？缩进对不对？括号、引号是不是成对？'],
     [/NameError: name '(.+?)'/, m => `不认识 <b>${esc(m[1])}</b>：是不是拼错了？或者忘了先给它赋值？如果它是文字，要加引号。`],
+    [/cannot concatenate 'str' and|unsupported operand type\(s\) for [+-].*'(str|int)'.*'(str|int)'/, '<b>文字和数字不能直接相加</b>：如果这个值是 input() 拿到的，要先用 int() 变成数字；如果是想把数字拼进句子，用 f"…{变量}…"。'],
     [/TypeError: can only concatenate str/, '<b>文字和数字不能直接相加</b>：如果这个值是 input() 拿到的，要先用 int() 变成数字；如果是想把数字拼进句子，用 f"…{变量}…"。'],
     [/TypeError: unsupported operand type.*'str' and 'int'|'int' and 'str'/, '<b>文字不能和数字做加减</b>：input() 得到的是文字，要先用 int() 变成数字。'],
     [/ValueError: invalid literal for int/, 'int() 只能把<b>像数字的文字</b>变成数字，比如 int("15")；int("十五") 就不行。检查输入框。'],
