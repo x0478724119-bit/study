@@ -1,6 +1,6 @@
 window.SET = {
  "title": "九年级物理全书模拟",
- "intro": "<a class=\"btn2 light\" href=\"book.html?d=2026-11-27#phy\">📖 先读手册：全书速记</a><br>第 13–22 章 15 题，<b>不看手册，像期末一样做</b>。错题回对应那天的手册，重做到 80%。",
+ "intro": "<a class=\"btn2 light\" href=\"book.html?d=2026-12-08#phy\">📖 先读手册：全书速记</a><br>第 13–22 章 15 题，<b>不看手册，像期末一样做</b>。错题回对应那天的手册，重做到 80%。",
  "sections": [
   "物理"
  ],

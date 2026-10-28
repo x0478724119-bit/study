@@ -1,6 +1,6 @@
 window.SET = {
  "title": "课本 U8：运动阅读 + 主谓一致",
- "intro": "<a class=\"btn2 light\" href=\"book.html?d=2026-11-03#e2\">📖 先读手册：细节题和推断题</a><br>一篇运动话题的阅读（课本 Unit 8 More than a Game 的话题）。最后 2 题主谓一致复习。错题重做到 80%。",
+ "intro": "<a class=\"btn2 light\" href=\"book.html?d=2026-11-12#e2\">📖 先读手册：细节题和推断题</a><br>一篇运动话题的阅读（课本 Unit 8 More than a Game 的话题）。最后 2 题主谓一致复习。错题重做到 80%。",
  "sections": [
   "阅读",
   "主谓一致"

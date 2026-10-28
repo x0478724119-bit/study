@@ -1,6 +1,6 @@
 window.SET = {
  "title": "基础练习：圆的综合题",
- "intro": "<a class=\"btn2 light\" href=\"book.html?d=2026-11-26#math\">📖 先读手册：圆的综合题</a><br>先看手册的知识卡再做。错题看解析后重做，到 80% 算完成。",
+ "intro": "<a class=\"btn2 light\" href=\"book.html?d=2026-12-07#math\">📖 先读手册：圆的综合题</a><br>先看手册的知识卡再做。错题看解析后重做，到 80% 算完成。",
  "sections": [
   "基础"
  ],

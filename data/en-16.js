@@ -1,6 +1,6 @@
 window.SET = {
  "title": "课本 U7：音乐阅读 + 定语从句",
- "intro": "<a class=\"btn2 light\" href=\"book.html?d=2026-11-02#e2\">📖 先读手册：阅读三步法</a><br>一篇音乐话题的阅读（课本 Unit 7 Feel the Rhythm 的话题），先读题再回原文找依据。最后 2 题是定语从句复习。错题重做到 80%。",
+ "intro": "<a class=\"btn2 light\" href=\"book.html?d=2026-11-11#e2\">📖 先读手册：阅读三步法</a><br>一篇音乐话题的阅读（课本 Unit 7 Feel the Rhythm 的话题），先读题再回原文找依据。最后 2 题是定语从句复习。错题重做到 80%。",
  "sections": [
   "阅读",
   "定语从句"

@@ -1,6 +1,6 @@
 window.SET = {
  "title": "练习：二氧化碳的性质和用途",
- "intro": "<a class=\"btn2 light\" href=\"book.html?d=2026-11-05#chem\">📖 先读手册：二氧化碳的性质和用途</a><br>先读手册再做。错题看解析后重做，到 80% 算完成。",
+ "intro": "<a class=\"btn2 light\" href=\"book.html?d=2026-11-16#chem\">📖 先读手册：二氧化碳的性质和用途</a><br>先读手册再做。错题看解析后重做，到 80% 算完成。",
  "sections": [
   "化学"
  ],

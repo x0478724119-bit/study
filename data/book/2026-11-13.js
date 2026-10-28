@@ -1,108 +1,143 @@
-// 第 26 天 · 周测（2026-11-13）手册
+// 第 19 天 · 二次函数与三角形面积（2026-11-04）手册
 window.BOOK = {
-  intro: '周五！今天以周测和大复习为主，新内容只有物理多档位电热器和 Python 第 10 课。点上面的科目标签切换。',
+  intro: '今天大约 4 小时：数学约 60 分钟、英语约 50 分钟，其他每科约 30 分钟。点上面的科目标签切换，一次只学一科。',
   parts: [
-{id: 'math', icon: '📐', title: '数学：周测 4 前的易错表', time: '约 45 分钟', html: `
-<p class="lede">周测 15 题，<b>不看手册</b>做。先花 3 分钟看易错表。</p>
-<div class="sec" id="m1"><h3><span class="n">01</span>这周的 8 个坑</h3>
-<table class="t"><tr><th>章节</th><th>坑</th></tr>
-<tr><td>看图判断</td><td>"左同右异"：对称轴在 y 轴左边 a、b 同号</td></tr>
-<tr><td>看图判断</td><td>a + b + c 是 x = 1 时的 y；a − b + c 是 x = −1 时的 y</td></tr>
-<tr><td>看图判断</td><td>比较 y：开口向上，离对称轴越远越大</td></tr>
-<tr><td>动点</td><td>先写 t 的范围（先到终点的那个点说了算）</td></tr>
-<tr><td>动点</td><td>解出的 t 要检查在不在范围里；顶点不在范围里，最大值在端点</td></tr>
-<tr><td>最短路径</td><td>同侧才对称，两侧直接连</td></tr>
-<tr><td>最短路径</td><td>正方形对角线 AC 是对称轴，B 和 D 对称</td></tr>
-<tr><td>函数应用</td><td>分段计费先判断在哪一段；题目问"售价"别答"涨价"</td></tr></table>
+{id: 'math', icon: '📐', title: '数学：二次函数与三角形面积', time: '约 60 分钟', html: `
+<p class="lede">中考二次函数大题的第 2、3 问，十有八九是<b>求三角形面积</b>。今天学两招：<b>有一边在坐标轴上，直接算</b>；<b>三边都是斜的，用"铅垂高"</b>。</p>
+
+<div class="sec" id="m1"><h3><span class="n">01</span>第一招：有一条边在坐标轴上</h3>
+<p>抛物线和 x 轴的两个交点 A、B 连成的线段在 x 轴上，以它为底最方便：<b>面积 = ½ × AB × 第三个点到 x 轴的距离</b>（就是那个点纵坐标的绝对值）。</p>
+<div class="ex"><b>例题 1</b>　抛物线 y = −x² + 2x + 3 和 x 轴交于 A、B，和 y 轴交于 C，顶点为 D。求 △ABC 和 △ABD 的面积。<br><br>
+<b>第 1 步：求交点。</b>令 y = 0：x² − 2x − 3 = 0，x = −1 或 3 → A(−1, 0)、B(3, 0)，AB = 4。令 x = 0：C(0, 3)。<br>
+<b>第 2 步：求顶点。</b>x = −b/(2a) = 1，y = −1 + 2 + 3 = 4 → D(1, 4)。<br>
+<b>第 3 步：</b>△ABC = ½ × 4 × 3 = <b>6</b>；△ABD = ½ × 4 × 4 = <b>8</b>。</div>
+<div class="warn">⚠️ 点在 x 轴下方时，纵坐标是负的，距离要取正：C(0, −3) 到 x 轴的距离是 3。</div>
 </div>
-<p>准备好了就开始：<a data-quiz="math-w4">数学周测 4</a></p>
+
+<div class="sec" id="m2"><h3><span class="n">02</span>第二招：铅垂高 × 水平宽 ÷ 2</h3>
+<p>求 △PBC 的面积，B、C 都不在同一条坐标轴上怎么办？</p>
+<div class="step"><i>1</i><div>过 P 画一条<b>竖直线</b>，交直线 BC 于 Q。PQ 叫<b>铅垂高</b> = P 的纵坐标 − Q 的纵坐标（上减下）。</div></div>
+<div class="step"><i>2</i><div>B、C 两点横坐标之差叫<b>水平宽</b>。</div></div>
+<div class="step"><i>3</i><div><b>S = ½ × 铅垂高 × 水平宽</b>。（相当于把三角形切成上下两块，每块都以 PQ 为底。）</div></div>
+<div class="ex"><b>例题 2</b>　接例题 1，B(3, 0)、C(0, 3)，P 是 BC 上方抛物线上一点，横坐标为 m。求 △PBC 面积的最大值。<br><br>
+<b>第 1 步：求直线 BC。</b>y = −x + 3。<br>
+<b>第 2 步：写出 P 和 Q。</b>P(m, −m² + 2m + 3)，Q(m, −m + 3)。<br>
+<b>第 3 步：铅垂高。</b>PQ = (−m² + 2m + 3) − (−m + 3) = −m² + 3m。<br>
+<b>第 4 步：面积。</b>水平宽 = 3 − 0 = 3，S = ½ × (−m² + 3m) × 3 = −(3/2)m² + (9/2)m。<br>
+<b>第 5 步：求最大值。</b>对称轴 m = 3/2（在 0 和 3 之间 ✅）。铅垂高最大 = −9/4 + 9/2 = 9/4，S = ½ × 9/4 × 3 = <b>27/8</b>。</div>
+<details class="try"><summary>试一试：例题 2 里，m = 1（也就是 P 在顶点 D）时 △PBC 的面积是多少？</summary><div>
+<details class="try"><summary>先看提示</summary><div>P(1, 4)，直线 BC 在 x = 1 时 y = 2。</div></details>
+答案：铅垂高 4 − 2 = 2，S = ½ × 2 × 3 = <b>3</b>。比 27/8 小，所以顶点不是面积最大的地方！</div></details>
+</div>
+
+<p>学完了，先做基础题：<a data-quiz="math-18">基础练习：二次函数与三角形面积</a></p>
+<p>再做挑战题：<a data-quiz="math-18b">挑战题：二次函数与三角形面积</a></p>
+<p>最后做综合滚动：<a data-quiz="roll-07">综合滚动 7</a></p>
 `},
-{id: 'en', icon: '🔤', title: '英语：周测 + 综合阅读', time: '约 30 分钟', html: `
-<div class="tip">📸 <b>别忘了：</b>今天交本周 Grammar in Use 照片——两个单元的练习页各拍 1 张，<b>一共 2 张</b>，发工作室群，再<b>找姐姐要取件码</b>，输进首页最后一项才算交了。</div>
-<div class="sec" id="e1"><h3><span class="n">01</span>Grammar in Use 周测 5（约 15 分钟）</h3>
-<p>考这周做的 Unit 12–13。<b>不看书、不看答案</b>。做完错的回书上那一单元再看一遍。</p>
-<div class="tip">📝 <a data-quiz="giu-w5">Grammar in Use 周测 5</a></div></div>
-<div class="sec" id="e2"><h3><span class="n">02</span>综合阅读：小房子（约 15 分钟）</h3>
-<p>这两周单词课学过的词（rent、salary、apartment、spacious、storage……）都藏在文章里。题型混合：细节、判断、猜词、主旨，用上两周学的所有方法。</p>
-<p class="s">遇到 <b>NOT</b> 题（哪个没有提到）：把选项一个个回原文对，找不到的那个就是答案。</p>
-<div class="tip">📝 <a data-quiz="en-25">阅读：小房子（综合题型）</a></div></div>
+{id: 'en', icon: '🔤', title: '英语：单词 + 完形填空', time: '约 50 分钟', html: `
+<div class="sec" id="e1"><h3><span class="n">01</span>单词课 16：工作和梦想（约 12 分钟）+ 造句（约 10 分钟）</h3>
+<div class="tip">📝 <a data-quiz="vocab-16">单词课 16</a></div>
+<p><b>然后回首页做「用新词写句子」：</b>5 个新词各写一句，<b>一共至少 40 个英文单词</b>。可以写写你自己想做的职业！</p></div>
+<div class="sec" id="e2"><h3><span class="n">02</span>完形填空三步法（约 12 分钟）</h3>
+<p>完形填空是中考英语分最多的题型之一。别一上来就选！</p>
+<div class="step"><i>1</i><div><b>先通读全文，不看选项。</b>知道讲了什么事、作者的感情是开心还是难过。</div></div>
+<div class="step"><i>2</i><div><b>看空格前后的词。</b>很多是固定搭配：make a difference、in front of、be surprised to do……</div></div>
+<div class="step"><i>3</i><div><b>看上下文找线索。</b>后一句常常解释前一句：后面说"我觉得做不到"，前面的心情就是 disappointed。</div></div>
+<p class="s">选完把整句读一遍，通顺才对。</p>
+<div class="tip">📝 <a data-quiz="en-18">完形填空 1：海滩上的五米</a></div></div>
+
 `},
-{id: 'yw', icon: '📖', title: '语文：古诗文默写 + 文言字词', time: '约 30 分钟', html: `
-<p class="lede">第三、六单元文言文：默写 + 常考实词。古今异义最容易丢分。</p>
-<div class="sec" id="y1"><h3><span class="n">01</span>常考实词表</h3>
-<table class="t"><tr><th>句子</th><th>字</th><th>意思</th></tr>
-<tr><td>属予作文以记之（岳阳楼记）</td><td>属</td><td>同"嘱"，嘱托</td></tr>
-<tr><td>百废具兴（岳阳楼记）</td><td>具</td><td>同"俱"，全、都</td></tr>
-<tr><td>微斯人，吾谁与归（岳阳楼记）</td><td>微</td><td>没有</td></tr>
-<tr><td>肉食者鄙（曹刿论战）</td><td>鄙</td><td>目光短浅</td></tr>
-<tr><td>小信未孚（曹刿论战）</td><td>孚</td><td>使人信服</td></tr>
-<tr><td>先帝不以臣卑鄙（出师表）</td><td>卑鄙</td><td><b>古今异义</b>：身份低微、见识短浅（不是品质恶劣）</td></tr>
-<tr><td>度已失期（陈涉世家）</td><td>度</td><td>估计（读 duó）</td></tr>
-<tr><td>燕雀安知鸿鹄之志哉（陈涉世家）</td><td>安</td><td>怎么、哪里</td></tr></table>
+{id: 'yw', icon: '📖', title: '语文：课外阅读 4（议论文）', time: '约 30 分钟', html: `
+<p class="lede">课外阅读 4：配合第五单元，今天读一篇<b>课外议论文</b>。用昨天学的四种论证方法来答题。</p>
+<div class="sec" id="y1"><h3><span class="n">01</span>议论文阅读的 2 个模板（5 分钟）</h3>
+<table class="t"><tr><th>题型</th><th>答题模板</th></tr>
+<tr><td><b>找中心论点</b></td><td>看题目 → 第一段 → 最后一段，找一个<b>完整的判断句</b>，照抄或稍微概括</td></tr>
+<tr><td><b>论证方法和作用</b></td><td>「运用了 ___ 论证，通过 ___（具体内容），证明了 ___（论点），使论证更 ___（具体有力 / 形象易懂 / 鲜明突出）」</td></tr></table>
 </div>
-<div class="sec" id="y2"><h3><span class="n">02</span>易错字</h3>
-<p>浩浩<b>汤汤</b>（shāng）、佳木<b>秀</b>而繁阴、<b>鸿鹄</b>之志、<b>亲</b>贤臣<b>远</b>小人、山<b>回</b>路转、似曾相识燕归来。</p>
-<div class="tip">📝 做题：<a data-quiz="yw-14">古诗文默写 + 文言字词</a></div>
-</div>
-`},
-{id: 'phy', icon: '⚡', title: '物理：多档位电热器', time: '约 30 分钟', html: `
-<p class="lede">电学专题 3：电饭锅、电热水壶、电暖器为什么有"高温档""低温档"？期末计算题的压轴常常就是它。</p>
-<div class="sec" id="p1"><h3><span class="n">01</span>一句话原理</h3>
-<div class="tip">📌 家里电压 U = 220 V 不变，<b>P = U²/R</b>：<b>总电阻越小 → 功率越大 → 高温档</b>；总电阻越大 → 功率越小 → 低温档。</div>
-<table class="t"><tr><th>接法</th><th>总电阻</th><th>档位</th></tr>
-<tr><td>R₁、R₂ <b>串联</b></td><td>最大</td><td>低温档</td></tr>
-<tr><td>只接 R₁（R₂ 被短路或断开）</td><td>中间</td><td>中温档 / 高温档</td></tr>
-<tr><td>R₁、R₂ <b>并联</b></td><td>最小</td><td>高温档</td></tr></table>
-</div>
-<div class="sec" id="p2"><h3><span class="n">02</span>例题</h3>
-<div class="ex"><b>例题</b>　电饭锅内有 R₁ = 44 Ω、R₂ = 176 Ω。开关 S 闭合时 R₂ 被短路；S 断开时 R₁、R₂ 串联。电压 220 V。求两个档位的功率。<br><br>
-<b>第 1 步：S 闭合，只有 R₁。</b>P = U²/R₁ = 220² ÷ 44 = 48400 ÷ 44 = <b>1100 W</b>（高温档，煮饭）。<br>
-<b>第 2 步：S 断开，串联。</b>R = 44 + 176 = 220 Ω，P = 48400 ÷ 220 = <b>220 W</b>（低温档，保温）。<br>
-<b>第 3 步（常追问）：</b>高温档电流 I = P/U = 1100 ÷ 220 = 5 A；工作 0.5 h 用电 1.1 kW × 0.5 h = 0.55 kW·h。</div>
-<p class="s">和热学结合：烧水吸热 Q = cmΔt，不计损失时 Q = W = Pt，可以求加热时间 t = Q/P。</p>
-<details class="try"><summary>试一试：上面的电饭锅，220² 为什么等于 48400？算一下可以背下来。</summary><div>220 × 220 = 48400。家庭电路题会反复用到它，记住能省很多时间。</div></details>
-<div class="tip">📝 做题：<a data-quiz="phy-19">练习：多档位电热器</a></div>
-</div>
-`},
-{id: 'chem', icon: '🧪', title: '化学：化学方程式大复习', time: '约 30 分钟', html: `
-<p class="lede">第 1–7 单元必背的化学方程式，一次过一遍。<b>先在纸上默写一遍</b>，再做题。</p>
-<div class="sec" id="c1"><h3><span class="n">01</span>必背方程式清单</h3>
-<table class="t"><tr><th>反应</th><th>方程式</th><th>类型</th></tr>
-<tr><td>红磷燃烧</td><td>4P + 5O₂ =点燃= 2P₂O₅</td><td>化合</td></tr>
-<tr><td>铁丝燃烧</td><td>3Fe + 2O₂ =点燃= Fe₃O₄</td><td>化合</td></tr>
-<tr><td>高锰酸钾制氧气</td><td>2KMnO₄ =△= K₂MnO₄ + MnO₂ + O₂↑</td><td>分解</td></tr>
-<tr><td>过氧化氢制氧气</td><td>2H₂O₂ =MnO₂= 2H₂O + O₂↑</td><td>分解</td></tr>
-<tr><td>电解水</td><td>2H₂O =通电= 2H₂↑ + O₂↑</td><td>分解</td></tr>
-<tr><td>碳充分燃烧</td><td>C + O₂ =点燃= CO₂</td><td>化合</td></tr>
-<tr><td>木炭还原氧化铜</td><td>C + 2CuO =高温= 2Cu + CO₂↑</td><td></td></tr>
-<tr><td>实验室制 CO₂</td><td>CaCO₃ + 2HCl = CaCl₂ + H₂O + CO₂↑</td><td></td></tr>
-<tr><td>CO₂ 和石灰水</td><td>CO₂ + Ca(OH)₂ = CaCO₃↓ + H₂O</td><td></td></tr>
-<tr><td>CO₂ 和水 / 碳酸分解</td><td>CO₂ + H₂O = H₂CO₃ / H₂CO₃ = H₂O + CO₂↑</td><td>化合 / 分解</td></tr>
-<tr><td>CO 燃烧</td><td>2CO + O₂ =点燃= 2CO₂</td><td>化合</td></tr>
-<tr><td>甲烷燃烧</td><td>CH₄ + 2O₂ =点燃= CO₂ + 2H₂O</td><td></td></tr></table>
-<p class="s">化合反应"多变一"，分解反应"一变多"。</p>
-<div class="tip">📝 做题：<a data-quiz="chem-19">化学方程式大复习</a></div>
+<div class="sec" id="y2"><h3><span class="n">02</span>课外阅读 4：《慢一点，也是一种本事》（15 分钟）</h3>
+<div class="ex">　　现在的人都怕"慢"。视频要倍速看，外卖要半小时送到，学东西也想"三天速成"。好像谁慢了一步，谁就输了。可我想说：<b>慢一点，也是一种本事。</b><br><br>
+　　慢，是把根扎深。竹子在最初的四年里，只长了三厘米，看起来几乎没动。可是从第五年开始，它每天能长三十厘米，六周就长到十五米高。原来，前面那四年，它把根在土里伸展了几百平方米。没有那四年的"慢"，就没有后来的"快"。<br><br>
+　　慢，是把事情做细。古人说："不积跬步，无以至千里。"一个优秀的木匠，刨一块木板要反复推几十次；一个好的厨师，一锅高汤要熬上好几个小时。急急忙忙做出来的东西，往往经不起看。<br><br>
+　　当然，慢不等于拖。拖延是明知道该做却不做，慢是认认真真地一步一步做。一个人每天只背十个单词，却坚持了一年；另一个人想一口气背一千个，三天后就放弃了。前者看起来慢，其实走得更远。<br><br>
+　　所以，别被"快"推着跑。找准方向，耐住性子，慢慢来，反而比较快。</div>
+<div data-ck="d19-yd"></div>
 </div>
 `},
-{id: 'hist', icon: '🏛️', title: '历史：全书期末模拟', time: '约 30 分钟', html: `
-<p class="lede">历史全书 7 个单元，一套题全考。<b>不看手册</b>，像考试一样做。做完错的回去看对应那天的表。</p>
-<div class="sec" id="h1"><h3><span class="n">01</span>全书速记（考前扫一眼）</h3>
-<table class="t"><tr><th>单元</th><th>一句话</th></tr>
-<tr><td>一 古代亚非</td><td>埃及金字塔、巴比伦法典、印度种姓和佛教</td></tr>
-<tr><td>二 古代欧洲</td><td>雅典民主（伯里克利）、亚历山大东征、罗马帝国（屋大维）</td></tr>
-<tr><td>三 封建欧洲</td><td>采邑改革、封君封臣、庄园、城市自治、大学、拜占庭《民法大全》</td></tr>
-<tr><td>四 中古亚非美</td><td>大化改新、伊斯兰教、玛雅文明</td></tr>
-<tr><td>五 走向近代</td><td>文艺复兴（人文主义）、新航路、殖民掠夺和三角贸易</td></tr>
-<tr><td>六 资本主义制度</td><td>英国《权利法案》、美国《独立宣言》、法国《人权宣言》和拿破仑</td></tr>
-<tr><td>七 工业革命和马克思主义</td><td>珍妮机、蒸汽机、火车；《共产党宣言》、巴黎公社</td></tr></table>
-<div class="tip">✍️ 做题：<a data-quiz="hist-12">历史期末模拟（全书）</a></div>
+{id: 'phy', icon: '⚡', title: '物理：安全用电', time: '约 30 分钟', html: `
+<p class="lede">19.3 安全用电：这一节不难，但全是生活常识，考试送分，生活里保命。</p>
+<div class="sec" id="p1"><h3><span class="n">01</span>触电是怎么回事</h3>
+<p><b>触电</b> = 一定强度的电流通过人体。对人体安全的电压是<b>不高于 36 V</b>，家里的 220 V 是很危险的。</p>
+<table class="t"><tr><th>类型</th><th>怎么发生</th><th>电流怎么走</th></tr>
+<tr><td><b>单线触电</b></td><td>站在地上，一只手碰到火线</td><td>火线 → 人 → 大地</td></tr>
+<tr><td><b>双线触电</b></td><td>一只手碰火线，另一只手碰零线</td><td>火线 → 人 → 零线</td></tr></table>
+<p class="s">小鸟停在一根高压线上为什么没事？两只脚之间几乎没有电压，没有电流通过它的身体。</p>
+</div>
+<div class="sec" id="p2"><h3><span class="n">02</span>安全用电原则 + 急救</h3>
+<div class="tip">📌 <b>安全用电原则：不接触低压带电体，不靠近高压带电体。</b>（高压电不用碰到，靠近就可能"放电"。）</div>
+<table class="t"><tr><th>情况</th><th>正确做法</th></tr>
+<tr><td>有人触电</td><td><b>先切断电源</b>，或用干木棍挑开电线；不能直接用手拉</td></tr>
+<tr><td>电器着火</td><td><b>先断电再灭火</b>，不能直接泼水</td></tr>
+<tr><td>雷雨天</td><td>不在大树下、高处避雨；不在空旷处打伞</td></tr>
+<tr><td>湿手</td><td>不摸开关、插头（生活用水是导体）</td></tr>
+<tr><td>高压线</td><td>不在附近放风筝、钓鱼</td></tr></table>
+<details class="try"><summary>试一试：为什么发现有人触电不能直接用手把他拉开？</summary><div>答案：人体是导体，触电的人身上有电流，你一拉，电流也会通过你的身体，你也会触电。</div></details>
+<div class="tip">📝 做题：<a data-quiz="phy-12">练习：安全用电</a></div>
 </div>
 `},
-{id: 'app', icon: '🐍', title: 'Python 第 10 课', time: '约 30 分钟', html: `
-<div class="sec" id="py10"><h3><span class="n">01</span>🐍 Python 第 10 课：文字冒险（2）：血量和钥匙（约 30 分钟）</h3>
-<p class="lede">给古堡加上血量、背包和锁着的门。做完这课，你的冒险游戏就真的"能玩"了。</p>
-<a class="go2" href="py.html?l=py10">🐍 打开 Python 第 10 课</a>
+{id: 'chem', icon: '🧪', title: '化学：二氧化碳的实验室制取', time: '约 30 分钟', html: `
+<p class="lede">课题：<b>二氧化碳的实验室制取</b>。和第二单元制氧气对照着学，期末实验题必考。</p>
+<div class="sec" id="c1"><h3><span class="n">01</span>药品和原理</h3>
+<p>药品：<b>大理石（或石灰石）+ 稀盐酸</b>。主要成分碳酸钙 CaCO₃。</p>
+<div class="tip">📌 <b>CaCO₃ + 2HCl = CaCl₂ + H₂O + CO₂↑</b>（必背）</div>
+<table class="t"><tr><th>为什么不用……</th><th>原因</th></tr>
+<tr><td>浓盐酸</td><td>易挥发，CO₂ 里会混有氯化氢气体</td></tr>
+<tr><td>稀硫酸</td><td>生成的硫酸钙微溶，盖在大理石表面，反应会停</td></tr>
+<tr><td>碳酸钠粉末</td><td>反应太快，来不及收集</td></tr></table>
+</div>
+<div class="sec" id="c2"><h3><span class="n">02</span>装置、收集、检验、验满</h3>
+<table class="t"><tr><th>环节</th><th>怎么做</th><th>为什么</th></tr>
+<tr><td>发生装置</td><td><b>固液常温型</b>（锥形瓶 + 长颈漏斗 / 分液漏斗）</td><td>固体 + 液体，不用加热</td></tr>
+<tr><td>收集</td><td><b>向上排空气法</b></td><td>密度比空气大；能溶于水，一般不用排水法</td></tr>
+<tr><td>检验</td><td>通入<b>澄清石灰水</b>，变浑浊</td><td>CO₂ + Ca(OH)₂ = CaCO₃↓ + H₂O</td></tr>
+<tr><td>验满</td><td><b>燃着的木条放在瓶口</b>，熄灭就满了</td><td>CO₂ 不燃烧也不支持燃烧</td></tr></table>
+<div class="warn">⚠️ 长颈漏斗的下端要<b>伸到液面以下</b>（"液封"），不然气体会从漏斗跑掉。</div>
+<details class="try"><summary>试一试：能不能用"燃着的木条熄灭"来检验一瓶气体是 CO₂？</summary><div>答案：不能。氮气等其他气体也会让木条熄灭。<b>检验</b>只能用澄清石灰水；燃着的木条只用来<b>验满</b>（已经知道是 CO₂ 了）。</div></details>
+<div class="tip">📝 做题：<a data-quiz="chem-12">练习：二氧化碳的实验室制取</a></div>
+</div>
+`},
+{id: 'hist', icon: '🏛️', title: '历史：材料题入门', time: '约 25 分钟', html: `
+<p class="lede">历史专题 5：<b>材料题</b>。期末大题基本都是"读一段材料，回答问题"。不难，有方法。</p>
+<div class="sec" id="h1"><h3><span class="n">01</span>材料题三步法</h3>
+<div class="step"><i>1</i><div><b>先读问题</b>，知道要从材料里找什么。</div></div>
+<div class="step"><i>2</i><div><b>圈材料里的关键词</b>：时间、人名、地名、特别的词（"议会""国王权威""生而自由""无产者"）。</div></div>
+<div class="step"><i>3</i><div><b>联系课本</b>：关键词对上了哪个知识点？答案用课本的话写。</div></div>
+<table class="t"><tr><th>材料里出现</th><th>想到</th></tr>
+<tr><td>议会、国王权威、未经同意</td><td>英国《权利法案》，限制王权</td></tr>
+<tr><td>人人生而平等、不可转让的权利</td><td>美国《独立宣言》</td></tr>
+<tr><td>生来自由、权利平等</td><td>法国《人权宣言》</td></tr>
+<tr><td>无产者联合起来</td><td>《共产党宣言》</td></tr>
+<tr><td>抽签、公民大会</td><td>雅典民主</td></tr>
+<tr><td>贵族 vs 平民受不同惩罚</td><td>《汉谟拉比法典》维护奴隶主利益</td></tr></table>
+<div class="tip">✍️ 做题：<a data-quiz="hist-08">历史专题：材料题入门</a></div>
+</div>
+`},
+{id: 'app', icon: '🐍', title: 'Python 第 6 课', time: '约 30 分钟', html: `
+<div class="sec" id="py6"><h3><span class="n">01</span>🐍 Python 第 6 课：random + 石头剪刀布（约 30 分钟）</h3>
+<p class="lede">今天让电脑"随机出招"，做出第一个能和电脑对战的小游戏。</p>
+<a class="go2" href="py.html?l=py6">🐍 打开 Python 第 6 课</a>
+<div class="tip">📤 学完这课可以接订单「石头剪刀布：三局两胜」（交完还能开一个金币盲盒 🎁）。</div>
 </div>
 `},
   ],
+  checks: {
+ "d19-yd": {
+  "title": "课外阅读 4：慢一点，也是一种本事",
+  "qs": [
+   {"q": "这篇文章的中心论点是什么？", "a": "慢一点，也是一种本事。（或：做事要耐住性子，一步一步来。）", "pts": ["写出\"慢一点，也是一种本事\"或意思相同的话"]},
+   {"q": "第 2 段竹子的例子用了什么论证方法？有什么作用？", "a": "举例论证。通过竹子前四年只长三厘米、却在土里扎根，后来每天长三十厘米的例子，具体有力地证明了\"慢是把根扎深，前面的慢才有后面的快\"的观点。", "pts": ["举例论证", "说出竹子例子的内容", "证明了\"慢是扎根 / 先慢后快\"", "具体有力 / 有说服力"]},
+   {"q": "第 3 段引用\"不积跬步，无以至千里\"有什么作用？", "a": "道理论证，引用古人的名言，证明了\"慢是把事情做细，要一步一步积累\"的观点，增强了说服力。", "pts": ["道理论证", "证明了一步步积累 / 做细", "增强说服力"]},
+   {"q": "第 4 段说\"慢不等于拖\"，作者为什么要加这一段？", "a": "为了防止读者误解，区分\"慢\"和\"拖延\"：拖延是该做不做，慢是认真一步步做。并用背单词的对比论证说明坚持慢慢做反而走得更远，使论证更严密、全面。", "pts": ["区分慢和拖延 / 防止误解", "对比论证（背单词的例子）", "使论证更严密 / 全面"]}
+  ]
+ }
+},
 };

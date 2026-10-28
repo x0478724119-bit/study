@@ -1,6 +1,6 @@
 window.SET = {
  "title": "议论文：精神的三间小屋 + 致巴特勒上尉的信",
- "intro": "<a class=\"btn2 light\" href=\"book.html?d=2026-11-05#yw\">📖 先读手册：精神的三间小屋</a><br>两篇课文的梳理都在手册里，读完再做。错题重做到 80%。",
+ "intro": "<a class=\"btn2 light\" href=\"book.html?d=2026-11-16#yw\">📖 先读手册：精神的三间小屋</a><br>两篇课文的梳理都在手册里，读完再做。错题重做到 80%。",
  "sections": [
   "三间小屋",
   "巴特勒"

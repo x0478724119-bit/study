@@ -1,6 +1,6 @@
 window.SET = {
  "title": "挑战题：第 29 章 圆总复习",
- "intro": "<a class=\"btn2 light\" href=\"book.html?d=2026-11-23#math\">📖 先读手册：第 29 章 圆总复习</a><br>比基础难，<b>先画草图</b>。用到的方法手册里都讲过。错题重做到 80%。",
+ "intro": "<a class=\"btn2 light\" href=\"book.html?d=2026-12-02#math\">📖 先读手册：第 29 章 圆总复习</a><br>比基础难，<b>先画草图</b>。用到的方法手册里都讲过。错题重做到 80%。",
  "sections": [
   "挑战"
  ],

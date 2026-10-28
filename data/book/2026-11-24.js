@@ -1,147 +1,105 @@
-// 第 33 天 · 直线和圆总复习（2026-11-24）手册
+// 第 26 天 · 周测（2026-11-13）手册
 window.BOOK = {
-  intro: '今天：数学第 30 章、物理第 22 章能源（物理九年级全部学完！）、化学第七单元、语文文言文、道法第三单元、美术角色表情。',
+  intro: '今天以周测和大复习为主，新内容只有物理多档位电热器和 Python 第 10 课。点上面的科目标签切换。',
   parts: [
-{id: 'math', icon: '📐', title: '数学：第 30 章 直线和圆、正多边形', time: '约 60 分钟', html: `
-<div class="sec" id="m1"><h3><span class="n">01</span>知识卡</h3>
-<table class="t"><tr><th>考点</th><th>要记住</th></tr>
-<tr><td>直线和圆</td><td>d &gt; r 相离，d = r 相切，d &lt; r 相交</td></tr>
-<tr><td>切线性质</td><td>切线 ⊥ 过切点的半径</td></tr>
-<tr><td>切线判定</td><td>经过半径<b>外端</b>并且<b>垂直</b>于这条半径</td></tr>
-<tr><td>切线长定理</td><td>圆外一点引两条切线，切线长相等，圆心和这点的连线平分夹角</td></tr>
-<tr><td>内心 / 外心</td><td>内心：角平分线交点，到三边距离相等；外心：垂直平分线交点，到三顶点距离相等</td></tr>
-<tr><td>正多边形</td><td>中心角 = 360° ÷ n；正六边形边长 = 半径</td></tr></table>
+{id: 'math', icon: '📐', title: '数学：周测 4 前的易错表', time: '约 45 分钟', html: `
+<p class="lede">周测 15 题，<b>不看手册</b>做。先花 3 分钟看易错表。</p>
+<div class="sec" id="m1"><h3><span class="n">01</span>这周的 8 个坑</h3>
+<table class="t"><tr><th>章节</th><th>坑</th></tr>
+<tr><td>看图判断</td><td>"左同右异"：对称轴在 y 轴左边 a、b 同号</td></tr>
+<tr><td>看图判断</td><td>a + b + c 是 x = 1 时的 y；a − b + c 是 x = −1 时的 y</td></tr>
+<tr><td>看图判断</td><td>比较 y：开口向上，离对称轴越远越大</td></tr>
+<tr><td>动点</td><td>先写 t 的范围（先到终点的那个点说了算）</td></tr>
+<tr><td>动点</td><td>解出的 t 要检查在不在范围里；顶点不在范围里，最大值在端点</td></tr>
+<tr><td>最短路径</td><td>同侧才对称，两侧直接连</td></tr>
+<tr><td>最短路径</td><td>正方形对角线 AC 是对称轴，B 和 D 对称</td></tr>
+<tr><td>函数应用</td><td>分段计费先判断在哪一段；题目问"售价"别答"涨价"</td></tr></table>
 </div>
-<div class="sec" id="m2"><h3><span class="n">02</span>两个好用的工具</h3>
-<p><b>① 内切圆半径：面积法</b>。把三角形从内心切成三个小三角形，它们的高都是 r：</p>
-<div class="tip">📌 <b>面积 = ½ × 周长 × r</b>，所以 r = 2 × 面积 ÷ 周长。直角三角形还有快捷公式：r = (a + b − c) ÷ 2。</div>
-<div class="ex"><b>例</b>　等腰三角形 AB = AC = 5，BC = 6。底边上的高 4，面积 12，周长 16，r = 24 ÷ 16 = <b>1.5</b>。</div>
-<p><b>② 30° 角对的直角边是斜边的一半</b>（八年级学过）。切线题常配一个 30° 角：OC ⊥ CD、∠D = 30° → OD = 2 × OC。</p>
-</div>
-<p>基础：<a data-quiz="math-29">基础练习</a>　挑战：<a data-quiz="math-29b">挑战题</a>　滚动：<a data-quiz="roll-18">综合滚动 18</a></p>
+<p>准备好了就开始：<a data-quiz="math-w4">数学周测 4</a></p>
 `},
-{id: 'en', icon: '🔤', title: '英语：单词 + 说明文 + Grammar in Use', time: '约 50 分钟', html: `
-<div class="sec" id="e1"><h3><span class="n">01</span>单词课 27：传统节日（约 12 分钟）+ 造句（约 10 分钟）</h3>
-<div class="tip">📝 <a data-quiz="vocab-27">单词课 27</a></div>
-<p><b>然后回首页做「用新词写句子」：</b>5 个新词各写一句，一共至少 40 个英文单词。用英语介绍一个中国节日吧。</p></div>
-<div class="sec" id="e2"><h3><span class="n">02</span>科普说明文阅读（约 12 分钟）</h3>
-<div class="step"><i>1</i><div><b>However / But 后面才是重点</b>：文章常常先说"以前人们以为……"，再用 However 推翻。</div></div>
-<div class="step"><i>2</i><div><b>判断题注意程度词</b>：some / all、more easily / less easily，一个词就能让 True 变 False。</div></div>
-<div class="step"><i>3</i><div><b>写作手法题</b>：开头 / 结尾用问句 → 引起读者兴趣、和读者互动。</div></div>
-<div class="tip">📝 <a data-quiz="en-32">阅读：说明文（推断和观点）</a></div></div>
-<div class="sec" id="e3"><h3><span class="n">03</span>Grammar in Use Unit 16（后半，约 15 分钟）</h3>
-<p>做剩下的练习，红笔改，回首页写一句。</p></div>
+{id: 'en', icon: '🔤', title: '英语：周测 + 综合阅读', time: '约 30 分钟', html: `
+
+<div class="sec" id="e2"><h3><span class="n">02</span>综合阅读：小房子（约 15 分钟）</h3>
+<p>这两周单词课学过的词（rent、salary、apartment、spacious、storage……）都藏在文章里。题型混合：细节、判断、猜词、主旨，用上两周学的所有方法。</p>
+<p class="s">遇到 <b>NOT</b> 题（哪个没有提到）：把选项一个个回原文对，找不到的那个就是答案。</p>
+<div class="tip">📝 <a data-quiz="en-25">阅读：小房子（综合题型）</a></div></div>
 `},
-{id: 'yw', icon: '📖', title: '语文：文言文复习（第三单元）', time: '约 30 分钟', html: `
-<p class="lede">中考文言文考：<b>实词意思、句子翻译、内容理解</b>。今天复习第三单元三篇游记散文。</p>
-<div class="sec" id="y1"><h3><span class="n">01</span>翻译句子的 3 个要求</h3>
-<div class="step"><i>1</i><div><b>字字落实</b>：每个字都要翻出来，关键字（题目一般就考它）不能漏。</div></div>
-<div class="step"><i>2</i><div><b>调整语序</b>：文言文有"倒装"，如"吾谁与归" = "吾与谁归"（我和谁一道）。</div></div>
-<div class="step"><i>3</i><div><b>通顺</b>：读起来像现代汉语的话。</div></div>
+{id: 'yw', icon: '📖', title: '语文：古诗文默写 + 文言字词', time: '约 30 分钟', html: `
+<p class="lede">第三、六单元文言文：默写 + 常考实词。古今异义最容易丢分。</p>
+<div class="sec" id="y1"><h3><span class="n">01</span>常考实词表</h3>
+<table class="t"><tr><th>句子</th><th>字</th><th>意思</th></tr>
+<tr><td>属予作文以记之（岳阳楼记）</td><td>属</td><td>同"嘱"，嘱托</td></tr>
+<tr><td>百废具兴（岳阳楼记）</td><td>具</td><td>同"俱"，全、都</td></tr>
+<tr><td>微斯人，吾谁与归（岳阳楼记）</td><td>微</td><td>没有</td></tr>
+<tr><td>肉食者鄙（曹刿论战）</td><td>鄙</td><td>目光短浅</td></tr>
+<tr><td>小信未孚（曹刿论战）</td><td>孚</td><td>使人信服</td></tr>
+<tr><td>先帝不以臣卑鄙（出师表）</td><td>卑鄙</td><td><b>古今异义</b>：身份低微、见识短浅（不是品质恶劣）</td></tr>
+<tr><td>度已失期（陈涉世家）</td><td>度</td><td>估计（读 duó）</td></tr>
+<tr><td>燕雀安知鸿鹄之志哉（陈涉世家）</td><td>安</td><td>怎么、哪里</td></tr></table>
 </div>
-<div class="sec" id="y2"><h3><span class="n">02</span>三篇一张表</h3>
-<table class="t"><tr><th>篇目</th><th>作者</th><th>主旨</th><th>常考句</th></tr>
-<tr><td>《岳阳楼记》</td><td>范仲淹（北宋）</td><td>"不以物喜，不以己悲"的旷达胸襟，"先忧后乐"的政治抱负</td><td>微斯人，吾谁与归</td></tr>
-<tr><td>《醉翁亭记》</td><td>欧阳修（北宋）</td><td>寄情山水、<b>与民同乐</b>；全文贯穿一个"乐"字</td><td>醉翁之意不在酒，在乎山水之间也</td></tr>
-<tr><td>《湖心亭看雪》</td><td>张岱（明末清初）</td><td>痴迷山水的雅趣，淡淡的孤独和故国之思</td><td>莫说相公痴，更有痴似相公者</td></tr></table>
-<p class="s">《岳阳楼记》的结构：写景（阴雨 → 悲；晴朗 → 喜）是为了<b>反衬</b>"古仁人之心"——"迁客骚人"会以物喜、以己悲，而古仁人不会。</p>
-<div class="tip">📝 做题：<a data-quiz="yw-18">文言文复习：第三单元</a></div>
+<div class="sec" id="y2"><h3><span class="n">02</span>易错字</h3>
+<p>浩浩<b>汤汤</b>（shāng）、佳木<b>秀</b>而繁阴、<b>鸿鹄</b>之志、<b>亲</b>贤臣<b>远</b>小人、山<b>回</b>路转、似曾相识燕归来。</p>
+<div class="tip">📝 做题：<a data-quiz="yw-14">古诗文默写 + 文言字词</a></div>
 </div>
 `},
-{id: 'phy', icon: '⚡', title: '物理：第 22 章 能源与可持续发展', time: '约 35 分钟', html: `
-<p class="lede">九年级物理的最后一章！学完这一章，课本就全部学完了 🎉</p>
-<div class="sec" id="p1"><h3><span class="n">01</span>能源的分类</h3>
-<table class="t"><tr><th>按来源</th><th>例子</th></tr>
-<tr><td><b>一次能源</b>（自然界直接获得）</td><td>煤、石油、天然气、太阳能、风能、水能、核能</td></tr>
-<tr><td><b>二次能源</b>（由一次能源转化来）</td><td>电能、汽油</td></tr></table>
-<table class="t"><tr><th>按能否再生</th><th>例子</th></tr>
-<tr><td><b>可再生</b>（用了还能有）</td><td>太阳能、风能、水能、生物质能</td></tr>
-<tr><td><b>不可再生</b>（越用越少）</td><td>煤、石油、天然气、核能（核燃料）</td></tr></table>
+{id: 'phy', icon: '⚡', title: '物理：多档位电热器', time: '约 30 分钟', html: `
+<p class="lede">电学专题 3：电饭锅、电热水壶、电暖器为什么有"高温档""低温档"？期末计算题的压轴常常就是它。</p>
+<div class="sec" id="p1"><h3><span class="n">01</span>一句话原理</h3>
+<div class="tip">📌 家里电压 U = 220 V 不变，<b>P = U²/R</b>：<b>总电阻越小 → 功率越大 → 高温档</b>；总电阻越大 → 功率越小 → 低温档。</div>
+<table class="t"><tr><th>接法</th><th>总电阻</th><th>档位</th></tr>
+<tr><td>R₁、R₂ <b>串联</b></td><td>最大</td><td>低温档</td></tr>
+<tr><td>只接 R₁（R₂ 被短路或断开）</td><td>中间</td><td>中温档 / 高温档</td></tr>
+<tr><td>R₁、R₂ <b>并联</b></td><td>最小</td><td>高温档</td></tr></table>
 </div>
-<div class="sec" id="p2"><h3><span class="n">02</span>核能和能量守恒</h3>
-<table class="t"><tr><th></th><th>核裂变</th><th>核聚变</th></tr>
-<tr><td>是什么</td><td>大的原子核分裂成小的</td><td>小的原子核结合成大的</td></tr>
-<tr><td>例子</td><td><b>核电站</b>（可控）、原子弹</td><td><b>太阳</b>、氢弹</td></tr></table>
-<p><b>能量守恒定律</b>：能量既不会凭空产生，也不会凭空消失，只会从一种形式转化为另一种形式，或从一个物体转移到另一个物体，总量不变。所以"永动机"不可能造出来。</p>
-<p>既然守恒，为什么还要节约？因为<b>能量的转化和转移有方向性</b>：散失到空气中的热，不能自动收回来再用。</p>
-<div class="tip">📝 基础：<a data-quiz="phy-26">练习：能源</a>　真题风格：<a data-quiz="phy-26b">真题风格</a></div>
-</div>
-`},
-{id: 'chem', icon: '🧪', title: '化学：第七单元复习', time: '约 35 分钟', html: `
-<div class="sec" id="c1"><h3><span class="n">01</span>复习卡：能源的合理利用与开发</h3>
-<table class="t"><tr><th>考点</th><th>要记住</th></tr>
-<tr><td>燃烧三条件</td><td>可燃物、氧气、温度达到着火点（缺一不可）</td></tr>
-<tr><td>灭火三原理</td><td>清除可燃物、隔绝氧气、降温到着火点以下（<b>着火点不能降低</b>）</td></tr>
-<tr><td>安全</td><td>燃气泄漏：关阀开窗，不开电器；可燃气体点燃前验纯；面粉厂禁烟火</td></tr>
-<tr><td>化石燃料</td><td>煤、石油、天然气（CH₄）；不可再生；石油分馏是物理变化，煤干馏是化学变化</td></tr>
-<tr><td>新能源</td><td>氢能（最理想）、太阳能、风能、核能；乙醇可再生</td></tr>
-<tr><td>环境</td><td>SO₂、NO₂ → 酸雨；CO₂ → 温室效应</td></tr></table>
-</div>
-<div class="sec" id="c2"><h3><span class="n">02</span>对比实验怎么看</h3>
-<p>燃烧条件的实验是期末必考的<b>对比实验</b>。方法：<b>找两个只有一处不同的地方比</b>。</p>
-<table class="t"><tr><th>对比</th><th>只差什么</th><th>说明</th></tr>
-<tr><td>铜片上的白磷 vs 红磷</td><td>着火点</td><td>需要温度达到着火点</td></tr>
-<tr><td>铜片上的白磷 vs 水里的白磷</td><td>氧气</td><td>需要氧气</td></tr></table>
-<div class="tip">📝 基础：<a data-quiz="chem-26">复习：第七单元</a>　真题风格：<a data-quiz="chem-26b">真题风格</a></div>
+<div class="sec" id="p2"><h3><span class="n">02</span>例题</h3>
+<div class="ex"><b>例题</b>　电饭锅内有 R₁ = 44 Ω、R₂ = 176 Ω。开关 S 闭合时 R₂ 被短路；S 断开时 R₁、R₂ 串联。电压 220 V。求两个档位的功率。<br><br>
+<b>第 1 步：S 闭合，只有 R₁。</b>P = U²/R₁ = 220² ÷ 44 = 48400 ÷ 44 = <b>1100 W</b>（高温档，煮饭）。<br>
+<b>第 2 步：S 断开，串联。</b>R = 44 + 176 = 220 Ω，P = 48400 ÷ 220 = <b>220 W</b>（低温档，保温）。<br>
+<b>第 3 步（常追问）：</b>高温档电流 I = P/U = 1100 ÷ 220 = 5 A；工作 0.5 h 用电 1.1 kW × 0.5 h = 0.55 kW·h。</div>
+<p class="s">和热学结合：烧水吸热 Q = cmΔt，不计损失时 Q = W = Pt，可以求加热时间 t = Q/P。</p>
+<details class="try"><summary>试一试：上面的电饭锅，220² 为什么等于 48400？算一下可以背下来。</summary><div>220 × 220 = 48400。家庭电路题会反复用到它，记住能省很多时间。</div></details>
+<div class="tip">📝 做题：<a data-quiz="phy-19">练习：多档位电热器</a></div>
 </div>
 `},
-{id: 'dfz', icon: '⚖️', title: '道法：第三单元 现代化和高质量发展', time: '约 35 分钟', html: `
-<div class="sec" id="z1"><h3><span class="n">01</span>从例子讲起</h3>
-<p><b>例子 1：</b>西方国家用了两三百年完成工业化，很多是靠殖民别的国家、抢资源。中国用几十年走完了这条路，没有殖民过任何国家。<br>
-→ <b>中国式现代化</b>走的是<b>和平发展道路</b>。它还有几个特点：人口规模巨大（14 亿人一起现代化）、全体人民共同富裕、物质文明和精神文明相协调、人与自然和谐共生。</p>
-<p><b>例子 2：</b>以前买东西只要有就行；现在大家要质量好、设计好、有品牌。工厂也从"造得多"变成"造得好"，比如国产手机、新能源汽车卖到全世界。<br>
-→ 这叫<b>高质量发展</b>：从"有没有"转向"好不好"。</p>
-<p><b>例子 3：</b>某企业花很多钱研发芯片，打破了国外垄断。<br>
-→ <b>创新是引领发展的第一动力</b>。</p>
+{id: 'chem', icon: '🧪', title: '化学：化学方程式大复习', time: '约 30 分钟', html: `
+<p class="lede">第 1–7 单元必背的化学方程式，一次过一遍。<b>先在纸上默写一遍</b>，再做题。</p>
+<div class="sec" id="c1"><h3><span class="n">01</span>必背方程式清单</h3>
+<table class="t"><tr><th>反应</th><th>方程式</th><th>类型</th></tr>
+<tr><td>红磷燃烧</td><td>4P + 5O₂ =点燃= 2P₂O₅</td><td>化合</td></tr>
+<tr><td>铁丝燃烧</td><td>3Fe + 2O₂ =点燃= Fe₃O₄</td><td>化合</td></tr>
+<tr><td>高锰酸钾制氧气</td><td>2KMnO₄ =△= K₂MnO₄ + MnO₂ + O₂↑</td><td>分解</td></tr>
+<tr><td>过氧化氢制氧气</td><td>2H₂O₂ =MnO₂= 2H₂O + O₂↑</td><td>分解</td></tr>
+<tr><td>电解水</td><td>2H₂O =通电= 2H₂↑ + O₂↑</td><td>分解</td></tr>
+<tr><td>碳充分燃烧</td><td>C + O₂ =点燃= CO₂</td><td>化合</td></tr>
+<tr><td>木炭还原氧化铜</td><td>C + 2CuO =高温= 2Cu + CO₂↑</td><td></td></tr>
+<tr><td>实验室制 CO₂</td><td>CaCO₃ + 2HCl = CaCl₂ + H₂O + CO₂↑</td><td></td></tr>
+<tr><td>CO₂ 和石灰水</td><td>CO₂ + Ca(OH)₂ = CaCO₃↓ + H₂O</td><td></td></tr>
+<tr><td>CO₂ 和水 / 碳酸分解</td><td>CO₂ + H₂O = H₂CO₃ / H₂CO₃ = H₂O + CO₂↑</td><td>化合 / 分解</td></tr>
+<tr><td>CO 燃烧</td><td>2CO + O₂ =点燃= 2CO₂</td><td>化合</td></tr>
+<tr><td>甲烷燃烧</td><td>CH₄ + 2O₂ =点燃= CO₂ + 2H₂O</td><td></td></tr></table>
+<p class="s">化合反应"多变一"，分解反应"一变多"。</p>
+<div class="tip">📝 做题：<a data-quiz="chem-19">化学方程式大复习</a></div>
 </div>
-<div class="sec" id="z2"><h3><span class="n">02</span>新发展理念（五个词，用例子记）</h3>
-<table class="t"><tr><th>理念</th><th>解决什么问题</th><th>例子</th></tr>
-<tr><td><b>创新</b></td><td>发展动力</td><td>研发芯片、航天</td></tr>
-<tr><td><b>协调</b></td><td>发展不平衡</td><td>西部大开发、乡村振兴</td></tr>
-<tr><td><b>绿色</b></td><td>人与自然和谐</td><td>"绿水青山就是金山银山"、垃圾分类</td></tr>
-<tr><td><b>开放</b></td><td>内外联动</td><td>进博会、"一带一路"</td></tr>
-<tr><td><b>共享</b></td><td>社会公平正义</td><td>脱贫攻坚、医保全覆盖</td></tr></table>
-<p><b>"两步走"</b>：到 2035 年<b>基本实现</b>社会主义现代化；到本世纪中叶<b>建成</b>社会主义现代化强国。</p>
-</div>
-<div class="sec lesson" id="d33-dz"><h3><span class="n">03</span>材料分析题</h3>
-<div class="ex">材料：某地过去靠开矿挣钱，山被挖得光秃秃，河水也被污染了。后来当地关停矿山、种树治水，发展生态旅游和民宿，村民收入反而更高了。同时，当地还和东部城市的企业合作，把山里的农产品通过网络卖到全国。</div>
-<div data-ck="d33-dz"></div>
-</div>
-<div class="tip">✍️ 最后做选择题：<a data-quiz="dfz-11">道法选择题：现代化和高质量发展</a></div>
 `},
-{id: 'app', icon: '🎨', title: '美术：角色表情', time: '约 30 分钟', html: `
-<div class="sec lesson" id="d33-art"><h3><span class="n">01</span>美术第 8 课：给角色画表情（约 30 分钟）</h3>
-<p class="lede">第 5 课学了用剪影设计角色。今天让角色"活"起来：同一张脸，画出不同的<b>表情</b>。游戏里的头像、表情包、漫画都要用到。</p>
-<p><b>先学原理：表情主要靠 3 个地方</b></p>
-<table class="t"><tr><th>部位</th><th>开心</th><th>生气</th><th>难过</th><th>惊讶</th></tr>
-<tr><td><b>眉毛</b></td><td>弯、放松</td><td>往中间往下压</td><td>中间往上翘（八字）</td><td>高高挑起</td></tr>
-<tr><td><b>眼睛</b></td><td>眯成弯月</td><td>瞪着、上眼皮压低</td><td>往下看、半闭</td><td>睁得很圆</td></tr>
-<tr><td><b>嘴巴</b></td><td>嘴角上扬</td><td>咬牙或紧闭</td><td>嘴角向下</td><td>张成 O 形</td></tr></table>
-<div class="why">🤔 新手常犯的错：只改嘴巴。其实<b>眉毛最传神</b>，把一个笑脸的眉毛改成"八字眉"，马上就变成"苦笑"了。</div>
-<p><b>动手（Procreate）：</b></p>
-<div class="step"><i>1</i><div>画一个简单的圆脸（可以用你学习站图标的小熊，或第 5 课的角色）。</div></div>
-<div class="step"><i>2</i><div>复制 4 份，分别画：开心、生气、难过、惊讶。<b>脸的形状不变，只改眉、眼、嘴</b>。</div></div>
-<div class="step"><i>3</i><div>拿给家里人看，不告诉他们，看他们能不能猜对每个表情。</div></div>
-<div class="tip">📤 想多赚点？上完这节课可以接订单「一套表情包」（交完小测还能开一个金币盲盒 🎁）。</div>
-<div data-ck="d33-art"></div></div>
+{id: 'hist', icon: '🏛️', title: '历史：全书期末模拟', time: '约 30 分钟', html: `
+<p class="lede">历史全书 7 个单元，一套题全考。<b>不看手册</b>，像考试一样做。做完错的回去看对应那天的表。</p>
+<div class="sec" id="h1"><h3><span class="n">01</span>全书速记（考前扫一眼）</h3>
+<table class="t"><tr><th>单元</th><th>一句话</th></tr>
+<tr><td>一 古代亚非</td><td>埃及金字塔、巴比伦法典、印度种姓和佛教</td></tr>
+<tr><td>二 古代欧洲</td><td>雅典民主（伯里克利）、亚历山大东征、罗马帝国（屋大维）</td></tr>
+<tr><td>三 封建欧洲</td><td>采邑改革、封君封臣、庄园、城市自治、大学、拜占庭《民法大全》</td></tr>
+<tr><td>四 中古亚非美</td><td>大化改新、伊斯兰教、玛雅文明</td></tr>
+<tr><td>五 走向近代</td><td>文艺复兴（人文主义）、新航路、殖民掠夺和三角贸易</td></tr>
+<tr><td>六 资本主义制度</td><td>英国《权利法案》、美国《独立宣言》、法国《人权宣言》和拿破仑</td></tr>
+<tr><td>七 工业革命和马克思主义</td><td>珍妮机、蒸汽机、火车；《共产党宣言》、巴黎公社</td></tr></table>
+<div class="tip">✍️ 做题：<a data-quiz="hist-12">历史期末模拟（全书）</a></div>
+</div>
+`},
+{id: 'app', icon: '🐍', title: 'Python 第 10 课', time: '约 30 分钟', html: `
+<div class="sec" id="py10"><h3><span class="n">01</span>🐍 Python 第 10 课：文字冒险（2）：血量和钥匙（约 30 分钟）</h3>
+<p class="lede">给古堡加上血量、背包和锁着的门。做完这课，你的冒险游戏就真的"能玩"了。</p>
+<a class="go2" href="py.html?l=py10">🐍 打开 Python 第 10 课</a>
+</div>
 `},
   ],
-  checks: {
- "d33-dz": {
-  "title": "道法第三单元：材料分析",
-  "qs": [
-   {"q": "当地关停矿山、种树治水，发展生态旅游，体现了新发展理念中的哪一个？", "a": "绿色发展（绿水青山就是金山银山）。", "pts": ["绿色发展", "绿水青山就是金山银山"]},
-   {"q": "和东部企业合作、把农产品卖到全国，体现了哪些新发展理念？", "a": "协调发展（缩小地区差距）、开放发展（内外联动）；也可以说是共享（村民共享发展成果）。", "pts": ["协调", "开放 / 共享（答出一个就行）"]},
-   {"q": "这个地方的变化，体现了中国式现代化的哪个特征？", "a": "人与自然和谐共生的现代化；也体现了全体人民共同富裕。", "pts": ["人与自然和谐共生", "共同富裕"]}
-  ]
- },
- "d33-art": {
-  "title": "美术第 8 课：角色表情",
-  "qs": [
-   {"q": "表情主要靠哪 3 个部位表现？哪个最传神？", "a": "眉毛、眼睛、嘴巴；眉毛最传神。", "pts": ["眉毛、眼睛、嘴巴", "眉毛最传神"]},
-   {"q": "\"生气\"和\"难过\"的眉毛有什么不同？", "a": "生气：眉毛往中间往下压；难过：眉毛中间往上翘，呈八字。", "pts": ["生气：往中间下压", "难过：八字眉"]},
-   {"q": "家里人能猜对你画的表情吗？哪个最容易猜错？", "a": "没有标准答案。好的回答会说出结果，以及猜错的那个怎么改得更明显。", "pts": ["说出测试结果", "说出怎么改进"]}
-  ]
- }
-},
 };

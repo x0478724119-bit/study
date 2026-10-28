@@ -992,7 +992,7 @@ window.JOBS = [
    "每个都能说出它的夸张特征是什么",
    "反派看起来比小伙伴\"凶\""
   ],
-  "ref": "book.html?d=2026-11-03#d18-art",
+  "ref": "book.html?d=2026-11-12#d18-art",
   "tool": "Procreate",
   "pre": [
    "d18-art"
@@ -1096,7 +1096,7 @@ window.JOBS = [
    "镜子没有正对大门",
    "从门口看进来不拥挤"
   ],
-  "ref": "book.html?d=2026-11-05#d20-kjl",
+  "ref": "book.html?d=2026-11-16#d20-kjl",
   "tool": "酷家乐",
   "pre": [
    "d20-kjl"
@@ -1197,7 +1197,7 @@ window.JOBS = [
    "不看文字也能猜出是什么技能",
    "缩小以后还能认出来，不糊成一团"
   ],
-  "ref": "book.html?d=2026-11-10#d23-art",
+  "ref": "book.html?d=2026-11-19#d23-art",
   "tool": "Procreate",
   "pre": [
    "d23-art"
@@ -1269,7 +1269,7 @@ window.JOBS = [
    "有地方坐",
    "看起来想坐进去喝杯东西"
   ],
-  "ref": "book.html?d=2026-11-12#d25-kjl",
+  "ref": "book.html?d=2026-11-23#d25-kjl",
   "tool": "酷家乐",
   "pre": [
    "d25-kjl"
@@ -1431,7 +1431,7 @@ window.JOBS = [
    "亮面都在左上",
    "斜线的台阶均匀，不乱跳"
   ],
-  "ref": "book.html?d=2026-11-17#d28-art",
+  "ref": "book.html?d=2026-11-26#d28-art",
   "tool": "Procreate",
   "pre": [
    "d28-art"
@@ -1493,7 +1493,7 @@ window.JOBS = [
    "马桶前面看起来有空间",
    "看起来整洁不拥挤"
   ],
-  "ref": "book.html?d=2026-11-19#d30-kjl",
+  "ref": "book.html?d=2026-11-30#d30-kjl",
   "tool": "酷家乐",
   "pre": [
    "d30-kjl"
@@ -1585,7 +1585,7 @@ window.JOBS = [
    "眉毛有变化，不只是嘴巴在变",
    "字和表情对得上"
   ],
-  "ref": "book.html?d=2026-11-24#d33-art",
+  "ref": "book.html?d=2026-12-03#d33-art",
   "tool": "Procreate",
   "pre": [
    "d33-art"
@@ -1617,7 +1617,7 @@ window.JOBS = [
    "每张效果图都整洁、光线自然",
    "有那段说明"
   ],
-  "ref": "book.html?d=2026-11-26#d35-kjl",
+  "ref": "book.html?d=2026-12-07#d35-kjl",
   "tool": "酷家乐",
   "pre": [
    "d35-kjl"

@@ -1,6 +1,6 @@
 window.SET = {
  "title": "复习：第五单元：化学反应的定量关系",
- "intro": "<a class=\"btn2 light\" href=\"book.html?d=2026-11-19#chem\">📖 先读手册：第五单元：化学反应的定量关系</a><br>先看手册的复习卡再做。错题看解析后重做，到 80% 算完成。",
+ "intro": "<a class=\"btn2 light\" href=\"book.html?d=2026-11-30#chem\">📖 先读手册：第五单元：化学反应的定量关系</a><br>先看手册的复习卡再做。错题看解析后重做，到 80% 算完成。",
  "sections": [
   "化学"
  ],

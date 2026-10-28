@@ -1,6 +1,6 @@
 window.SET = {
  "title": "化学第 1–5 单元小测",
- "intro": "<a class=\"btn2 light\" href=\"book.html?d=2026-11-20#chem\">📖 先读手册：第 1–5 单元易错表</a><br>这周复习的 5 个单元一起考，不看手册做。错题重做到 80%。",
+ "intro": "<a class=\"btn2 light\" href=\"book.html?d=2026-12-01#chem\">📖 先读手册：第 1–5 单元易错表</a><br>这周复习的 5 个单元一起考，不看手册做。错题重做到 80%。",
  "sections": [
   "化学"
  ],

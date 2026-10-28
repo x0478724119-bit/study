@@ -1,6 +1,6 @@
 window.SET = {
  "title": "第 20 章小测",
- "intro": "<a class=\"btn2 light\" href=\"book.html?d=2026-11-20#phy\">📖 先读手册：第 20 章易错表</a><br>电与磁一章一起考，不看手册做。错题重做到 80%。",
+ "intro": "<a class=\"btn2 light\" href=\"book.html?d=2026-12-01#phy\">📖 先读手册：第 20 章易错表</a><br>电与磁一章一起考，不看手册做。错题重做到 80%。",
  "sections": [
   "物理"
  ],

@@ -1,6 +1,6 @@
 window.SET = {
  "title": "道法复习：第三、四单元综合",
- "intro": "<a class=\"btn2 light\" href=\"book.html?d=2026-11-12#dfz\">📖 先读手册：速记表</a><br>先看手册速记表再做。错题重做到 80%。",
+ "intro": "<a class=\"btn2 light\" href=\"book.html?d=2026-11-23#dfz\">📖 先读手册：速记表</a><br>先看手册速记表再做。错题重做到 80%。",
  "sections": [
   "道法"
  ],

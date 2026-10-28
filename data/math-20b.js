@@ -1,6 +1,6 @@
 window.SET = {
  "title": "挑战题：看图判断 a、b、c",
- "intro": "<a class=\"btn2 light\" href=\"book.html?d=2026-11-09#math\">📖 先读手册：看图判断 a、b、c</a><br>比基础难，<b>先画草图</b>。用到的方法手册里都讲过（例题里有）。错题重做到 80%。",
+ "intro": "<a class=\"btn2 light\" href=\"book.html?d=2026-11-18#math\">📖 先读手册：看图判断 a、b、c</a><br>比基础难，<b>先画草图</b>。用到的方法手册里都讲过（例题里有）。错题重做到 80%。",
  "sections": [
   "挑战"
  ],

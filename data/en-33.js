@@ -1,6 +1,6 @@
 window.SET = {
  "title": "词形变换 2 + 排顺序",
- "intro": "<a class=\"btn2 light\" href=\"book.html?d=2026-11-25#e2\">📖 先读手册：词形变换</a><br>前 8 题词形变换，后 2 题排顺序（写作的段落结构）。错题重做到 80%。",
+ "intro": "<a class=\"btn2 light\" href=\"book.html?d=2026-12-04#e2\">📖 先读手册：词形变换</a><br>前 8 题词形变换，后 2 题排顺序（写作的段落结构）。错题重做到 80%。",
  "sections": [
   "词形变换",
   "排顺序"

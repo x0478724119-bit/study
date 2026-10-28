@@ -1,6 +1,6 @@
 window.SET = {
  "title": "历史专题：三大资产阶级革命对比",
- "intro": "<a class=\"btn2 light\" href=\"book.html?d=2026-11-02#hist\">📖 先读手册：对比表</a><br>先看手册的表，再做题。有排顺序题。错题重做到 80%。",
+ "intro": "<a class=\"btn2 light\" href=\"book.html?d=2026-11-11#hist\">📖 先读手册：对比表</a><br>先看手册的表，再做题。有排顺序题。错题重做到 80%。",
  "sections": [
   "历史"
  ],

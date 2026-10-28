@@ -1,6 +1,6 @@
 window.SET = {
  "title": "复习：第三单元：物质构成的奥秘",
- "intro": "<a class=\"btn2 light\" href=\"book.html?d=2026-11-17#chem\">📖 先读手册：第三单元：物质构成的奥秘</a><br>先看手册的复习卡再做。错题看解析后重做，到 80% 算完成。",
+ "intro": "<a class=\"btn2 light\" href=\"book.html?d=2026-11-04#chem\">📖 先读手册：第三单元：物质构成的奥秘</a><br>先看手册的复习卡再做。错题看解析后重做，到 80% 算完成。",
  "sections": [
   "化学"
  ],

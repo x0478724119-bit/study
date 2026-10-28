@@ -1,6 +1,6 @@
 window.SET = {
  "title": "课本 U7–U8 复习",
- "intro": "<a class=\"btn2 light\" href=\"book.html?d=2026-11-05#e2\">📖 先读手册：易错点</a><br>定语从句 + 主谓一致 + 两个单元的话题词，混着考。错题重做到 80%。",
+ "intro": "<a class=\"btn2 light\" href=\"book.html?d=2026-11-16#e2\">📖 先读手册：易错点</a><br>定语从句 + 主谓一致 + 两个单元的话题词，混着考。错题重做到 80%。",
  "sections": [
   "定语从句",
   "主谓一致"

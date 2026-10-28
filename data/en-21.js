@@ -1,6 +1,6 @@
 window.SET = {
  "title": "阅读：判断对错（雅思题型入门）",
- "intro": "<a class=\"btn2 light\" href=\"book.html?d=2026-11-09#e2\">📖 先读手册：True / False / Not Given</a><br>一篇科普阅读，题型是雅思的 <b>True / False / Not Given</b>：文章说了而且一致 = True；文章说的正好相反 = False；文章没提到 = Not Given。错题重做到 80%。",
+ "intro": "<a class=\"btn2 light\" href=\"book.html?d=2026-11-18#e2\">📖 先读手册：True / False / Not Given</a><br>一篇科普阅读，题型是雅思的 <b>True / False / Not Given</b>：文章说了而且一致 = True；文章说的正好相反 = False；文章没提到 = Not Given。错题重做到 80%。",
  "sections": [
   "判断",
   "主旨"

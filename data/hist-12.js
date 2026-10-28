@@ -1,6 +1,6 @@
 window.SET = {
  "title": "历史期末模拟（全书）",
- "intro": "<a class=\"btn2 light\" href=\"book.html?d=2026-11-13#hist\">📖 先读手册：全书速记</a><br>全书 7 个单元混着考，不看手册做，像考试一样。错题重做到 80%。",
+ "intro": "<a class=\"btn2 light\" href=\"book.html?d=2026-11-24#hist\">📖 先读手册：全书速记</a><br>全书 7 个单元混着考，不看手册做，像考试一样。错题重做到 80%。",
  "sections": [
   "历史"
  ],

@@ -1,6 +1,6 @@
 window.SET = {
  "title": "完形填空 3：午饭时的角落",
- "intro": "<a class=\"btn2 light\" href=\"book.html?d=2026-11-17#e2\">📖 先读手册：完形填空复习</a><br>中考完形。先读全文，再一空一空选。错题重做到 80%。",
+ "intro": "<a class=\"btn2 light\" href=\"book.html?d=2026-11-05#e2\">📖 先读手册：完形填空复习</a><br>中考完形。先读全文，再一空一空选。错题重做到 80%。",
  "sections": [
   "完形"
  ],

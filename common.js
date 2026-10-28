@@ -13,6 +13,7 @@ const CONFIG = {
   WEEK_JOBS: 2,            // 周作业：每周（周一到周日）要交 2 单订单，哪天交都行
   WEEK_JOBS_FROM: '2026-10-26',
   WEEK_JOBS_PEN: 10,       // 周五前没交够，少一单扣 10
+  WEEK_JOBS_OFF: ['2026-11-02', '2026-11-09'],  // 这几周（周一日期）不要求交订单：期中冲刺和期中考试
   JOB_LIMIT: 2,            // 同时最多 2 个进行中的单；可以放弃换别的
   STALE: 7,                // 作业欠超过 7 天：不能接单、不能兑换；请假的作业 7 天内没补完照样扣
   FEISHU: 'https://open.feishu.cn/open-apis/bot/v2/hook/1af9d69f-acb2-491f-824e-037b5537a920',
@@ -105,16 +106,18 @@ function clearWrite(key){ const s = load('ws', {}); delete s[key]; save('ws', s)
 // ===== 课程 id → 名字 / 链接（订单前置课用）=====
 // d5-kjl 这种 = 第 5 天手册里的课；sk-xxx / d6-plan = 技能课
 const LESSON_NAMES = {'d6-plan': '平面图', 'sk-3v': '三视图', 'sk-canva': '可画入门', 'd6-kjl': '酷家乐第 5 课：灯光和效果图', 'd6-art': '美术第 1 课：一点透视', 'd5-kjl': '酷家乐第 4 课：材质和配色', 'd3-cv': '好 logo 的 4 条原则', 'd7-sw': 'Swift 第 5 课：逻辑运算符', 'd8-art': '美术第 2 课：两点透视', 'd9-kjl': '酷家乐第 6 课：客厅布局和动线', 'd10-cv': '设计第 2 课：字体和排版', 'd11-art': '美术第 3 课：明暗', 'py1': 'Python 第 1 课：游戏角色卡', 'py2': 'Python 第 2 课：if 判断', 'py3': 'Python 第 3 课：猜数字游戏', 'py4': 'Python 第 4 课：星星金字塔', 'd12-yd': '课外阅读 1：外婆的旧缝纫机', 'd13-art': '美术第 4 课：色彩基础', 'd14-yd': '课外阅读 2：楼下的那棵桂花树', 'd15-kjl': '酷家乐第 7 课：设计一个学习角', 'py5': 'Python 第 5 课：点歌单', 'py6': 'Python 第 6 课：石头剪刀布', 'py7': 'Python 第 7 课：伤害计算器', 'py8': 'Python 第 8 课：背包系统', 'py9': 'Python 第 9 课：文字冒险（1）', 'py10': 'Python 第 10 课：文字冒险（2）', 'd17-yd': '课外阅读 3：修自行车的人', 'd18-art': '美术第 5 课：角色剪影', 'd19-yd': '课外阅读 4：慢一点，也是一种本事', 'd20-kjl': '酷家乐第 8 课：玄关和收纳', 'd22-yd': '课外阅读 5：那盏灯', 'd23-art': '美术第 6 课：游戏图标', 'd24-yd': '课外阅读 6：墙角的那丛草', 'd25-kjl': '酷家乐第 9 课：阳台小花园', 'py11': 'Python 第 11 课：文字冒险（3）', 'py12': 'Python 第 12 课：密码强度检测器', 'py13': 'Python 第 13 课：游戏排行榜', 'py14': 'Python 第 14 课：井字棋棋盘', 'py15': 'Python 第 15 课：井字棋', 'py16': 'Python 第 16 课：bug 侦探', 'd27-yd': '课外阅读 7：一张没寄出的明信片', 'd27-hs': '历史课 1：文明从大河边长出来', 'd28-dz': '道法：坚持党的全面领导', 'd28-art': '美术第 7 课：像素画', 'd29-hs': '历史课 2：希腊人和罗马人', 'd30-yd': '课外阅读 8：会呼吸的房子', 'd30-dz': '道法：进入新时代', 'd30-kjl': '酷家乐第 10 课：小卫生间', 'd31-hs': '历史课 3：中世纪', 'd32-yd': '课外阅读 9：冬天的菜市场', 'd32-hs': '历史课 4：文艺复兴和新航路', 'd33-dz': '道法：现代化和高质量发展', 'd33-art': '美术第 8 课：角色表情', 'd34-hs': '历史课 5：三场革命', 'd35-yd': '课外阅读 10：补鞋', 'd35-dz': '道法：共圆中国梦', 'd35-kjl': '酷家乐第 11 课：小户型整体方案', 'd36-hs': '历史课 6：工业革命和马克思主义'};
+function lessonDay(id){ const D = window.DAYS || {}; return Object.keys(D).sort().find(k => D[k].tasks.some(t => t.lesson === id)) || null; }
 function lessonUrl(id){
   if (/^py\d/.test(id)) return `py.html?l=${id}`;
-  const m = id.match(/^d(\d+)-/), ks = Object.keys(window.DAYS || {}).sort();
-  if (m && id !== 'd6-plan' && ks[+m[1] - 1]) return `book.html?d=${ks[+m[1] - 1]}#${id}`;
+  const day = id !== 'd6-plan' && lessonDay(id);
+  if (day) return `book.html?d=${day}#${id}`;
   return `book.html?k=skills#${id}`;
 }
 function lessonName(id){
-  const m = id.match(/^d(\d+)-/), ks = Object.keys(window.DAYS || {}).sort(), day = m && id !== 'd6-plan' && ks[+m[1] - 1];
+  const day = id !== 'd6-plan' && lessonDay(id);
   return (LESSON_NAMES[id] || id) + (day ? `（${+day.slice(5,7)}/${+day.slice(8)} 的课，可以提前学）` : /^py\d/.test(id) ? '（Python 练习台）' : '（技能课）');
 }
+
 
 // 预览模式：姐姐的浏览器（开过后台或 ?me=1）什么都不锁，方便检查内容
 const PREVIEW = (() => { try { return load('isAdmin', false) || !!load('adminToken', ''); } catch(e){ return false; } })();

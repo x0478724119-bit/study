@@ -1,6 +1,6 @@
 window.SET = {
  "title": "中考单选综合",
- "intro": "<a class=\"btn2 light\" href=\"book.html?d=2026-11-26#e2\">📖 先读手册：单选信号词</a><br>中考单选 12 题，课本语法 + Grammar in Use 学过的时态 + 交际用语混着考。错题重做到 80%。",
+ "intro": "<a class=\"btn2 light\" href=\"book.html?d=2026-12-07#e2\">📖 先读手册：单选信号词</a><br>中考单选 12 题，课本语法 + Grammar in Use 学过的时态 + 交际用语混着考。错题重做到 80%。",
  "sections": [
   "单选"
  ],

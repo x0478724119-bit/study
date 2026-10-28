@@ -1,6 +1,6 @@
 window.SET = {
  "title": "基础练习：旋转综合",
- "intro": "<a class=\"btn2 light\" href=\"book.html?d=2026-11-05#math\">📖 先读手册：旋转综合</a><br>先读手册再做。错题看解析后重做，到 80% 算完成。",
+ "intro": "<a class=\"btn2 light\" href=\"book.html?d=2026-11-16#math\">📖 先读手册：旋转综合</a><br>先读手册再做。错题看解析后重做，到 80% 算完成。",
  "sections": [
   "基础"
  ],

@@ -1,6 +1,6 @@
 window.SET = {
  "title": "复习：第一、二单元：走进化学 + 空气和氧气",
- "intro": "<a class=\"btn2 light\" href=\"book.html?d=2026-11-16#chem\">📖 先读手册：第一、二单元：走进化学 + 空气和氧气</a><br>先看手册的复习卡再做。错题看解析后重做，到 80% 算完成。",
+ "intro": "<a class=\"btn2 light\" href=\"book.html?d=2026-11-02#chem\">📖 先读手册：第一、二单元：走进化学 + 空气和氧气</a><br>先看手册的复习卡再做。错题看解析后重做，到 80% 算完成。",
  "sections": [
   "化学"
  ],
