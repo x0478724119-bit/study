@@ -13,8 +13,8 @@ window.SET = {
    "q": "\"childhood\" 的意思是",
    "opts": [
     "童年",
-    "孩子们",
-    "儿童节"
+    "儿童节",
+    "孩子们"
    ],
    "a": 0,
    "e": "child + hood = 童年。in my childhood 在我小时候。"
@@ -34,20 +34,20 @@ window.SET = {
    "sec": "意思",
    "q": "\"vivid\" 的意思是",
    "opts": [
-    "模糊的",
     "清晰生动的",
-    "安静的"
+    "安静的",
+    "模糊的"
    ],
-   "a": 1,
+   "a": 0,
    "e": "a vivid memory 一段清晰的记忆。"
   },
   {
    "sec": "意思",
    "q": "\"relative\" 的意思是",
    "opts": [
-    "朋友",
+    "邻居",
     "亲戚",
-    "邻居"
+    "朋友"
    ],
    "a": 1,
    "e": "relative 亲戚，和 relation（关系）是一家。"
@@ -56,11 +56,11 @@ window.SET = {
    "sec": "意思",
    "q": "\"I feel grateful to my teacher.\" grateful 的意思是",
    "opts": [
-    "生气的",
     "感激的",
+    "生气的",
     "伟大的"
    ],
-   "a": 1,
+   "a": 0,
    "e": "be grateful to sb / for sth 感激某人 / 某事。"
   },
   {
@@ -104,8 +104,8 @@ window.SET = {
    "q": "This photo always ___ me of our trip to the beach.",
    "opts": [
     "reminds",
-    "recalls",
-    "gathers"
+    "gathers",
+    "recalls"
    ],
    "a": 0,
    "e": "remind sb of sth。recall 不接人：I recall the trip。"
@@ -114,11 +114,11 @@ window.SET = {
    "sec": "用起来",
    "q": "The most beautiful ___ in the film is the sunset by the sea.",
    "opts": [
-    "scene",
     "album",
+    "scene",
     "relative"
    ],
-   "a": 0,
+   "a": 1,
    "e": "scene 场景、画面。"
   },
   {
@@ -126,8 +126,8 @@ window.SET = {
    "q": "This ring was my grandma's. I will ___ it all my life.",
    "opts": [
     "treasure",
-    "gather",
-    "remind"
+    "remind",
+    "gather"
    ],
    "a": 0,
    "e": "treasure 作动词 = 珍惜、珍藏。"
@@ -136,33 +136,33 @@ window.SET = {
    "sec": "复习",
    "q": "Living alone made her more ___ .",
    "opts": [
-    "independent",
+    "local",
     "homesick",
-    "local"
+    "independent"
    ],
-   "a": 0,
+   "a": 2,
    "e": "independent 独立的。（单词课 5）"
   },
   {
    "sec": "复习",
    "q": "He was ___ in his first week at university, so he called home every night.",
    "opts": [
+    "popular",
     "homesick",
-    "confident",
-    "popular"
+    "confident"
    ],
-   "a": 0,
+   "a": 1,
    "e": "homesick 想家的。（单词课 5）"
   },
   {
    "sec": "复习",
    "q": "The game was ___ last month and millions of people have played it.",
    "opts": [
-    "released",
+    "solved",
     "imagined",
-    "solved"
+    "released"
    ],
-   "a": 0,
+   "a": 2,
    "e": "release 发布。（单词课 4）"
   }
  ],

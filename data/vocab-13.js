@@ -12,22 +12,22 @@ window.SET = {
    "sec": "意思",
    "q": "\"device\" 的意思是",
    "opts": [
-    "设备",
+    "决定",
     "建议",
-    "决定"
+    "设备"
    ],
-   "a": 0,
+   "a": 2,
    "e": "device 设备，手机、平板都是 device。"
   },
   {
    "sec": "意思",
    "q": "\"addicted\" 的意思是",
    "opts": [
-    "上瘾的",
+    "生气的",
     "增加的",
-    "生气的"
+    "上瘾的"
    ],
-   "a": 0,
+   "a": 2,
    "e": "be addicted to sth 对……上瘾。"
   },
   {
@@ -56,11 +56,11 @@ window.SET = {
    "sec": "意思",
    "q": "\"browse\" 的意思是",
    "opts": [
-    "浏览",
     "眉毛",
-    "烤"
+    "烤",
+    "浏览"
    ],
-   "a": 0,
+   "a": 2,
    "e": "browse the internet 上网浏览。"
   },
   {
@@ -103,33 +103,33 @@ window.SET = {
    "sec": "用起来",
    "q": "Please ___ me by email if you have any questions.",
    "opts": [
-    "contact",
     "access",
-    "update"
+    "update",
+    "contact"
    ],
-   "a": 0,
+   "a": 2,
    "e": "contact sb 联系某人（后面直接接人，不加 with）。"
   },
   {
    "sec": "用起来",
    "q": "All students have free ___ to the library computers.",
    "opts": [
-    "access",
     "device",
-    "privacy"
+    "privacy",
+    "access"
    ],
-   "a": 0,
+   "a": 2,
    "e": "have access to 能使用。"
   },
   {
    "sec": "用起来",
    "q": "My phone needs an ___ — it keeps crashing.",
    "opts": [
-    "update",
     "upload",
-    "limit"
+    "limit",
+    "update"
    ],
-   "a": 0,
+   "a": 2,
    "e": "update 更新。"
   },
   {
@@ -147,11 +147,11 @@ window.SET = {
    "sec": "复习",
    "q": "I was ___ after the long hike.",
    "opts": [
-    "exhausted",
+    "relaxing",
     "balanced",
-    "relaxing"
+    "exhausted"
    ],
-   "a": 0,
+   "a": 2,
    "e": "exhausted 筋疲力尽的。（单词课 12）"
   },
   {
@@ -159,8 +159,8 @@ window.SET = {
    "q": "The ___ of reading are clear: better vocabulary and focus.",
    "opts": [
     "benefits",
-    "habits",
-    "records"
+    "records",
+    "habits"
    ],
    "a": 0,
    "e": "benefit 好处。（单词课 12）"

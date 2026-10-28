@@ -12,11 +12,11 @@ window.SET = {
    "sec": "意思",
    "q": "\"astronaut\" 的意思是",
    "opts": [
+    "飞行员",
     "宇航员",
-    "天文学家",
-    "飞行员"
+    "天文学家"
    ],
-   "a": 0,
+   "a": 1,
    "e": "astro（星星）+ naut（航行的人）。"
   },
   {
@@ -24,8 +24,8 @@ window.SET = {
    "q": "\"gravity\" 的意思是",
    "opts": [
     "重力",
-    "重量",
-    "严肃"
+    "严肃",
+    "重量"
    ],
    "a": 0,
    "e": "gravity 重力、引力。"
@@ -34,31 +34,31 @@ window.SET = {
    "sec": "意思",
    "q": "\"float\" 的意思是",
    "opts": [
-    "漂浮",
     "掉落",
-    "飞走"
+    "飞走",
+    "漂浮"
    ],
-   "a": 0,
+   "a": 2,
    "e": "float 漂浮，在水上或空中都可以用。"
   },
   {
    "sec": "意思",
    "q": "\"mission\" 的意思是",
    "opts": [
+    "机器",
     "任务",
-    "失误",
-    "机器"
+    "失误"
    ],
-   "a": 0,
+   "a": 1,
    "e": "a space mission 一次太空任务。"
   },
   {
    "sec": "意思",
    "q": "\"universe\" 的意思是",
    "opts": [
-    "大学",
+    "制服",
     "宇宙",
-    "制服"
+    "大学"
    ],
    "a": 1,
    "e": "universe 宇宙，别和 university 大学搞混。"
@@ -114,44 +114,44 @@ window.SET = {
    "sec": "用起来",
    "q": "The Moon moves in an ___ around the Earth.",
    "opts": [
-    "orbit",
     "mission",
+    "orbit",
     "oxygen"
    ],
-   "a": 0,
+   "a": 1,
    "e": "orbit 轨道。"
   },
   {
    "sec": "用起来",
    "q": "Shenzhou is the name of a Chinese ___ .",
    "opts": [
-    "spacecraft",
+    "planet",
     "satellite",
-    "planet"
+    "spacecraft"
    ],
-   "a": 0,
+   "a": 2,
    "e": "spacecraft 宇宙飞船（单复数同形）。"
   },
   {
    "sec": "复习",
    "q": "Life is much more ___ with a phone and online maps.",
    "opts": [
-    "convenient",
+    "effective",
     "digital",
-    "effective"
+    "convenient"
    ],
-   "a": 0,
+   "a": 2,
    "e": "convenient 方便的。（单词课 8）"
   },
   {
    "sec": "复习",
    "q": "Who ___ the light bulb?",
    "opts": [
-    "invented",
     "discovered",
+    "invented",
     "replaced"
    ],
-   "a": 0,
+   "a": 1,
    "e": "灯泡原来不存在 → invent。（单词课 8）"
   },
   {
@@ -159,8 +159,8 @@ window.SET = {
    "q": "Put your phone away so you don't get ___ .",
    "opts": [
     "distracted",
-    "concentrated",
-    "grateful"
+    "grateful",
+    "concentrated"
    ],
    "a": 0,
    "e": "distracted 分心的。（单词课 7）"

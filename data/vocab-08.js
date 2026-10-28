@@ -12,11 +12,11 @@ window.SET = {
    "sec": "意思",
    "q": "\"invention\" 的意思是",
    "opts": [
-    "发明",
     "邀请",
-    "投资"
+    "投资",
+    "发明"
    ],
-   "a": 0,
+   "a": 2,
    "e": "invent（动词，发明）→ invention（名词，发明物）→ inventor（发明家）。"
   },
   {
@@ -24,8 +24,8 @@ window.SET = {
    "q": "\"convenient\" 的意思是",
    "opts": [
     "方便的",
-    "昂贵的",
-    "传统的"
+    "传统的",
+    "昂贵的"
    ],
    "a": 0,
    "e": "convenient 方便的。课本 U5 常考。"
@@ -34,11 +34,11 @@ window.SET = {
    "sec": "意思",
    "q": "\"influence\" 的意思是",
    "opts": [
-    "影响",
     "流感",
-    "信息"
+    "信息",
+    "影响"
    ],
-   "a": 0,
+   "a": 2,
    "e": "have an influence on 对……有影响。"
   },
   {
@@ -46,8 +46,8 @@ window.SET = {
    "q": "\"Paper money replaced metal coins.\" replace 的意思是",
    "opts": [
     "取代",
-    "修理",
-    "重复"
+    "重复",
+    "修理"
    ],
    "a": 0,
    "e": "replace A with B 用 B 取代 A。"
@@ -56,11 +56,11 @@ window.SET = {
    "sec": "意思",
    "q": "\"digital\" 的意思是",
    "opts": [
-    "数字的",
+    "危险的",
     "困难的",
-    "危险的"
+    "数字的"
    ],
-   "a": 0,
+   "a": 2,
    "e": "digital 数字的、电子的。"
   },
   {
@@ -103,66 +103,66 @@ window.SET = {
    "sec": "用起来",
    "q": "Who ___ that the earth goes around the sun?",
    "opts": [
-    "discovered",
+    "produced",
     "invented",
-    "produced"
+    "discovered"
    ],
-   "a": 0,
+   "a": 2,
    "e": "发现本来就存在的东西用 discover；造出原来没有的东西用 invent。"
   },
   {
    "sec": "用起来",
    "q": "This factory ___ 500 cars a day.",
    "opts": [
-    "produces",
     "replaces",
-    "influences"
+    "influences",
+    "produces"
    ],
-   "a": 0,
+   "a": 2,
    "e": "produce 生产。"
   },
   {
    "sec": "用起来",
    "q": "We need a ___ to the traffic problem.",
    "opts": [
-    "solution",
+    "material",
     "battery",
-    "material"
+    "solution"
    ],
-   "a": 0,
+   "a": 2,
    "e": "a solution to the problem 解决问题的办法（注意介词用 to）。"
   },
   {
    "sec": "复习",
    "q": "If you want to remember better, ___ on one thing at a time.",
    "opts": [
-    "concentrate",
     "distract",
-    "store"
+    "store",
+    "concentrate"
    ],
-   "a": 0,
+   "a": 2,
    "e": "concentrate on。（单词课 7）"
   },
   {
    "sec": "复习",
    "q": "Reading the same page five times is not an ___ way to learn.",
    "opts": [
-    "effective",
     "active",
+    "effective",
     "vivid"
    ],
-   "a": 0,
+   "a": 1,
    "e": "effective 有效的。（单词课 7）"
   },
   {
    "sec": "复习",
    "q": "I still have a ___ memory of my first day at school.",
    "opts": [
-    "vivid",
+    "digital",
     "grateful",
-    "digital"
+    "vivid"
    ],
-   "a": 0,
+   "a": 2,
    "e": "a vivid memory。（单词课 6）"
   }
  ],

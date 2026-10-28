@@ -12,33 +12,33 @@ window.SET = {
    "sec": "意思",
    "q": "\"opponent\" 的意思是",
    "opts": [
-    "对手",
+    "观众",
     "队友",
-    "观众"
+    "对手"
    ],
-   "a": 0,
+   "a": 2,
    "e": "opponent 对手。"
   },
   {
    "sec": "意思",
    "q": "\"champion\" 的意思是",
    "opts": [
-    "冠军",
+    "裁判",
     "教练",
-    "裁判"
+    "冠军"
    ],
-   "a": 0,
+   "a": 2,
    "e": "champion 冠军；championship 锦标赛。"
   },
   {
    "sec": "意思",
    "q": "\"injury\" 的意思是",
    "opts": [
-    "伤",
     "比赛",
+    "伤",
     "力气"
    ],
-   "a": 0,
+   "a": 1,
    "e": "injury 伤；动词 injure 使受伤。"
   },
   {
@@ -46,8 +46,8 @@ window.SET = {
    "q": "\"determined\" 的意思是",
    "opts": [
     "下定决心的",
-    "决定好的时间",
-    "失望的"
+    "失望的",
+    "决定好的时间"
    ],
    "a": 0,
    "e": "be determined to do 决心做某事。"
@@ -56,11 +56,11 @@ window.SET = {
    "sec": "意思",
    "q": "\"record\" 在 \"break a record\" 里的意思是",
    "opts": [
-    "录音",
     "纪录",
-    "唱片"
+    "唱片",
+    "录音"
    ],
-   "a": 1,
+   "a": 0,
    "e": "break a record 打破纪录。"
   },
   {
@@ -125,22 +125,22 @@ window.SET = {
    "sec": "用起来",
    "q": "What was the final ___? — 3 to 1.",
    "opts": [
-    "score",
     "record",
-    "medal"
+    "medal",
+    "score"
    ],
-   "a": 0,
+   "a": 2,
    "e": "score 比分、分数。"
   },
   {
    "sec": "复习",
    "q": "There was a long ___ after her performance.",
    "opts": [
-    "applause",
     "melody",
+    "applause",
     "lyrics"
    ],
-   "a": 0,
+   "a": 1,
    "e": "applause 掌声。（单词课 10）"
   },
   {
@@ -158,11 +158,11 @@ window.SET = {
    "sec": "复习",
    "q": "Our ___ moves around the sun.",
    "opts": [
-    "planet",
+    "satellite",
     "mission",
-    "satellite"
+    "planet"
    ],
-   "a": 0,
+   "a": 2,
    "e": "planet 行星。（单词课 9）"
   }
  ],

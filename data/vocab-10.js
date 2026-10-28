@@ -12,44 +12,44 @@ window.SET = {
    "sec": "意思",
    "q": "\"audience\" 的意思是",
    "opts": [
-    "观众",
     "听力",
+    "观众",
     "演员"
    ],
-   "a": 0,
+   "a": 1,
    "e": "audience 观众（整体），a big audience 很多观众。"
   },
   {
    "sec": "意思",
    "q": "\"rhythm\" 的意思是",
    "opts": [
-    "韵律、节奏",
+    "乐器",
     "歌词",
-    "乐器"
+    "韵律、节奏"
    ],
-   "a": 0,
+   "a": 2,
    "e": "rhythm 节奏。课本 U7 标题就是 Feel the Rhythm。"
   },
   {
    "sec": "意思",
    "q": "\"lyrics\" 的意思是",
    "opts": [
+    "歌手",
     "歌词",
-    "旋律",
-    "歌手"
+    "旋律"
    ],
-   "a": 0,
+   "a": 1,
    "e": "lyrics 歌词，一般用复数。"
   },
   {
    "sec": "意思",
    "q": "\"talent\" 的意思是",
    "opts": [
-    "天赋",
     "谈话",
-    "故事"
+    "故事",
+    "天赋"
    ],
-   "a": 0,
+   "a": 2,
    "e": "have a talent for sth 有……的天赋。"
   },
   {
@@ -57,8 +57,8 @@ window.SET = {
    "q": "\"applause\" 的意思是",
    "opts": [
     "掌声",
-    "苹果",
-    "申请"
+    "申请",
+    "苹果"
    ],
    "a": 0,
    "e": "applause 掌声（不可数）；动词 applaud 鼓掌。"
@@ -104,8 +104,8 @@ window.SET = {
    "q": "She will ___ a dance at the New Year party.",
    "opts": [
     "perform",
-    "practise",
-    "applaud"
+    "applaud",
+    "practise"
    ],
    "a": 0,
    "e": "perform 表演。"
@@ -125,22 +125,22 @@ window.SET = {
    "sec": "用起来",
    "q": "The music is so ___ that everyone wants to dance.",
    "opts": [
-    "energetic",
     "nervous",
-    "talent"
+    "talent",
+    "energetic"
    ],
-   "a": 0,
+   "a": 2,
    "e": "energetic 充满活力的。"
   },
   {
    "sec": "复习",
    "q": "The astronauts did an interesting ___ in space.",
    "opts": [
-    "experiment",
     "oxygen",
-    "orbit"
+    "orbit",
+    "experiment"
    ],
-   "a": 0,
+   "a": 2,
    "e": "experiment 实验。（单词课 9）"
   },
   {
@@ -148,8 +148,8 @@ window.SET = {
    "q": "Shared bikes are very ___ for short trips.",
    "opts": [
     "convenient",
-    "digital",
-    "vivid"
+    "vivid",
+    "digital"
    ],
    "a": 0,
    "e": "convenient 方便的。（单词课 8）"

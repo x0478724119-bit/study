@@ -12,33 +12,33 @@ window.SET = {
    "sec": "意思",
    "q": "\"concentrate\" 的意思是",
    "opts": [
-    "集中注意力",
     "放松",
+    "集中注意力",
     "聊天"
    ],
-   "a": 0,
+   "a": 1,
    "e": "concentrate on sth 专心于某事。"
   },
   {
    "sec": "意思",
    "q": "\"I was distracted by the noise.\" distracted 的意思是",
    "opts": [
-    "分心的",
     "受伤的",
-    "兴奋的"
+    "兴奋的",
+    "分心的"
    ],
-   "a": 0,
+   "a": 2,
    "e": "be distracted by 被……分散注意力。"
   },
   {
    "sec": "意思",
    "q": "\"effective\" 的意思是",
    "opts": [
-    "昂贵的",
     "有效的",
+    "昂贵的",
     "简单的"
    ],
-   "a": 1,
+   "a": 0,
    "e": "an effective method 有效的方法。"
   },
   {
@@ -46,8 +46,8 @@ window.SET = {
    "q": "\"strategy\" 的意思是",
    "opts": [
     "策略",
-    "力量",
-    "故事"
+    "故事",
+    "力量"
    ],
    "a": 0,
    "e": "strategy 策略、计划，雅思写作常用词。"
@@ -103,11 +103,11 @@ window.SET = {
    "sec": "用起来",
    "q": "I need to ___ my notes before the test tomorrow.",
    "opts": [
+    "distract",
     "revise",
-    "store",
-    "distract"
+    "store"
    ],
-   "a": 0,
+   "a": 1,
    "e": "revise 复习（英式）。美式常用 review。"
   },
   {
@@ -115,8 +115,8 @@ window.SET = {
    "q": "Computers can ___ information much faster than people.",
    "opts": [
     "process",
-    "concentrate",
-    "repeat"
+    "repeat",
+    "concentrate"
    ],
    "a": 0,
    "e": "process information 处理信息。"
@@ -125,44 +125,44 @@ window.SET = {
    "sec": "用起来",
    "q": "Don't just listen in class — be ___ and ask questions.",
    "opts": [
-    "active",
     "effective",
+    "active",
     "distracted"
    ],
-   "a": 0,
+   "a": 1,
    "e": "active 主动的。effective 是\"有效的\"，形容方法，不形容人上课的态度。"
   },
   {
    "sec": "复习",
    "q": "This old song ___ me of my childhood.",
    "opts": [
-    "reminds",
+    "treasures",
     "recalls",
-    "treasures"
+    "reminds"
    ],
-   "a": 0,
+   "a": 2,
    "e": "remind sb of sth。（单词课 6）"
   },
   {
    "sec": "复习",
    "q": "At Spring Festival, three ___ of my family eat together.",
    "opts": [
-    "generations",
     "relatives",
-    "albums"
+    "albums",
+    "generations"
    ],
-   "a": 0,
+   "a": 2,
    "e": "three generations 三代人。（单词课 6）"
   },
   {
    "sec": "复习",
    "q": "Joining the club gave me the ___ to meet new people.",
    "opts": [
-    "opportunity",
+    "culture",
     "schedule",
-    "culture"
+    "opportunity"
    ],
-   "a": 0,
+   "a": 2,
    "e": "opportunity 机会。（单词课 5）"
   }
  ],

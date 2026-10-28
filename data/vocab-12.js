@@ -12,33 +12,33 @@ window.SET = {
    "sec": "意思",
    "q": "\"routine\" 的意思是",
    "opts": [
-    "日常作息、惯例",
     "路线",
+    "日常作息、惯例",
     "房间"
    ],
-   "a": 0,
+   "a": 1,
    "e": "daily routine 每天的作息。雅思口语 Part 1 常考。"
   },
   {
    "sec": "意思",
    "q": "\"exhausted\" 的意思是",
    "opts": [
-    "筋疲力尽的",
     "兴奋的",
-    "用完的"
+    "用完的",
+    "筋疲力尽的"
    ],
-   "a": 0,
+   "a": 2,
    "e": "exhausted 比 tired 更累。"
   },
   {
    "sec": "意思",
    "q": "\"benefit\" 的意思是",
    "opts": [
-    "好处",
     "长凳",
+    "好处",
     "习惯"
    ],
-   "a": 0,
+   "a": 1,
    "e": "the benefits of exercise 运动的好处。"
   },
   {
@@ -103,22 +103,22 @@ window.SET = {
    "sec": "用起来",
    "q": "Can you ___ a good book for me?",
    "opts": [
-    "recommend",
     "relax",
-    "benefit"
+    "benefit",
+    "recommend"
    ],
-   "a": 0,
+   "a": 2,
    "e": "recommend 推荐。"
   },
   {
    "sec": "用起来",
    "q": "You should exercise ___ — three times a week.",
    "opts": [
-    "regularly",
     "exhausted",
+    "regularly",
     "balanced"
    ],
-   "a": 0,
+   "a": 1,
    "e": "regularly 规律地（副词修饰动词）。"
   },
   {
@@ -126,8 +126,8 @@ window.SET = {
    "q": "I feel ___ after a hot bath.",
    "opts": [
     "relaxed",
-    "relaxing",
-    "stress"
+    "stress",
+    "relaxing"
    ],
    "a": 0,
    "e": "人的感受用 -ed：I feel relaxed；东西让人放松用 -ing：a relaxing bath。（你小作文里错过！）"
@@ -136,33 +136,33 @@ window.SET = {
    "sec": "复习",
    "q": "He was ___ to finish the race even with an injury.",
    "opts": [
-    "determined",
     "nervous",
+    "determined",
     "energetic"
    ],
-   "a": 0,
+   "a": 1,
    "e": "determined 下定决心的。（单词课 11）"
   },
   {
    "sec": "复习",
    "q": "She won a gold ___ in swimming.",
    "opts": [
-    "medal",
     "record",
-    "score"
+    "score",
+    "medal"
    ],
-   "a": 0,
+   "a": 2,
    "e": "medal 奖牌。（单词课 11）"
   },
   {
    "sec": "复习",
    "q": "The ___ of this song is really beautiful.",
    "opts": [
+    "instrument",
     "melody",
-    "rhythm",
-    "instrument"
+    "rhythm"
    ],
-   "a": 0,
+   "a": 1,
    "e": "melody 旋律。（单词课 10）"
   }
  ],
