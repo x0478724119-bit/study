@@ -18,7 +18,7 @@ window.BOOK = {
 <p>准备好了就开始：<a data-quiz="math-w4">数学周测 4</a></p>
 `},
 {id: 'en', icon: '🔤', title: '英语：周测 + 综合阅读', time: '约 30 分钟', html: `
-<div class="tip">📸 <b>别忘了：</b>今天交本周 Grammar in Use 照片——两个单元的练习页各拍 1 张，<b>一共 2 张</b>，发工作室群。首页最后一项。</div>
+<div class="tip">📸 <b>别忘了：</b>今天交本周 Grammar in Use 照片——两个单元的练习页各拍 1 张，<b>一共 2 张</b>，发工作室群，再<b>找姐姐要取件码</b>，输进首页最后一项才算交了。</div>
 <div class="sec" id="e1"><h3><span class="n">01</span>Grammar in Use 周测 5（约 15 分钟）</h3>
 <p>考这周做的 Unit 12–13。<b>不看书、不看答案</b>。做完错的回书上那一单元再看一遍。</p>
 <div class="tip">📝 <a data-quiz="giu-w5">Grammar in Use 周测 5</a></div></div>

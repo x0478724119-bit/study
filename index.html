@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="学习站">
 <title>学习站</title>
-<link rel="stylesheet" href="style.css?v=1793174079">
+<link rel="stylesheet" href="style.css?v=1793174405">
 </head><body class="app">
 <header class="top">
   <div class="brand"><div class="logo" style="background:url(apple-touch-icon.png) center/cover"></div><div><b>我的设计工作室</b><small id="lv"></small></div></div>
@@ -21,7 +21,7 @@
 </nav>
 <div class="modal" id="modal"><div class="box" id="mbox"></div></div>
 
-<script src="common.js?v=1793174079"></script>
+<script src="common.js?v=1793174405"></script>
 <script>
 const LEVELS = [
   {lv:1, name:'设计学徒', need:0, icon:'🌱'},
@@ -39,7 +39,7 @@ const isWeekend = d => [0,6].includes(new Date(d + 'T12:00').getDay());
 
 // 加载数据文件（加时间戳，保证拿到最新的）
 function loadScript(src){ return new Promise(r => { const s = document.createElement('script'); s.src = src + '?v=' + Date.now(); s.onload = r; s.onerror = r; document.body.appendChild(s); }); }
-Promise.all([loadScript('data/days.js'), loadScript('data/jobs.js'), loadScript('data/pause.js'), loadScript('data/leave.js'), loadScript('data/adjust.js'), loadScript('data/feedback.js')]).then(() => { addReviewTasks(); save('daysCache', window.DAYS); checkMissed(); checkWeekJobs(); render(); });
+Promise.all([loadScript('data/days.js'), loadScript('data/jobs.js'), loadScript('data/pause.js'), loadScript('data/leave.js'), loadScript('data/adjust.js'), loadScript('data/feedback.js'), loadScript('data/codes.js')]).then(() => { addReviewTasks(); save('daysCache', window.DAYS); checkMissed(); checkWeekJobs(); render(); });
 // 错题复习：今天（或已经开始复习的那天）在最后加一项"复习错题"
 function addReviewTasks(){
   const fixed = load('reviewList', {});
@@ -187,12 +187,14 @@ function viewToday(){
     if (t.quiz) act += q && q.first != null
       ? `<div class="d">${q.done ? '✅ 已完成' : '⏳ 还要订正'} · 第一次 ${q.first}%</div><a class="btn2 ${q.done ? 'light' : ''}" href="quiz.html?s=${t.quiz}&d=${key}">${q.done ? '查看 / 再刷' : '继续订正'}</a>`
       : `<a class="btn2" href="quiz.html?s=${t.quiz}&d=${key}">开始 →</a>`;
+    if (t.code){ const cv = load('day-' + key, {})[i]; act += cv ? `<div class="wdone">✅ 取件码正确<br><small>${cv.time} 交的</small></div>`
+      : `<input class="fill" id="code-${key}-${i}" inputmode="numeric" maxlength="6" placeholder="输入姐姐给的 6 位取件码" style="max-width:220px"><button class="main sm" style="margin-top:8px" onclick="submitCode('${key}',${i})">交码</button>`; }
     if (t.write) act += wv ? `<div class="wdone">✍️ ${esc(wv.text)}<br><small>${wv.time} 提交 · <a href="#" onclick="editWrite('${key}',${i});return false">修改</a></small></div>`
       : `<textarea class="fill wbox" data-ws="w-${key}-${i}" id="w-${key}-${i}" placeholder="${t.write}" oninput="draft('${key}',${i},this.value)${t.words ? `;this.nextElementSibling.textContent=wordCount(this.value)+' / ${t.words} 词'` : ''}">${esc(load('draft', {})[key + '-' + i] || '')}</textarea>${t.words ? `<small class="wc" style="display:block;color:#888;margin-top:4px">${wordCount(load('draft', {})[key + '-' + i])} / ${t.words} 词</small>` : ''}<button class="main sm" style="margin-top:8px" onclick="submitWrite('${key}',${i})">提交</button>`;
     // 批改：data/feedback.js 里按 "日期-序号" 或教程 id 存
     const fb = (window.FEEDBACK || {})[key + '-' + i] || (t.lesson && (window.FEEDBACK || {})[t.lesson]);
     if (fb) act += `<details class="fb" ${load('fbSeen', {})[key + '-' + i] ? '' : 'open'}><summary onclick="const s=load('fbSeen',{});s['${key}-${i}']=1;save('fbSeen',s);this.querySelector('.new')?.remove()">📝 批改${load('fbSeen', {})[key + '-' + i] ? '' : ' <span class="new">新</span>'}</summary>${fb.html}</details>`;
-    const tick = !t.quiz && !t.write && !t.lesson && !t.job ? `onclick="tog('${key}',${i})"` : '';
+    const tick = !t.quiz && !t.write && !t.lesson && !t.job && !t.code ? `onclick="tog('${key}',${i})"` : '';
     return `<div class="c task ${on ? 'done' : ''}"><div class="chk ${on?'on':''}" ${tick}>${on?'✓':''}</div>
       <div style="flex:1"><div class="t">${t.t}<span class="tcoin">🪙${taskCoin(t)}</span></div><div class="d">${t.d}</div>${act}</div></div>`;
   });
@@ -259,6 +261,13 @@ function submitWrite(key, i){
   else if (v.length < (t.min || 10)){ toast(`再多写一点（至少 ${t.min || 10} 个字）`); return; }
   const d = load('day-' + key, {}); d[i] = {text: v, time: todayStr() + ' ' + hm()}; save('day-' + key, d); const dr = load('draft', {}); delete dr[key + '-' + i]; save('draft', dr);
   notify(`✍️ ${t.t}：\n${v}\n${writeStats('w-' + key + '-' + i, v)}`); clearWrite('w-' + key + '-' + i); render();
+}
+function submitCode(key, i){
+  const t = DAYS[key].tasks[i], v = document.getElementById(`code-${key}-${i}`).value.trim(), h = (window.CODES || {})[t.code];
+  if (!h){ toast('姐姐还没生成这周的码，让她打开一下后台'); return; }
+  if (!/^\d{6}$/.test(v) || fnv(v) !== h){ toast('码不对，再问问姐姐'); return; }
+  const d = load('day-' + key, {}); d[i] = {text: '取件码正确', time: todayStr() + ' ' + hm()}; save('day-' + key, d);
+  notify(`📸 ${t.t}：取件码正确，已交`); render();
 }
 function tog(key, i){ const d = load('day-' + key, {}); d[i] = !d[i]; save('day-' + key, d); render(); }
 // 当天完成的任务每项 +2，一项只给一次；补的不给

@@ -5,7 +5,7 @@
 <link rel="icon" type="image/png" href="icon-512.png">
 <meta name="robots" content="noindex">
 <title>管理后台</title>
-<link rel="stylesheet" href="style.css?v=1793174079">
+<link rel="stylesheet" href="style.css?v=1793174405">
 <style>
 .tabs2{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0 14px}.tabs2 button{width:auto;background:var(--card);border:1px solid var(--line);color:var(--ink);padding:8px 14px}.tabs2 button.on{background:var(--acc);color:#fff;border-color:var(--acc)}
 label{display:block;font-size:13px;color:var(--soft);margin:10px 0 4px}
@@ -19,14 +19,14 @@ textarea.in{min-height:72px}.grid3{display:grid;grid-template-columns:1fr 1fr 1f
 </head><body><div class="w">
 <div id="app"></div>
 </div>
-<script src="common.js?v=1793174079"></script>
+<script src="common.js?v=1793174405"></script>
 <script>
 // ===== 管理后台：只有存了 GitHub 钥匙的浏览器能改东西 =====
 const REPO = 'x0478724119-bit/study', API = 'https://api.github.com/repos/' + REPO + '/contents/';
 const $ = s => document.querySelector(s);
 const esc = x => String(x ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 let jQ = '';
-let jType = '全部', TOKEN = load('adminToken', ''), SECRET = load('adminSecret', ''), tab = 'jobs', jobs = [], pause = [], leaves = [], adjust = [], editing = null;
+let codeTasks = [], codes = {}, jType = '全部', TOKEN = load('adminToken', ''), SECRET = load('adminSecret', ''), tab = 'jobs', jobs = [], pause = [], leaves = [], adjust = [], editing = null;
 const b64e = s => btoa(unescape(encodeURIComponent(s))), b64d = s => decodeURIComponent(escape(atob(s.replace(/\n/g, ''))));
 const sha = {};
 
@@ -71,14 +71,20 @@ async function boot(){
   let changed = false;
   for (const j of jobs){ const h = await hashes(j.id); if (String(j.h) !== String(h)){ j.h = h; changed = true; } if (!j.pub){ j.pub = todayStr(); changed = true; } }
   if (changed) await saveJobs('验收码改用后台暗号生成');
+  // 每周作业的取件码：days.js 里带 code 的任务，把码的哈希写进 data/codes.js
+  const df = await gh('data/days.js'), w = {}; new Function('window', b64d(df.content))(w);
+  codeTasks = []; for (const [d, day] of Object.entries(w.DAYS || {})) day.tasks.forEach(t => { if (t.code) codeTasks.push({d, id: t.code, t: t.t}); });
+  try { codes = await readJS('data/codes.js', 'CODES'); } catch(e){ codes = {}; }
+  let cc = false; for (const c of codeTasks){ const h = fnv(await codeOf(c.id, 'full')); if (codes[c.id] !== h){ codes[c.id] = h; cc = true; } }
+  if (cc) await writeJS('data/codes.js', 'CODES', codes, '// 每周作业的取件码（由管理后台生成）：key = 码的 id，值 = 码的 fnv 哈希。', '生成作业取件码');
   render();
 }
 
 // ===== 页面 =====
 function render(){
   let h = `<div class="row2"><h1>🛠️ 管理后台</h1><a class="go" href="./">打开学习站 →</a></div>
-    <div class="tabs2">${[['jobs','📋 订单'],['leave','🙋 请假'],['pause','🏖️ 放假'],['coin','🪙 奖惩'],['set','⚙️ 设置']].map(([k,n]) => `<button class="${tab === k ? 'on' : ''}" onclick="tab='${k}';editing=null;render()">${n}</button>`).join('')}</div>`;
-  h += ({jobs: vJobs, leave: vLeave, pause: vPause, coin: vCoin, set: vSet})[tab]();
+    <div class="tabs2">${[['jobs','📋 订单'],['codes','📸 作业码'],['leave','🙋 请假'],['pause','🏖️ 放假'],['coin','🪙 奖惩'],['set','⚙️ 设置']].map(([k,n]) => `<button class="${tab === k ? 'on' : ''}" onclick="tab='${k}';editing=null;render()">${n}</button>`).join('')}</div>`;
+  h += ({jobs: vJobs, codes: vCodes, leave: vLeave, pause: vPause, coin: vCoin, set: vSet})[tab]();
   $('#app').innerHTML = h;
 
 }
@@ -177,6 +183,15 @@ function vCoin(){
 }
 async function addAdj(){ const n = +$('#c-n').value, w = $('#c-w').value.trim(); if (!n || !w) return toast('金币和原因都要填'); adjust.push({id: Date.now().toString(36), n, why: w, date: todayStr()}); await writeJS('data/adjust.js', 'ADJUST', adjust, '', '金币奖惩'); render(); toast('已发出'); }
 
+function vCodes(){
+  const today = todayStr(), list = codeTasks.slice().sort((a, b) => b.d.localeCompare(a.d));
+  return `<p class="s">她把照片发到工作室群、你看过了，就点"看码"，把 6 位码发给她。她输对了，那一项才算完成；周六早上 6 点前没输码，按缺交扣金币。</p>` +
+    (list.length ? list.map(c => `<div class="c"><div class="row2"><span><b>${c.d.slice(5)}</b> · ${esc(c.t)}${c.d < today ? ' <small class="s">（已过）</small>' : ''}</span><button class="main mini" onclick="codeShow('${c.id}','${c.d}')">看码</button></div><div class="codes" id="cs-${c.id}"></div></div>`).join('') : '<p class="s">现在没有要码的作业。</p>');
+}
+async function codeShow(id, d){
+  const c = await codeOf(id, 'full');
+  document.getElementById('cs-' + id).innerHTML = `<span style="font-size:28px;font-weight:800;letter-spacing:4px">${c}</span> <button class="ghost mini" onclick="navigator.clipboard.writeText('${c}').then(()=>toast('已复制，发给她吧'))">复制</button>`;
+}
 function vSet(){
   return `<div class="c"><b>当前状态</b><p class="s">钥匙和暗号都存在这台电脑的浏览器里。换电脑或清了浏览器数据，要重新输入（暗号要和原来一样，否则验收码会变）。</p>
     <button class="ghost" onclick="if(confirm('退出后需要重新粘贴钥匙')){save('adminToken','');location.reload()}">退出后台</button></div>`;
