@@ -46,7 +46,7 @@ window.BOOK = {
 <p class="s">选完把整句读一遍，通顺才对。</p>
 <div class="tip">📝 <a data-quiz="en-18">完形填空 1：海滩上的五米</a></div></div>
 <div class="sec" id="e3"><h3><span class="n">03</span>Grammar in Use Unit 11（前半，约 15 分钟）</h3>
-<p>Unit 11：<b>How long have you (been) …?</b> 读左页讲解，做<b>前 2 个练习</b>，用书后答案对，红笔改。<b>拍照发工作室群</b>，回首页写一句：做了哪几个练习、错几题。</p></div>
+<p>Unit 11：<b>How long have you (been) …?</b> 读左页讲解，做<b>前 2 个练习</b>，用书后答案对，红笔改。书留着当笔记（<b>周五一起拍照交</b>），回首页写一句：做了哪几个练习、错几题。</p></div>
 `},
 {id: 'yw', icon: '📖', title: '语文：课外阅读 4（议论文）', time: '约 30 分钟', html: `
 <p class="lede">课外阅读 4：配合第五单元，今天读一篇<b>课外议论文</b>。用昨天学的四种论证方法来答题。</p>

@@ -58,7 +58,7 @@ window.BOOK = {
 <p class="s">题型小抄：why → 找 because / so；猜词题 → 看前后句；主旨题 → 看第一段和最后一段。</p>
 <div class="tip">📝 <a data-quiz="en-16">课本 U7：音乐阅读 + 定语从句</a></div></div>
 <div class="sec" id="e3"><h3><span class="n">03</span>Grammar in Use Unit 10（前半，约 15 分钟）</h3>
-<p>Unit 10 讲<b>现在完成进行时和现在完成时的区别</b>（I have been doing / I have done）。读左页讲解，做右页<b>前 2 个练习</b>，用书后答案自己对，红笔改。<b>拍照发工作室群</b>，回首页写一句：做了哪几个练习、错几题。</p></div>
+<p>Unit 10 讲<b>现在完成进行时和现在完成时的区别</b>（I have been doing / I have done）。读左页讲解，做右页<b>前 2 个练习</b>，用书后答案自己对，红笔改。书留着当笔记（<b>周五一起拍照交</b>），回首页写一句：做了哪几个练习、错几题。</p></div>
 `},
 {id: 'yw', icon: '📖', title: '语文：课外阅读 3', time: '约 30 分钟', html: `
 <p class="lede">课外阅读 3：一篇<b>记叙文</b>。先复习记叙文最常考的 2 个题型，再读文章、写答案、对要点。</p>

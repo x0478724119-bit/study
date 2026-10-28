@@ -48,7 +48,7 @@ window.BOOK = {
 <p class="s">最后两个信号词（if 条件句、look forward to）是你 10 月摸底时错过的，今天再练一次。</p>
 <div class="tip">📝 <a data-quiz="en-24">语法选择（中考题型）</a></div></div>
 <div class="sec" id="e3"><h3><span class="n">03</span>Grammar in Use Unit 13（后半，约 15 分钟）</h3>
-<p>做 Unit 13 剩下的练习，用书后答案对，红笔改。<b>拍照发工作室群</b>，回首页写一句：做了哪几个练习、错几题。明天周测考 Unit 12–13。</p>
+<p>做 Unit 13 剩下的练习，用书后答案对，红笔改。书留着当笔记（<b>周五一起拍照交</b>），回首页写一句：做了哪几个练习、错几题。明天周测考 Unit 12–13。</p>
 <p class="s">一句话记住 Unit 13：<b>说了具体的过去时间（yesterday、in 2020、ago、when …?）→ 一般过去时；没说时间、和现在有关 → 现在完成时</b>。</p></div>
 `},
 {id: 'yw', icon: '📖', title: '语文：议论文专题', time: '约 30 分钟', html: `

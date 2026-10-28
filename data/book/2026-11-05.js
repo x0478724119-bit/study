@@ -50,7 +50,7 @@ window.BOOK = {
 <tr><td>with / as well as</td><td>后面的不算主语</td><td>The teacher with two students <b>is</b> …</td></tr></table>
 <div class="tip">📝 <a data-quiz="en-19">课本 U7–U8 复习</a></div></div>
 <div class="sec" id="e3"><h3><span class="n">03</span>Grammar in Use Unit 11（后半，约 15 分钟）</h3>
-<p>做 Unit 11 剩下的练习，用书后答案对，红笔改。<b>拍照发工作室群</b>，回首页写一句：做了哪几个练习、错几题。明天周测考 Unit 10–11。</p></div>
+<p>做 Unit 11 剩下的练习，用书后答案对，红笔改。书留着当笔记（<b>周五一起拍照交</b>），回首页写一句：做了哪几个练习、错几题。明天周测考 Unit 10–11。</p></div>
 `},
 {id: 'yw', icon: '📖', title: '语文：精神的三间小屋 + 致巴特勒上尉的信', time: '约 30 分钟', html: `
 <p class="lede">第五单元另外两篇：一篇用<b>比喻</b>讲道理，一篇是雨果写的<b>一封信</b>。课文在<a href="https://basic.smartedu.cn/tchMaterial" target="_blank">电子课本</a>里，先读梳理，有时间再读原文。</p>

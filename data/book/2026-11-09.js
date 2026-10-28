@@ -53,7 +53,7 @@ window.BOOK = {
 <p class="s">False 和 Not Given 分不清时问自己：文章里有没有一句话能<b>直接反驳</b>它？有 → False；找不到 → Not Given。</p>
 <div class="tip">📝 <a data-quiz="en-21">阅读：判断对错（雅思题型入门）</a></div></div>
 <div class="sec" id="e3"><h3><span class="n">03</span>Grammar in Use Unit 12（前半，约 15 分钟）</h3>
-<p>Unit 12：<b>for 和 since、When …? 和 How long …?</b> 读讲解，做<b>前 2 个练习</b>，用书后答案对，红笔改。<b>拍照发工作室群</b>，回首页写一句：做了哪几个练习、错几题。</p></div>
+<p>Unit 12：<b>for 和 since、When …? 和 How long …?</b> 读讲解，做<b>前 2 个练习</b>，用书后答案对，红笔改。书留着当笔记（<b>周五一起拍照交</b>），回首页写一句：做了哪几个练习、错几题。</p></div>
 `},
 {id: 'yw', icon: '📖', title: '语文：课外阅读 5', time: '约 30 分钟', html: `
 <p class="lede">课外阅读 5：一篇<b>记叙文</b>。今天练两个新题型：<b>标题的作用</b>和<b>细节描写的作用</b>。</p>

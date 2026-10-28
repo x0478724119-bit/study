@@ -52,7 +52,7 @@ window.BOOK = {
 <p class="s">"不是…而是…"（not … but …、don't … ; … ）这种句子，答案一般在"而是"后面。</p>
 <div class="tip">📝 <a data-quiz="en-17">课本 U8：运动阅读 + 主谓一致</a></div></div>
 <div class="sec" id="e3"><h3><span class="n">03</span>Grammar in Use Unit 10（后半，约 15 分钟）</h3>
-<p>做 Unit 10 剩下的练习，用书后答案对，红笔改。<b>拍照发工作室群</b>，回首页写一句：做了哪几个练习、错几题。</p>
+<p>做 Unit 10 剩下的练习，用书后答案对，红笔改。书留着当笔记（<b>周五一起拍照交</b>），回首页写一句：做了哪几个练习、错几题。</p>
 <p class="s">一句话记住 Unit 10：<b>强调"做了多久、一直在做" → have been doing；强调"做完了几个、结果" → have done</b>。</p></div>
 `},
 {id: 'yw', icon: '📖', title: '语文：怀疑与学问', time: '约 30 分钟', html: `

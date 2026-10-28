@@ -43,7 +43,7 @@ window.BOOK = {
 <div class="tip">💡 看到 <b>But / However</b>，后面的意思和前面<b>相反</b>；看到 <b>so / because</b>，前后是<b>因果</b>。连接词是完形的"路标"。</div>
 <div class="tip">📝 <a data-quiz="en-22">完形填空 2：学手机的爷爷</a></div></div>
 <div class="sec" id="e3"><h3><span class="n">03</span>Grammar in Use Unit 12（后半，约 15 分钟）</h3>
-<p>做 Unit 12 剩下的练习，用书后答案对，红笔改。<b>拍照发工作室群</b>，回首页写一句：做了哪几个练习、错几题。</p>
+<p>做 Unit 12 剩下的练习，用书后答案对，红笔改。书留着当笔记（<b>周五一起拍照交</b>），回首页写一句：做了哪几个练习、错几题。</p>
 <p class="s">一句话记住 Unit 12：<b>for + 一段时间（for two years），since + 起点（since 2020）</b>。</p></div>
 `},
 {id: 'yw', icon: '📖', title: '语文：小说专题复习', time: '约 30 分钟', html: `

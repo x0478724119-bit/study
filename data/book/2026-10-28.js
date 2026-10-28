@@ -46,7 +46,7 @@ window.BOOK = {
 <tr><td>all / everything / the first / the only 修饰</td><td>只能 that</td><td>All <b>that</b> you need is practice.</td></tr></table>
 <p class="s">关系词在从句里作宾语时可以省略：the song (that) I like。</p>
 <div class="tip">📝 <a data-quiz="en-13">课本 U7 语法：定语从句</a></div></div><div class="sec" id="e3"><h3><span class="n">03</span>Grammar in Use Unit 9（前半，约 15 分钟）</h3>
-<p>读左页讲解，做右页<b>前 2 个练习</b>（比如 9.1、9.2）。剩下的明天做。用书后答案自己对，错的用红笔改。<b>做完拍照发工作室群</b>，回首页写一句：做了哪几个练习、错几题。</p></div>
+<p>读左页讲解，做右页<b>前 2 个练习</b>（比如 9.1、9.2）。剩下的明天做。用书后答案自己对，错的用红笔改。书留着当笔记（<b>周五一起拍照交</b>），回首页写一句：做了哪几个练习、错几题。</p></div>
 `},
 {id: 'yw', icon: '📖', title: '语文：课外阅读 2', time: '约 30 分钟', html: `
 <p class="lede">课外阅读 2：今天是一篇<b>散文</b>。先学散文常考的 2 个模板，再读文章、写答案、对要点。</p>
