@@ -17,6 +17,7 @@ window.BOOK = {
 
 `},
 {id: 'en', icon: '🔤', title: '英语：周测 + 课本复习', time: '约 50 分钟', html: `
+<div class="tip">📸 <b>别忘了：</b>今天交本周 Grammar in Use 照片——两个单元的练习页各拍 1 张，<b>一共 2 张</b>，发工作室群。首页最后一项。</div>
 
 <div class="sec" id="e1"><h3><span class="n">01</span>Grammar in Use 周测 3（约 15 分钟）</h3>
 <p>考这周做的 Unit 8–9。<b>不看书、不看答案</b>。错的回书上对应单元看一遍再订正。</p>

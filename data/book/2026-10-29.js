@@ -51,7 +51,7 @@ window.BOOK = {
 <tr><td>there be、either…or、neither…nor</td><td><b>就近</b></td><td>There <b>is</b> a ball and two bats.</td></tr>
 <tr><td>the number of / a number of</td><td>单 / 复</td><td>The number of fans <b>is</b>…；A number of fans <b>are</b>…</td></tr></table>
 <div class="tip">📝 <a data-quiz="en-14">课本 U8 语法：主谓一致</a></div></div><div class="sec" id="e3"><h3><span class="n">03</span>Grammar in Use Unit 9（后半，约 15 分钟）</h3>
-<p>做右页<b>剩下的练习</b>（9.3 以后）。不会的回左页讲解找。用书后答案自己对，错的用红笔改。书留着当笔记（<b>周五一起拍照交</b>），回首页写一句：做了哪几个练习、错几题。</p></div>
+<p>做右页<b>剩下的练习</b>（9.3 以后）。不会的回左页讲解找。用书后答案自己对，错的用红笔改。书留着当笔记，<b>明天（周五）把这周两个单元的练习页各拍 1 张交上来</b>，回首页写一句：做了哪几个练习、错几题。</p></div>
 `},
 {id: 'yw', icon: '📖', title: '语文：议论文 + 想和做', time: '约 30 分钟', html: `
 <p class="lede">第五单元是<b>议论文</b>。学校会考议论文阅读，今天先学议论文的"三要素"，再读胡绳的<b>《想和做》</b>（课本第 112 页）。</p>
