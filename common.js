@@ -12,7 +12,7 @@ const CONFIG = {
   GOOD_ENOUGH: 0.6,        // 验收"一般"：总共只拿到报酬的 60%
   WEEK_JOBS: 2,            // 周作业：每周（周一到周日）要交 2 单订单，哪天交都行
   WEEK_JOBS_FROM: '2026-10-26',
-  WEEK_JOBS_PEN: 10,       // 周五前没交够，少一单扣 10
+  WEEK_JOBS_PEN: 10,       // 周日前没交够（周一早上 6 点后结算），少一单扣 10
   WEEK_JOBS_OFF: ['2026-11-02', '2026-11-09'],  // 这几周（周一日期）不要求交订单：期中冲刺和期中考试
   JOB_LIMIT: 2,            // 同时最多 2 个进行中的单；可以放弃换别的
   STALE: 7,                // 作业欠超过 7 天：不能接单、不能兑换；请假的作业 7 天内没补完照样扣
@@ -139,7 +139,7 @@ const PREVIEW = (() => { try { return load('isAdmin', false) || !!load('adminTok
 // ===== 推送末尾：今天的进度 + 余额变化（和上一条推送比）=====
 // 每周必做订单：这一周（周一到周日）提交过几单（提交时记了 sub 日期）
 function weekMon(key){ const d = new Date(key + 'T12:00'); return todayStr(new Date(d - ((d.getDay() + 6) % 7) * 864e5)); }
-function jobsInWeek(key){ const a = weekMon(key), b = todayStr(new Date(new Date(a + 'T12:00').getTime() + 4 * 864e5));  /* 周一到周五 */ return Object.values(load('jobs', {})).filter(v => v && v.sub && v.sub >= a && v.sub <= b).length; }
+function jobsInWeek(key){ const a = weekMon(key), b = todayStr(new Date(new Date(a + 'T12:00').getTime() + 6 * 864e5));  /* 周一到周日 */ return Object.values(load('jobs', {})).filter(v => v && v.sub && v.sub >= a && v.sub <= b).length; }
 function taskDoneLS(key, i, t){
   if (t.job) return jobsInWeek(key) >= t.job;
   if (t.lesson) return !!load('lesson', {})[t.lesson];

@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="学习站">
 <title>学习站</title>
-<link rel="stylesheet" href="style.css?v=1793319584">
+<link rel="stylesheet" href="style.css?v=1793321640">
 </head><body class="app">
 <header class="top">
   <div class="brand"><div class="logo" style="background:url(apple-touch-icon.png) center/cover"></div><div><b>我的设计工作室</b><small id="lv"></small></div></div>
@@ -21,7 +21,7 @@
 </nav>
 <div class="modal" id="modal"><div class="box" id="mbox"></div></div>
 
-<script src="common.js?v=1793319584"></script>
+<script src="common.js?v=1793321640"></script>
 <script>
 const LEVELS = [
   {lv:1, name:'设计学徒', need:0, icon:'🌱'},
@@ -62,12 +62,12 @@ function applyAdjust(){
     toast((a.n > 0 ? '🎁 +' : '') + a.n + ' 金币 · ' + a.why);
   }
 }
-// 订单周作业：周五过完（周六早上 6 点后）结算，少一单扣 WEEK_JOBS_PEN
+// 订单周作业：周日过完（周一早上 6 点后）结算，少一单扣 WEEK_JOBS_PEN
 function checkWeekJobs(){
   if (!CONFIG.WEEK_JOBS) return;
   const done = load('weekJobs', {}), start = load('start', T);
   for (let mon = weekMon(CONFIG.WEEK_JOBS_FROM); ; mon = todayStr(new Date(new Date(mon + 'T12:00').getTime() + 7 * 864e5))){
-    const fri = todayStr(new Date(new Date(mon + 'T12:00').getTime() + 4 * 864e5));
+    const fri = todayStr(new Date(new Date(mon + 'T12:00').getTime() + 6 * 864e5));  // 周日
     if (fri >= T) break;
     if (done[mon] != null || fri < start || paused(fri) || (CONFIG.WEEK_JOBS_OFF || []).includes(mon)) continue;
     const n = jobsInWeek(mon), miss = Math.max(0, CONFIG.WEEK_JOBS - n), pen = miss * CONFIG.WEEK_JOBS_PEN;
@@ -165,7 +165,7 @@ function viewToday(){
   if (unseen.length) h += `<div class="bar-msg fbbar">📝 有 <b>${unseen.length}</b> 条新批改：${unseen.map(u => `<a class="go" href="#" onclick="openFb('${u.k}');return false">${u.name}</a>`).join(' · ')}</div>`;
   // ③ 欠账提醒
   const bl = backlog(), st = stale();
-  if (CONFIG.WEEK_JOBS && T >= CONFIG.WEEK_JOBS_FROM && !paused(T) && !(CONFIG.WEEK_JOBS_OFF || []).includes(weekMon(T))){ const n = jobsInWeek(T), need = CONFIG.WEEK_JOBS; h += `<div class="bar-msg">📦 <b>本周作业</b>：交 ${need} 单订单（已交 <b>${n}/${need}</b>）${n >= need ? ' ✅' : ` · 周五前交完，少一单扣 ${CONFIG.WEEK_JOBS_PEN}`} <a class="go" href="#" onclick="tab='jobs';jobSel=null;render();scrollTo(0,0);return false">去接单 →</a></div>`; }
+  if (CONFIG.WEEK_JOBS && T >= CONFIG.WEEK_JOBS_FROM && !paused(T) && !(CONFIG.WEEK_JOBS_OFF || []).includes(weekMon(T))){ const n = jobsInWeek(T), need = CONFIG.WEEK_JOBS; h += `<div class="bar-msg">📦 <b>本周作业</b>：交 ${need} 单订单（已交 <b>${n}/${need}</b>）${n >= need ? ' ✅' : ` · 周日前交完，少一单扣 ${CONFIG.WEEK_JOBS_PEN}`} <a class="go" href="#" onclick="tab='jobs';jobSel=null;render();scrollTo(0,0);return false">去接单 →</a></div>`; }
   if (bl.length) h += `<div class="bar-msg">📌 还欠 <b>${bl.length} 天</b>作业${st.length ? `（${st.length} 天超过 ${CONFIG.STALE} 天，<b>不能接单、不能兑换</b>）` : ''}：${bl.map(k => `<a class="go" href="#" onclick="selDay='${k}';render();scrollTo(0,0);return false">${+k.slice(5,7)}/${+k.slice(8)} 去补</a>`).join(' · ')}</div>`;
   if (!day) return h + '<div class="c">这一天没有任务。</div>';
   // ④ 标题 + 进度
