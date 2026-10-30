@@ -7,17 +7,17 @@
 <meta name="apple-mobile-web-app-title" content="寒假作业">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="assets/style.css?v=1793331475">
-<script src="assets/core.js?v=1793331475"></script>
-<script src="data/chn.js?v=1793331475"></script>
-<script src="data/math.js?v=1793331475"></script>
-<script src="data/eng.js?v=1793331475"></script>
-<script src="data/phy.js?v=1793331475"></script>
-<script src="data/chem.js?v=1793331475"></script>
-<script src="data/his.js?v=1793331475"></script>
-<script src="data/df.js?v=1793331475"></script>
-<script src="data/py.js?v=1793331475"></script>
-<script src="data/des.js?v=1793331475"></script>
+<link rel="stylesheet" href="assets/style.css?v=1793331607">
+<script src="assets/core.js?v=1793331607"></script>
+<script src="data/chn.js?v=1793331607"></script>
+<script src="data/math.js?v=1793331607"></script>
+<script src="data/eng.js?v=1793331607"></script>
+<script src="data/phy.js?v=1793331607"></script>
+<script src="data/chem.js?v=1793331607"></script>
+<script src="data/his.js?v=1793331607"></script>
+<script src="data/df.js?v=1793331607"></script>
+<script src="data/py.js?v=1793331607"></script>
+<script src="data/des.js?v=1793331607"></script>
 <title>作业 · 寒假大作业</title>
 </head>
 <body>
@@ -85,7 +85,7 @@ W.nav();
     if (a.submit === 'pdf') x += '<label style="display:block;margin-top:10px"><input type="checkbox" id="chk"> 文档最后有参考资料' + (a.ai >= 1 ? '（用了 AI 的话还有 AI 声明）' : '') + '</label>';
     if (a.extraField) x += '<label class="f">' + a.extraField.label + ' <small>' + (a.extraField.small || '') + '</small></label><textarea id="extra" style="min-height:140px"></textarea>';
     x += '<label class="f">想对姐姐说的 <small>可以不写</small></label><input type="text" id="memo">';
-    x += '<div class="row"><button class="btn primary" id="go">提交</button><span class="note" id="err" style="color:var(--warn)"></span></div>';
+    x += '<div class="row"><button class="btn primary" id="go">' + (vers.length ? '重新提交' : '提交') + '并发给姐姐</button><span class="note" id="err" style="color:var(--warn)"></span></div>';
     box.innerHTML = x;
     if (a.submit === 'write') wireWriting();
     showFiles();
@@ -130,16 +130,21 @@ W.nav();
       if (!document.getElementById('chk').checked) return err.textContent = '检查一下文档最后有没有参考资料，再打勾。'; }
     if (a.extraField) { data.extra = v('extra'); if (!data.extra) return err.textContent = '请填写「' + a.extraField.label + '」。'; }
     data.memo = v('memo');
-    if (!confirm('确定提交 ' + a.no + '「' + a.title + '」吗？')) return;
-    Promise.all(files.map(function (f) { return W.FILES.save(id, f); })).then(function (recs) {
-      data.files = recs.map(function (r) { return r.name; }); done();
-    }, function () { data.files = files.map(function (f) { return f.name; }); data.fileErr = true; done();
-      alert('文件没能存进浏览器（可能是空间不够）。这次提交已记下，请把 PDF 微信发给姐姐。'); });
+    // 提交 = 记下来 + 马上弹出分享菜单发给姐姐。iPad 要求分享必须在点击里同步调用，所以先同步记录、同步做好要发的文件，再分享；存文件到浏览器放在后面异步做
+    data.files = files.map(function (f) { return f.name; });
+    W.submit(id, data);
+    if (a.submit === 'write') W.store.set('draft_' + id, {text: data.text, ms: data.ms, leaves: data.leaves, pastes: data.pastes});
+    var send = a.submit === 'pdf' ? files[0] : W.snapshotFile(id), shared = false;
+    if (navigator.canShare && navigator.canShare({files: [send]})) {
+      shared = true;
+      navigator.share({files: [send], title: send.name}).catch(function () {});
+    }
+    Promise.all(files.map(function (f) { return W.FILES.save(id, f); })).then(done, function () {
+      W.store.set('fileErr_' + id, true); done();
+      alert('文件没能存进浏览器（可能是空间不够）。这次提交已记下，请一定把 PDF 发给姐姐。'); });
     function done() {
-      W.submit(id, data);
-      if (a.submit === 'write') W.store.set('draft_' + id, {text: data.text, ms: data.ms, leaves: data.leaves, pastes: data.pastes});
       renderSubmit(); document.getElementById('submit').scrollIntoView();
-      alert('交好了！' + (W.status(id).k === 'late' ? '' : '按时完成 👍') + '\n接下来点「📤 备份并发给姐姐」，把这一项发到微信。');
+      if (!shared) alert('交好了！' + (W.status(id).k === 'late' ? '' : '按时完成 👍') + '\n这台设备不能直接分享，请点「📤 备份并发给姐姐」。');
     }
   }
 })();

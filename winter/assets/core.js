@@ -73,8 +73,13 @@ W.submit = function (id, data) {
   data.t = new Date().toISOString(); data.late = W.lateDays(id, data.t);
   all[id].push(data); W.store.set('subs', all);
   var a = W.A[id], c = W.course(a.course);
-  W.notify('📮 交了 ' + c.name + ' ' + a.no + '「' + a.title + '」' + (all[id].length > 1 ? '（第 ' + all[id].length + ' 版）' : '') +
-    (data.late ? '，晚交 ' + data.late + ' 天' : '，按时') + '');
+  var head = '📮 交了 ' + c.name + ' ' + a.no + '「' + a.title + '」' + (all[id].length > 1 ? '（第 ' + all[id].length + ' 版）' : '') + (data.late ? '，晚交 ' + data.late + ' 天' : '，按时');
+  var body = '';
+  if (data.text) body += '字数：' + data.count + (a.write && a.write.unit || '') + ' · 打字用时 ' + Math.round((data.ms || 0) / 60000) + ' 分钟 · 切出去 ' + (data.leaves || 0) + ' 次' + (data.pastes ? ' · 挡住的粘贴 ' + data.pastes + ' 次' : '') + '\n\n' + data.text;
+  if (data.code) body += '【代码】\n' + data.code;
+  if (data.extra) body += '\n\n【' + (a.extraField ? a.extraField.label : '补充') + '】\n' + data.extra;
+  if (data.memo) body += '\n\n【想对姐姐说】' + data.memo;
+  if (body) W.notifyLong(head, body); else W.notify(head);
   return data;
 };
 W.status = function (id) {
@@ -93,6 +98,20 @@ W.band = function (p) { for (var i = 0; i < W.BANDS.length; i++) if (p >= W.BAND
 W.notify = function (text) {
   if (!/github\.io$/.test(location.hostname) || !W.CONFIG.FEISHU) return;
   try { fetch(W.CONFIG.FEISHU, {method: 'POST', mode: 'no-cors', headers: {'Content-Type': 'text/plain'}, body: JSON.stringify({msg_type: 'text', content: {text: '【寒假作业】' + text}})}); } catch (e) {}
+};
+
+W.notifyLong = function (title, text) {
+  if (!/github\.io$/.test(location.hostname) || !W.CONFIG.FEISHU) return;
+  var parts = [], n = 3000;
+  for (var i = 0; i < text.length; i += n) parts.push(text.slice(i, i + n));
+  if (!parts.length) parts = [''];
+  parts.reduce(function (p, part, i) {
+    return p.then(function () {
+      return fetch(W.CONFIG.FEISHU, {method: 'POST', mode: 'no-cors', headers: {'Content-Type': 'text/plain'},
+        body: JSON.stringify({msg_type: 'text', content: {text: '【寒假作业】' + title + (parts.length > 1 ? '（' + (i + 1) + '/' + parts.length + '）' : '') + '\n\n' + part}})})
+        .catch(function () {}).then(function () { return new Promise(function (r) { setTimeout(r, 1200); }); });
+    });
+  }, Promise.resolve());
 };
 
 // ---------- 备份 ----------
@@ -132,6 +151,13 @@ W.backupFile = function (onlyId) {
     var name = '寒假作业备份_' + (onlyId ? onlyId + '_' : '') + W.iso(new Date()) + '.json';
     return new File([JSON.stringify(o)], name, {type: 'application/json'});
   });
+};
+// 只带文字记录（同步做出来，提交时马上分享用）
+W.snapshotFile = function (id) {
+  var o = {site: 'winter-2026', at: new Date().toISOString(), data: {}, files: []};
+  W.store.keys().forEach(function (k) { o.data[k] = localStorage.getItem(k); });
+  W.store.set('lastBackup', new Date().toISOString());
+  return new File([JSON.stringify(o)], '寒假作业备份_' + id + '_' + W.iso(new Date()) + '.json', {type: 'application/json'});
 };
 W.download = function (f) { var a = document.createElement('a'); a.href = URL.createObjectURL(f); a.download = f.name; document.body.appendChild(a); a.click(); a.remove(); };
 // iPad 上弹出分享菜单（选微信 → 姐姐 / 文件传输助手 / 收藏）；不支持分享的设备就下载
