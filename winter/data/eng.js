@@ -27,12 +27,12 @@ var ENG_PLAN =
   '<tr><td>[G8]</td><td>主谓一致（U8）</td><td><i>Each</i> of my friends <i>has</i> a phone. / <i>The number of</i> players <i>is</i> growing.</td></tr></table></div>' +
   '<div class="tip"><b>读什么：</b>每个话题找至少 1 篇英文文章读（BBC Learning English、China Daily、21st Century 英文报都可以），把用到的信息标 [1] [2]，最后列参考资料。读不懂的词可以查词典。</div>';
 
-W.reg({id: 'ENG-A1', course: 'ENG', n: 1, no: 'A1', title: '九上英语小测', weight: 20, week: 3, ai: 0, submit: 'quiz', ready: false,
+W.reg({id: 'ENG-A1', course: 'ENG', n: 1, no: 'A1', title: '九上英语小测', weight: 15, week: 3, ai: 0, submit: 'quiz', ready: false,
   intro: 'U1–U8 的语法和阅读，中考题型，自动打分。'});
 
-W.reg({id: 'ENG-A2', course: 'ENG', n: 2, no: 'A2', title: 'My Changing World：提纲 + 前半篇', weight: 30, week: 6, ai: 0, submit: 'write',
+W.reg({id: 'ENG-A2', course: 'ENG', n: 2, no: 'A2', title: 'My Changing World：提纲 + 前半篇', weight: 20, week: 6, ai: 0, submit: 'write',
   time: '4–5 小时（可以分几天）', length: '至少 450 词（不算提纲）',
-  intro: '这是一篇 1000 词文章的前半部分：先写提纲，再写开头和前两个主体段。A3 会在这个基础上写完、改好。',
+  intro: '这是一篇 1000 词文章的前半部分：先写提纲，再写开头和前两个主体段。A4 会在这个基础上写完、改好。',
   dataTitle: '文章怎么写', data: ENG_PLAN,
   how: [
     '全部在下面的写作框里打字（AI 0：不能用 AI，不能用翻译软件，可以查词典）。',
@@ -52,7 +52,7 @@ W.reg({id: 'ENG-A2', course: 'ENG', n: 2, no: 'A2', title: 'My Changing World：
   write: {unit: '词', min: 450, placeholder: 'Plan\n中心句：\nBody 1（U?）：\n\nIntroduction\n\nBody 1\n\nBody 2\n\nReferences\n[1]'}
 });
 
-W.reg({id: 'ENG-A3', course: 'ENG', n: 3, no: 'A3', title: 'My Changing World：1000 词终稿', weight: 50, week: 9, ai: 2, submit: 'write',
+W.reg({id: 'ENG-A4', course: 'ENG', n: 4, no: 'A4', title: 'My Changing World：1000 词终稿', weight: 40, week: 9, ai: 2, submit: 'write',
   time: '6–8 小时（可以分几天）', length: '900–1100 词',
   intro: '把 A2 改好，写完 Body 3、Body 4 和 Conclusion，变成一篇完整的 1000 词左右的文章。这次可以用 DeepSeek 帮你找错（AI 2），但每一处都要你自己改，并写进修改记录。',
   dataTitle: '文章怎么写（和 A2 一样）', data: ENG_PLAN,
@@ -74,4 +74,31 @@ W.reg({id: 'ENG-A3', course: 'ENG', n: 3, no: 'A3', title: 'My Changing World：
   refs: {min: 3, nonAI: 3},
   extraField: {label: '修改记录（10 处）', small: '每行一处：原句 → 改后 → 为什么'},
   write: {unit: '词', min: 900, fromPrev: 'A2', fromPrevId: 'ENG-A2', placeholder: 'My Changing World\n\nIntroduction ……\n\nReferences\n[1]\n\nAI 声明\nDeepSeek 对话链接：\n用它做了什么：'}
+});
+
+// A3 英文读书报告（2026-10-30 加）
+W.reg({id: 'ENG-A3', course: 'ENG', n: 3, no: 'A3', title: '英文读书报告', weight: 25, week: 7, ai: 0, submit: 'write',
+  time: '6 小时（读书 4 小时 + 写 2 小时）', length: '至少 450 词',
+  intro: '读一本简写版的英文书（分级读物），用英文写一份读书报告。读书可以分几天，每天读一两章。',
+  dataTitle: '选一本书',
+  data: '<p>推荐《书虫》（Oxford Bookworms）第 2–3 级，比如：</p><ul><li><i>The Railway Children</i>（铁路边的孩子们）</li><li><i>Sherlock Holmes Short Stories</i>（福尔摩斯短篇）</li><li><i>The Secret Garden</i>（秘密花园）</li><li><i>Alice\'s Adventures in Wonderland</i>（爱丽丝漫游奇境）</li></ul>' +
+    '<p class="note">纸书、电子书都可以。读的时候不用每个词都查，看懂故事就行；遇到喜欢的句子抄下来，写报告时要用。</p>',
+  method: '<div class="tscroll"><table class="t"><tr><th>部分</th><th>长度</th><th>要包含</th></tr>' +
+    '<tr><td>Book information</td><td>—</td><td>书名、作者、级别、你读了几天</td></tr>' +
+    '<tr><td>Summary 故事梗概</td><td>120–150 词</td><td>主要人物、发生在哪里、发生了什么、结局（用一般过去时）</td></tr>' +
+    '<tr><td>The main character 主要人物</td><td>100 词</td><td>他 / 她是什么样的人，用书里的一件事证明</td></tr>' +
+    '<tr><td>My favourite part 最喜欢的部分</td><td>100 词</td><td>引用书里的一句原话（加引号、写页码），说为什么喜欢</td></tr>' +
+    '<tr><td>My opinion 我的看法</td><td>100 词</td><td>推荐不推荐、推荐给谁、你学到了什么</td></tr>' +
+    '<tr><td>New words 生词表</td><td>10 个</td><td>单词 + 中文 + 书里的原句</td></tr></table></div>',
+  methodTitle: '读书报告怎么写',
+  how: ['在下面的写作框里用英文写（生词表的中文意思可以用中文）。', 'AI 0：不能用 AI 和翻译软件，可以查词典。', '最后写 References：书名、作者、出版社。'],
+  tasks: [
+    {q: 'Q1', pts: 25, title: 'Summary', text: '120–150 词的故事梗概。', full: '人物、地点、经过、结局都有；用自己的话；时态正确。'},
+    {q: 'Q2', pts: 20, title: 'Main character', text: '人物分析 + 一件事做证据。', full: '形容词准确，证据具体。'},
+    {q: 'Q3', pts: 20, title: 'Favourite part', text: '引用一句原话并解释。', full: '引号、页码齐全；理由真实。'},
+    {q: 'Q4', pts: 20, title: 'Opinion', text: '推荐与否 + 理由 + 收获。', full: '有明确态度和两个理由。'},
+    {q: 'Q5', pts: 15, title: 'New words + 语言', text: '10 个生词；全文语法和拼写。', full: '生词都配原句；错误少。'}
+  ],
+  refs: {min: 1},
+  write: {unit: '词', min: 450, placeholder: 'Book information\nTitle:\nAuthor:\n\nSummary\n\nThe main character\n\nMy favourite part\n\nMy opinion\n\nNew words\n1.\n\nReferences\n[1]'}
 });

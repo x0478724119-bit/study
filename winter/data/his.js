@@ -8,10 +8,10 @@ var HIS_METHOD = '<p>历史学家读一段史料，会问五个问题。每段�
   '<tr><td>⑤ 局限</td><td>它没说什么？谁被排除在外？可信吗？</td><td>写的时候还有奴隶制，"人人"不包括黑人奴隶、妇女</td></tr></table></div>' +
   '<div class="tip"><b>注意：</b>"局限"不是说它不好，而是要看到它在那个时代的边界。这一步最能拉开分数。</div>';
 
-W.reg({id: 'HIS-A1', course: 'HIS', n: 1, no: 'A1', title: '九上历史小测', weight: 20, week: 2, ai: 0, submit: 'quiz', ready: false,
+W.reg({id: 'HIS-A1', course: 'HIS', n: 1, no: 'A1', title: '九上历史小测', weight: 15, week: 2, ai: 0, submit: 'quiz', ready: false,
   intro: '第 1–22 课：古代文明到第一次工业革命和马克思主义。中考题型（选择 + 材料理解），自动打分。'});
 
-W.reg({id: 'HIS-A2', course: 'HIS', n: 2, no: 'A2', title: '三次革命留下的文件', weight: 30, week: 5, ai: 1, submit: 'pdf',
+W.reg({id: 'HIS-A2', course: 'HIS', n: 2, no: 'A2', title: '三次革命留下的文件', weight: 20, week: 5, ai: 1, submit: 'pdf',
   time: '3–4 小时', length: '约 1500 字（含表格）',
   intro: '第六单元"资本主义制度的初步确立"：英国、美国、法国三次革命，各留下一份重要的文件。读这三段原文，用史料分析的五步来比较它们。',
   dataTitle: '史料（节选）',
@@ -32,7 +32,7 @@ W.reg({id: 'HIS-A2', course: 'HIS', n: 2, no: 'A2', title: '三次革命留下�
   how: ['AI 1：可以问 AI"启蒙运动是什么"，但分析自己写。']
 });
 
-W.reg({id: 'HIS-A3', course: 'HIS', n: 3, no: 'A3', title: '史料里的世界：从古代到工业革命', weight: 50, week: 7, ai: 1, submit: 'pdf',
+W.reg({id: 'HIS-A4', course: 'HIS', n: 4, no: 'A4', title: '史料里的世界：从古代到工业革命', weight: 40, week: 8, ai: 1, submit: 'pdf',
   time: '7–8 小时', length: '约 2500 字（6 组分析 + 一篇 800 字比较）',
   intro: '把九上世界史从头串到尾：每个单元一组史料，每组按五步分析；最后写一篇比较文章，看人类对"平等"和"权利"的理解是怎么一步步变化的。',
   dataTitle: '六组史料',
@@ -57,4 +57,22 @@ W.reg({id: 'HIS-A3', course: 'HIS', n: 3, no: 'A3', title: '史料里的世界�
   ],
   refs: {min: 6, nonAI: 3},
   how: ['AI 1：可以问 AI 背景知识，分析和文章自己写。']
+});
+
+// A3 历史人物小传（2026-10-30 加）
+W.reg({id: 'HIS-A3', course: 'HIS', n: 3, no: 'A3', title: '历史人物小传', weight: 25, week: 7, ai: 1, submit: 'pdf',
+  time: '4 小时', length: '约 1500 字',
+  intro: '从九上世界史里挑一个人物，写一篇小传。重点不是背生平，而是学会"历史地看一个人"：把他放回他的时代。',
+  dataTitle: '可以选的人物（课本里都出现过）',
+  data: '<p>汉谟拉比 · 伯里克利 · 亚历山大 · 屋大维 · 查理曼 · 但丁 · 哥伦布 · 麦哲伦 · 克伦威尔 · 华盛顿 · 拿破仑 · 瓦特 · 马克思（也可以选课本里的其他人物）</p>' +
+    '<div class="tip"><b>找资料：</b>课本、百度百科、纪录片（比如央视《大国崛起》里有好几位）。至少 3 个资料，至少 2 个不是 AI。</div>',
+  tasks: [
+    {q: 'Q1', pts: 20, title: '生平时间轴', text: '做一张表或一条时间轴：至少 8 个时间节点（出生、几件大事、去世）。', full: '8 个节点、年份准确、每个节点一句话。'},
+    {q: 'Q2', pts: 20, title: '他生活的时代', text: '他生活在一个什么样的社会？对应课本哪个单元？当时最大的问题是什么？约 300 字。', full: '和课本单元对上；说出时代的主要矛盾。'},
+    {q: 'Q3', pts: 25, title: '三件关键的事', text: '挑三件最重要的事，每件写：发生了什么、他为什么这么做、带来了什么影响。至少引用一段史料或原话（注明出处）。约 600 字。', full: '三件事都有原因和影响；有史料引用。'},
+    {q: 'Q4', pts: 25, title: '怎么评价他', text: '他的功和过分别是什么？放在当时看和放在今天看，评价有什么不一样？约 400 字。', full: '功、过都有；体现"放回当时的历史条件"去评价，不只用今天的眼光。'},
+    {q: 'Q5', pts: 10, title: '格式和引用', text: '标题、小标题、参考资料。', full: '参考资料至少 3 个，至少 2 个不是 AI。'}
+  ],
+  refs: {min: 3, nonAI: 2},
+  how: ['AI 1：可以问 AI 背景知识，小传自己写。']
 });

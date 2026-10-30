@@ -8,10 +8,10 @@ var DF_METHOD = '<ol class="steps"><li><b>审设问：</b>先看问题问的是"
   '<p class="note">写之前可以把材料复制到 Pages 里，对着材料一句一句圈。</p>';
 function dfMat(t, src) { return '<blockquote>' + t + (src ? '<span class="src">' + src + '</span>' : '') + '</blockquote>'; }
 
-W.reg({id: 'DF-A1', course: 'DF', n: 1, no: 'A1', title: '九上道法小测', weight: 20, week: 2, ai: 0, submit: 'quiz', ready: false,
+W.reg({id: 'DF-A1', course: 'DF', n: 1, no: 'A1', title: '九上道法小测', weight: 15, week: 2, ai: 0, submit: 'quiz', ready: false,
   intro: '第 1–9 课选择题，中考题型，自动打分。'});
 
-W.reg({id: 'DF-A2', course: 'DF', n: 2, no: 'A2', title: '材料分析题集（一）：第一、二单元', weight: 30, week: 6, ai: 1, submit: 'pdf',
+W.reg({id: 'DF-A2', course: 'DF', n: 2, no: 'A2', title: '材料分析题集（一）：第一、二单元', weight: 20, week: 5, ai: 1, submit: 'pdf',
   time: '1.5–2 小时（含找新闻、自己出题）', length: '约 1200 字',
   intro: '按中考主观题的样子答题。前四题我们给材料；第五题你自己找一条最近的新闻、自己出题、自己写参考答案。',
   method: DF_METHOD, methodTitle: '材料题怎么答（先看这个）',
@@ -30,7 +30,7 @@ W.reg({id: 'DF-A2', course: 'DF', n: 2, no: 'A2', title: '材料分析题集（�
   how: ['AI 1：可以问 AI"这个词什么意思"，答案要自己写、用课本的话。', '课本观点可以查网上的"九上道法知识点整理"，查了要写进参考资料。']
 });
 
-W.reg({id: 'DF-A3', course: 'DF', n: 3, no: 'A3', title: '材料分析题集（二）：第三、四单元 + 探究', weight: 50, week: 8, ai: 1, submit: 'pdf',
+W.reg({id: 'DF-A4', course: 'DF', n: 4, no: 'A4', title: '材料分析题集（二）：第三、四单元 + 探究', weight: 40, week: 9, ai: 1, submit: 'pdf',
   time: '2.5–3 小时（含探究题的采访或查资料）', length: '约 1800 字',
   intro: '第三单元（中国式现代化、高质量发展）、第四单元（民族团结、国家统一、中国梦）。五道材料题 + 一道中考最后那种"探究与实践"大题 + 自己出题。',
   method: DF_METHOD, methodTitle: '材料题怎么答（和 A2 一样）',
@@ -50,4 +50,25 @@ W.reg({id: 'DF-A3', course: 'DF', n: 3, no: 'A3', title: '材料分析题集（�
   ],
   refs: {min: 3, nonAI: 2},
   how: ['AI 1：可以问 AI 概念，答案要自己写。']
+});
+
+// A3 时政评论（2026-10-30 加）
+W.reg({id: 'DF-A3', course: 'DF', n: 3, no: 'A3', title: '时政评论四篇', weight: 25, week: 8, ai: 1, submit: 'pdf',
+  time: '3 小时', length: '4 篇，每篇约 400 字',
+  intro: '中考道法每年都考时政。这次你自己当评论员：找 4 条新闻，每条写一篇短评论，用课本的观点来分析。',
+  method: '<p>每篇按这个结构写：</p><ol class="steps"><li><b>新闻摘要</b>（约 100 字）：时间、地点、发生了什么。下面注明出处（网站名、标题、日期、链接）。</li>' +
+    '<li><b>我的观点</b>（一句话）：这条新闻说明了什么。</li>' +
+    '<li><b>分析</b>（约 250 字）：用课本观点分点分析，每点后面写上用的是第几课，比如"（第 8 课 新发展理念）"。</li>' +
+    '<li><b>联系自己</b>（约 50 字）：作为中学生，我能做什么 / 我怎么看。</li></ol>' +
+    '<div class="tip"><b>去哪找：</b>新华网、人民网、央视新闻 App。选寒假期间（12 月–2 月）的新闻。</div>',
+  methodTitle: '一篇时政评论怎么写',
+  tasks: [
+    {q: '一', pts: 22, title: '第一单元相关', text: '党的领导、以人民为中心。', full: '新闻真实有出处；观点明确；至少 2 个课本观点；联系自己。'},
+    {q: '二', pts: 22, title: '第二单元相关', text: '新时代、中国腾飞（经济、民生、科技、生态）。', full: '同上。'},
+    {q: '三', pts: 22, title: '第三单元相关', text: '中国式现代化、高质量发展。', full: '同上。'},
+    {q: '四', pts: 22, title: '第四单元相关', text: '民族团结、国家统一、中国梦。', full: '同上。'},
+    {q: '五', pts: 12, title: '格式', text: '每篇有标题；出处完整；最后列参考资料。', full: '4 条新闻都在 12 月–2 月之间，出处可查。'}
+  ],
+  refs: {min: 4, nonAI: 4},
+  how: ['AI 1：可以问 AI 这条新闻的背景，评论自己写。']
 });

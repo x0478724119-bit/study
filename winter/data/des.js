@@ -6,7 +6,7 @@ var DES_CLIENT = '<div class="card"><b>客户需求单</b><ul>' +
   '<li>预算：家具和软装一共 <b>2 万元</b>（不含装修硬装）。</li>' +
   '<li>女儿说："不要粉色，想要安静一点、像咖啡店那样的感觉。"妈妈说："收纳一定要多。"</li></ul></div>';
 
-W.reg({id: 'DES-A1', course: 'DES', n: 1, no: 'A1', title: '客户需求分析 + 情绪板', weight: 20, week: 4, ai: 1, submit: 'pdf',
+W.reg({id: 'DES-A2', course: 'DES', n: 2, no: 'A2', title: '客户需求分析 + 情绪板', weight: 20, week: 4, ai: 1, submit: 'pdf',
   time: '3 小时', length: '3–4 页（表 + Procreate 作品）',
   intro: '真正的设计师接单后，第一步是把客户的需求理清楚，再用一张"情绪板"（mood board）跟客户确认风格。',
   scenario: ['你接到了一个真实的设计单。下面是客户的需求。'], dataTitle: '客户需求', data: DES_CLIENT,
@@ -20,9 +20,9 @@ W.reg({id: 'DES-A1', course: 'DES', n: 1, no: 'A1', title: '客户需求分析 +
   how: ['AI 1：可以问 AI"什么是情绪板"，但图和文字自己做。', 'Procreate 作品导出 JPG 插进 Pages。']
 });
 
-W.reg({id: 'DES-A2', course: 'DES', n: 2, no: 'A2', title: '酷家乐平面图 + 预算表', weight: 30, week: 7, ai: 1, submit: 'pdf',
+W.reg({id: 'DES-A3', course: 'DES', n: 3, no: 'A3', title: '酷家乐平面图 + 预算表', weight: 25, week: 7, ai: 1, submit: 'pdf',
   time: '4–5 小时', length: '截图 4 张 + 预算表 + 约 400 字说明',
-  intro: '从 A1 的两张草图里选一个，在酷家乐里把房间按真实尺寸画出来，放好家具，算好钱。',
+  intro: '从 A2 的两张草图里选一个，在酷家乐里把房间按真实尺寸画出来，放好家具，算好钱。',
   scenario: ['客户看了你的情绪板，说"就是这个感觉"。现在要出正式方案。'], dataTitle: '客户需求', data: DES_CLIENT,
   tasks: [
     {q: 'Q1', pts: 30, title: '平面图', text: '在酷家乐里按 4 m × 3 m 画房间，门窗位置正确，放好所有家具。截图：俯视平面图（带尺寸标注）+ 2 个角度的 3D 视图。', full: '尺寸正确；家具齐全（床、书桌、椅子、衣柜、书架、画画的地方、给同学坐的地方）。'},
@@ -34,7 +34,7 @@ W.reg({id: 'DES-A2', course: 'DES', n: 2, no: 'A2', title: '酷家乐平面图 +
   how: ['AI 1：可以问 AI 尺寸标准，方案自己做。']
 });
 
-W.reg({id: 'DES-A3', course: 'DES', n: 3, no: 'A3', title: '设计提案', weight: 50, week: 8, ai: 1, submit: 'pdf',
+W.reg({id: 'DES-A4', course: 'DES', n: 4, no: 'A4', title: '设计提案', weight: 40, week: 9, ai: 1, submit: 'pdf',
   time: '6–8 小时', length: '10–15 页的提案 PDF',
   intro: '最后一步：把所有东西做成一份可以直接拿给客户看的设计提案。想象你要用这份 PDF 说服爸爸妈妈花这 2 万元。',
   scenario: ['客户要一份完整的提案，下周开会时投在电视上讲。'], dataTitle: '客户需求', data: DES_CLIENT,
@@ -42,9 +42,22 @@ W.reg({id: 'DES-A3', course: 'DES', n: 3, no: 'A3', title: '设计提案', weigh
     {q: 'Q1', pts: 15, title: '封面和目录', text: '封面：方案名字（自己起，比如"窗边的咖啡角"）、设计师名字、日期。第二页目录。', full: '封面有设计感；目录和页码对得上。'},
     {q: 'Q2', pts: 30, title: '4 张效果图', text: '在酷家乐里渲染 4 张效果图（不同角度，至少一张是书桌区、一张是睡眠区），每张配一两句说明。', full: '渲染清楚、光线自然；每张都看得出设计重点。'},
     {q: 'Q3', pts: 20, title: '一张 Procreate 手绘', text: '用 Procreate 画一张局部效果图或细节图（比如书桌一角、床头），体现你的配色。', full: '和效果图风格一致；比例、透视基本正确。'},
-    {q: 'Q4', pts: 25, title: '设计说明', text: '约 800 字，分四部分：设计理念（一句话 + 解释）、配色和材质、功能分区（睡、学、画、收纳、待客）、预算总结（引用 A2 的表）。', full: '四部分齐全；每一点都对上了客户需求单里的一条。'},
+    {q: 'Q4', pts: 25, title: '设计说明', text: '约 800 字，分四部分：设计理念（一句话 + 解释）、配色和材质、功能分区（睡、学、画、收纳、待客）、预算总结（引用 A3 的表）。', full: '四部分齐全；每一点都对上了客户需求单里的一条。'},
     {q: 'Q5', pts: 10, title: '排版', text: '每页标题统一、字体不超过 2 种、图文对齐。', full: '整份看起来像一份专业的提案。'}
   ],
   refs: {min: 3},
   how: ['AI 1：可以问 AI 怎么排版，内容自己做。', 'Pages 里有现成的"提案"模板可以用。']
+});
+
+// A1 Procreate 作品集（2026-10-30 加）
+W.reg({id: 'DES-A1', course: 'DES', n: 1, no: 'A1', title: 'Procreate 作品集：三张画', weight: 15, week: 2, ai: 0, submit: 'pdf',
+  time: '5 小时', length: '3 张作品 + 每张 100 字说明',
+  intro: '寒假的设计课先从画画开始：三张作品，练透视、练配色、再画一张自由的。',
+  tasks: [
+    {q: 'Q1', pts: 30, title: '房间一角写生', text: '对着家里的一个角落（书桌、窗边、厨房一角）画，用一点透视或两点透视。', full: '透视线正确（可以保留辅助线图层截图）；物体比例合理。'},
+    {q: 'Q2', pts: 30, title: '配色练习', text: '同一个简单的场景画两遍：一遍暖色调、一遍冷色调。说说两张给人的感觉有什么不同。', full: '两张构图相同、只换配色；色调统一。'},
+    {q: 'Q3', pts: 25, title: '自由主题', text: '角色、海报、风景都可以。', full: '完成度高，看得出用心。'},
+    {q: 'Q4', pts: 15, title: '说明 + 缩时视频', text: '每张写约 100 字：画了多久、用了什么笔刷、遇到什么困难。至少一张导出 Procreate 的缩时视频（作品 → 操作 → 视频 → 导出缩时视频），在下面一起上传，或者微信发给姐姐。', full: '三段说明都有；有缩时视频。'}
+  ],
+  how: ['三张画导出 JPG，插进 Pages，每张下面写说明，导出 PDF 上传。', 'AI 0：不能用 AI 生成图片，也不能描别人的画。参考图可以看，要注明出处。']
 });
