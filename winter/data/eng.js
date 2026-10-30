@@ -77,36 +77,36 @@ W.reg({id: 'ENG-A4', course: 'ENG', n: 4, no: 'A4', title: 'My Changing World：
 });
 
 // A3 英文读书报告：按姐姐买的那本书设计（书虫升级版二级《福尔摩斯探案故事》，外研社）
+// 姐姐 10-30：凭空写 450 词太难；改成"引用原句 → 自己的话转述 → 解释"的结构，自己写的约 350 词，引用多一点
 W.reg({id: 'ENG-A3', course: 'ENG', n: 3, no: 'A3', title: '英文读书报告：Sherlock Holmes Short Stories', weight: 25, week: 7, ai: 0, submit: 'write',
-  time: '6–7 小时（读书 4–5 小时 + 写 2 小时）', length: '至少 450 词',
-  intro: '读姐姐给你买的《书虫·牛津英汉双语读物（升级版）二级：福尔摩斯探案故事》（Sherlock Holmes Short Stories），用英文写一份读书报告。书里有好几个案子，每个案子是一个独立的故事，一天读一个就好。',
+  time: '6–7 小时（读书 4–5 小时 + 写 2 小时）', length: '自己写的约 350 词 + 至少 5 句引用',
+  intro: '读姐姐给你买的《书虫·牛津英汉双语读物（升级版）二级：福尔摩斯探案故事》（Sherlock Holmes Short Stories），用英文写一份读书报告。书里有好几个案子，每个案子是一个独立的故事，一天读一个就好。这份报告不用凭空写：<b>每一段都从书里的一句原句出发</b>，用自己的话说一遍，再说说你的想法。',
   dataTitle: '怎么读这本书',
-  data: '<ul><li><b>先读英文</b>，读完一个案子再看后面的中文对一对意思。中文只是帮你检查，报告里的内容和引用都要来自英文原文。</li>' +
+  data: '<ul><li><b>先读英文</b>，读完一个案子再看后面的中文对一对意思。中文只是帮你检查，报告里的引用都要来自英文原文。</li>' +
     '<li>书里配了<b>免费的在线音频</b>（扫书上的码），可以边听边读，顺便练听力。</li>' +
-    '<li>准备一张纸或一个笔记：每读完一个案子，写下 ① 案子名字 ② 谁来找福尔摩斯、出了什么事 ③ 一句你喜欢的英文原句和<b>页码</b> ④ 两三个生词。写报告的时候全靠这张笔记。</li>' +
+    '<li>准备一张纸或一个笔记：每读完一个案子，写下 ① 案子名字 ② 谁来找福尔摩斯、出了什么事 ③ <b>两三句你喜欢的英文原句和页码</b> ④ 两三个生词。写报告的时候全靠这张笔记。</li>' +
     '<li>书后面的练习题可以做，不算分，做了更容易看懂。</li></ul>',
-  method: '<div class="tscroll"><table class="t"><tr><th>部分</th><th>长度</th><th>要包含</th></tr>' +
-    '<tr><td>Book information</td><td>—</td><td>书名、原作者（Arthur Conan Doyle）、改写者、级别、你读了几天</td></tr>' +
-    '<tr><td>Summary 案子梗概</td><td>120–150 词</td><td>挑<b>你最喜欢的一个案子</b>：谁来找福尔摩斯 → 遇到了什么怪事 → 福尔摩斯怎么查 → 真相是什么。用一般过去时。</td></tr>' +
-    '<tr><td>Holmes as a detective 福尔摩斯是个什么样的侦探</td><td>100–120 词</td><td>用两个形容词形容他（比如 clever, calm, careful），每个形容词配一件书里的事 + <b>一句原文引用</b></td></tr>' +
-    '<tr><td>My favourite moment 最喜欢的一幕</td><td>80–100 词</td><td>引用一句原文，说为什么喜欢</td></tr>' +
-    '<tr><td>My opinion 我的看法</td><td>80–100 词</td><td>几个案子里哪个最难猜、哪个最没意思？推荐给谁？</td></tr>' +
-    '<tr><td>New words 生词表</td><td>10 个</td><td>单词 + 中文 + 书里的原句和页码</td></tr></table></div>' +
-    '<h3>为什么要引用原文</h3><p>你说"福尔摩斯很聪明"，别人会问：你怎么知道？<b>引用就是你的证据</b>。用书里的原话证明你的看法，说明你真的读了书，也让读的人分清哪句是作者写的、哪句是你自己说的。大学里写文章，每个观点后面都要有证据，这是同一个习惯。</p>' +
-    '<h3>怎么引用（三步）</h3><ol class="steps"><li><b>引出：</b>先说是谁说的 / 什么时候：<i>When Watson asks how he knows, Holmes says,</i></li>' +
-    '<li><b>原句：</b>英文原文一字不改，加引号，后面括号写页码：<i>"……" (p. 23).</i></li>' +
-    '<li><b>解释：</b>用你自己的话说这句话证明了什么：<i>This shows that Holmes notices small things that other people miss.</i></li></ol>' +
-    '<div class="tip"><b>完整的例子（格式示范，引号里换成你书里真实的原句）：</b><br><i>Holmes is very observant. When he meets a new client, he says, "……" (p. ??). This shows that he can learn a lot about a person just by looking at them.</i></div>' +
-    '<p class="note">注意：① 引号里必须是书里的<b>英文原句</b>，不能是你自己翻译的中文意思；② 一定写页码；③ 引用不要太长，一两句就够，后面一定要有你自己的解释。整篇报告至少引用 <b>3 句</b>。</p>',
-  methodTitle: '读书报告怎么写',
-  how: ['在下面的写作框里用英文写（生词表的中文意思可以写中文）。', 'AI 0：不能用 AI 和翻译软件，可以查词典。', '最后写 References：书名、作者、改写者、出版社、年份。'],
+  method: '<h3 style="margin-top:0">为什么要引用原文</h3><p>你说"福尔摩斯很聪明"，别人会问：你怎么知道？<b>引用就是你的证据</b>。用书里的原话证明你的看法，说明你真的读了书，也让读的人分清哪句是作者写的、哪句是你自己说的。</p>' +
+    '<p class="note">平时写文章，大多数时候是用自己的话<b>转述</b> + 注明出处，直接引原句要少而短。读书报告是例外：它本来就是谈一本书，引几句原文很正常。这次多引一点，是为了让你回到英文原文里找证据。</p>' +
+    '<h3>每一段的写法：引用三明治</h3><ol class="steps"><li><b>引出 + 原句：</b>先说是谁说的 / 什么时候，再写英文原句，一字不改，加引号，后面括号写页码。<br><i>When Watson asks how he knows, Holmes says, "……" (p. 23).</i></li>' +
+    '<li><b>转述：</b>用你自己的、更简单的英文把这句话的意思再说一遍。<br><i>In other words, Holmes ……</i></li>' +
+    '<li><b>解释：</b>这句话说明了什么？你怎么看？<br><i>This shows that Holmes notices small things that other people miss.</i></li></ol>' +
+    '<div class="tip"><b>例子（格式示范，引号里换成你书里真实的原句和页码）：</b><br><i>Holmes is very observant. When he meets a new client, he says, "……" (p. ??). In other words, he can guess where the man has been just by looking at his clothes. This shows that he learns a lot from small details.</i></div>' +
+    '<h3>报告结构</h3><div class="tscroll"><table class="t"><tr><th>部分</th><th>自己写的词数</th><th>要包含</th></tr>' +
+    '<tr><td>Beginning 开头</td><td>约 50 词</td><td>书名、原作者（Arthur Conan Doyle）、你挑的是哪个案子、这个案子讲了什么（一两句）</td></tr>' +
+    '<tr><td>Middle 中间</td><td>约 250 词</td><td><b>4 个引用三明治</b>，每个一段：<br>① 案子开头：出了什么怪事<br>② 福尔摩斯的一个特点（比如 clever / calm / careful）<br>③ 他的另一个特点<br>④ 你最喜欢的一幕</td></tr>' +
+    '<tr><td>End 结尾</td><td>约 50 词</td><td>你喜不喜欢这本书、推荐给谁、为什么（再引一句也可以）</td></tr>' +
+    '<tr><td>New words 生词表</td><td>10 个</td><td>单词 + 中文 + 书里的原句和页码（不算在词数里）</td></tr></table></div>' +
+    '<p class="note">规则：① 引号里必须是书里的<b>英文原句</b>，不能是你翻译的中文意思；② 每句都写页码；③ 每句引用一两句就够，后面一定要有转述和解释，不能一直引用；④ 全文至少引用 <b>5 句</b>。</p>',
+  methodTitle: '为什么要引用、怎么写',
+  how: ['在下面的写作框里用英文写（生词表的中文意思可以写中文）。写作框数的是全部英文词数，包括引用，至少 400。', 'AI 0：不能用 AI 和翻译软件，可以查词典。', '最后写 References：书名、作者、改写者、出版社、年份。'],
   tasks: [
-    {q: 'Q1', pts: 25, title: 'Summary', text: '一个案子的梗概，120–150 词。', full: '人物、怪事、调查、真相都有；用自己的话；时态正确。'},
-    {q: 'Q2', pts: 25, title: 'Holmes as a detective', text: '两个形容词 + 两件事 + 引用。', full: '每个形容词都有事例和一句原文引用（引号 + 页码 + 解释）。'},
-    {q: 'Q3', pts: 15, title: 'Favourite moment', text: '引用一句原文并解释为什么喜欢。', full: '引用格式正确；理由真实具体。'},
-    {q: 'Q4', pts: 15, title: 'Opinion', text: '比较几个案子 + 推荐与否。', full: '至少提到两个案子；有明确态度和理由。'},
-    {q: 'Q5', pts: 20, title: 'New words + 语言', text: '10 个生词（带原句和页码）；全文语法和拼写。', full: '生词都配原句；至少 3 处引用；错误少。'}
+    {q: 'Q1', pts: 10, title: 'Beginning', text: '约 50 词：书的信息 + 选的案子 + 一两句概括。', full: '信息齐全；概括用自己的话。'},
+    {q: 'Q2', pts: 50, title: 'Middle：4 个引用三明治', text: '每段：原句（引号 + 页码）→ 转述 → 解释。', full: '4 段都有原句、转述、解释三步；原句来自英文原文；转述真的换了说法，不是改一两个词；解释说出了自己的想法。'},
+    {q: 'Q3', pts: 10, title: 'End', text: '约 50 词：喜不喜欢、推荐给谁、为什么。', full: '态度明确，有理由。'},
+    {q: 'Q4', pts: 15, title: 'New words', text: '10 个生词，带原句和页码。', full: '10 个齐全，原句和页码都有。'},
+    {q: 'Q5', pts: 15, title: '语言', text: '语法、拼写、时态（讲故事用一般过去时）。', full: '错误少，不影响理解。'}
   ],
   refs: {min: 1},
-  write: {unit: '词', min: 450, placeholder: 'Book information\nTitle: Sherlock Holmes Short Stories\nAuthor: Arthur Conan Doyle\nRetold by:\nLevel:\n\nSummary\n\nHolmes as a detective\n\nMy favourite moment\n\nMy opinion\n\nNew words\n1. word – 中文 – "原句" (p. )\n\nReferences\n[1]'}
+  write: {unit: '词', min: 400, placeholder: 'Title: Sherlock Holmes Short Stories\nAuthor: Arthur Conan Doyle\n\nBeginning\n\nMiddle\n1. (原句 + 转述 + 解释)\n2.\n3.\n4.\n\nEnd\n\nNew words\n1. word – 中文 – "原句" (p. )\n\nReferences\n[1]'}
 });
