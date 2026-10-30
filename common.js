@@ -31,6 +31,7 @@ function save(key, v){ try { localStorage.setItem(key, JSON.stringify(v)); } cat
 // 钱包：coins 余额，earned 累计，log 记录
 function wallet(){ return load('wallet', {coins:0, earned:0, log:[]}); }
 function addCoins(n, why){
+  if (PREVIEW) return wallet();  // 姐姐的预览浏览器：金币不加不减
   const w = wallet(); w.coins += n; if (n > 0) w.earned += n;
   w.seq = (w.seq || 0) + 1;
   w.log.unshift({t: dayStr() + ' ' + hm(), n, why, q: w.seq}); w.log = w.log.slice(0, 200);
@@ -150,6 +151,11 @@ function lessonName(id){
 
 // 预览模式：姐姐的浏览器（开过后台或 ?me=1）什么都不锁，方便检查内容
 const PREVIEW = (() => { try { return load('isAdmin', false) || !!load('adminToken', ''); } catch(e){ return false; } })();
+// 预览浏览器里没有诗予的记录，以前会被结算成负数、"欠作业"：余额清零一次；start 每次记成今天，不再算欠账
+if (PREVIEW){
+  if (!load('previewReset', false)){ save('wallet', {coins: 0, earned: 0, log: []}); save('missed', {}); save('weekJobs', {}); save('previewReset', true); }
+  save('start', dayStr());
+}
 
 // ===== 推送末尾：今天的进度 + 余额变化（和上一条推送比）=====
 // 每周必做订单：这一周（周一到周日）提交过几单（提交时记了 sub 日期）
