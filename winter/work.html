@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="寒假作业">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="stylesheet" href="assets/style.css?v=1793328064">
+<script src="assets/core.js?v=1793328064"></script>
+<script src="data/chn.js?v=1793328064"></script>
+<script src="data/math.js?v=1793328064"></script>
+<script src="data/eng.js?v=1793328064"></script>
+<script src="data/phy.js?v=1793328064"></script>
+<script src="data/chem.js?v=1793328064"></script>
+<script src="data/his.js?v=1793328064"></script>
+<script src="data/df.js?v=1793328064"></script>
+<script src="data/py.js?v=1793328064"></script>
+<script src="data/des.js?v=1793328064"></script>
+<title>作业 · 寒假大作业</title>
+</head>
+<body>
+<div id="nav"></div>
+<div class="wrap narrow">
+  <h1>作业和截止日期</h1>
+  <p class="sub">每周日晚上 12 点前交 3 项。可以提前做、提前交；想放松一周，就把那周的先做掉。晚交一天扣这项作业的 5%。</p>
+  <div id="list"></div>
+</div>
+<script>
+W.nav();
+(function () {
+  var weeks = {};
+  W.ORDER.forEach(function (id) { var w = W.A[id].week; (weeks[w] = weeks[w] || []).push(id); });
+  var h = '<div class="week">W0 · 学术规范入门 <span class="d">' + W.fmt(W.weekDue(0), true) + ' 前</span></div>' +
+    '<div class="alist"><a class="aitem" href="intro.html"><span class="ic">' + ((W.store.get('intro', {}) || {}).pass ? '✅' : '🎓') + '</span><span class="m"><div class="tt">学术规范入门（约 30 分钟 + 小测）</div><div class="c">不算分，但要先过关</div></span></a></div>';
+  var shownSpring = false, sp = W.d(W.CONFIG.SPRING[0]);
+  Object.keys(W.WEEKS).filter(function (w) { return +w > 0; }).forEach(function (w) {
+    var due = W.weekDue(+w);
+    if (!shownSpring && due > sp) { shownSpring = true; h += '<div class="week">🧧 春节 <span class="d">' + W.fmt(sp) + ' – ' + W.fmt(W.d(W.CONFIG.SPRING[1])) + '，不放截止日期</span></div>'; }
+    h += '<div class="week">W' + w + ' <span class="d">' + W.fmt(due, true) + ' 截止</span></div><div class="alist">' + (weeks[w] || []).map(function (id) { return W.aRow(id, true); }).join('') + '</div>';
+  });
+  if (W.CONFIG.PAUSE.length) h = '<div class="banner blue"><span>📚 考前复习周：' + W.CONFIG.PAUSE.map(function (m) { return W.fmt(W.d(m)) + ' 那一周'; }).join('、') + '。这周去学习站复习，寒假作业的截止都往后推了一周。</span></div>' + h;
+  document.getElementById('list').innerHTML = h;
+})();
+</script>
+</body>
+</html>

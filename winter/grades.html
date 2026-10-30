@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="寒假作业">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="stylesheet" href="assets/style.css?v=1793328064">
+<script src="assets/core.js?v=1793328064"></script>
+<script src="data/chn.js?v=1793328064"></script>
+<script src="data/math.js?v=1793328064"></script>
+<script src="data/eng.js?v=1793328064"></script>
+<script src="data/phy.js?v=1793328064"></script>
+<script src="data/chem.js?v=1793328064"></script>
+<script src="data/his.js?v=1793328064"></script>
+<script src="data/df.js?v=1793328064"></script>
+<script src="data/py.js?v=1793328064"></script>
+<script src="data/des.js?v=1793328064"></script>
+<script src="data/grades.js?v=1793328064"></script>
+<title>成绩 · 寒假大作业</title>
+</head>
+<body>
+<div id="nav"></div>
+<div class="wrap narrow">
+  <h1>成绩</h1>
+  <div class="banner blue"><span>📝 就像学校老师改作业需要时间一样，姐姐会在 <b>3 月之前</b>改完所有作业、出分。你现在只要按时交就好。小测做完会自动出分。</span></div><p class="sub">分数按每项作业页面上的评分标准打，会出现在这里。等级：HD ≥ 85 · D ≥ 75 · C ≥ 65 · P ≥ 50。</p>
+  <div id="g"></div>
+</div>
+<script>
+W.nav();
+(function () {
+  var h = '', sum = 0, graded = 0;
+  W.COURSES.forEach(function (c) {
+    var ids = W.ofCourse(c.id), tot = 0, wsum = 0;
+    h += '<h3 style="color:' + c.color + '">' + c.name + ' <span class="note">' + c.code + '</span></h3><div class="tscroll"><table class="t"><tr><th>作业</th><th>占比</th><th>状态</th><th>得分</th><th>评语</th></tr>';
+    ids.forEach(function (id) {
+      var a = W.A[id], g = W.GRADES[id], s = W.status(id);
+      if (g) { tot += g.score * a.weight / 100; wsum += a.weight; }
+      h += '<tr><td><a href="assignment.html?id=' + id + '">' + a.no + ' ' + W.esc(a.title) + '</a></td><td>' + a.weight + '%</td><td>' + s.ic + ' ' + s.txt + '</td><td>' +
+        (g ? g.score + '（' + W.band(g.score)[1] + '）' : '—') + '</td><td>' + (g ? W.esc(g.fb || '') : '') + '</td></tr>';
+    });
+    h += '<tr><th colspan="3">总评</th><th colspan="2">' + (wsum === 100 ? Math.round(tot) + ' / 100（' + W.band(tot)[1] + ' ' + W.band(tot)[2] + '）' : wsum ? '已评 ' + wsum + '%，目前 ' + Math.round(tot) + ' 分' : '还没评分') + '</th></tr></table></div>';
+    if (wsum === 100) { sum += tot; graded++; }
+  });
+  document.getElementById('g').innerHTML = (graded ? '<div class="banner gold"><span>🎉 已出总评的 ' + graded + ' 门课一共 <b>' + Math.round(sum) + '</b> 分，奖励 ' + Math.round(sum) + ' 元（1 分 = 1 元）。</span></div>' : '') + h;
+})();
+</script>
+</body>
+</html>

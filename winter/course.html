@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="寒假作业">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="stylesheet" href="assets/style.css?v=1793328064">
+<script src="assets/core.js?v=1793328064"></script>
+<script src="data/chn.js?v=1793328064"></script>
+<script src="data/math.js?v=1793328064"></script>
+<script src="data/eng.js?v=1793328064"></script>
+<script src="data/phy.js?v=1793328064"></script>
+<script src="data/chem.js?v=1793328064"></script>
+<script src="data/his.js?v=1793328064"></script>
+<script src="data/df.js?v=1793328064"></script>
+<script src="data/py.js?v=1793328064"></script>
+<script src="data/des.js?v=1793328064"></script>
+<title>课程 · 寒假大作业</title>
+</head>
+<body>
+<div id="nav"></div>
+<div class="wrap narrow" id="main"></div>
+<script>
+W.nav();
+(function () {
+  var c = W.course(W.q('c')) || W.COURSES[0], ids = W.ofCourse(c.id), m = document.getElementById('main');
+  var h = '<div class="ahead"><div class="note"><a href="index.html">首页</a> › ' + c.name + '</div>' +
+    '<h1 style="color:' + c.color + '">' + c.name + '</h1><div class="note">' + c.code + ' · ' + W.CONFIG.TERM + '</div></div>' +
+    '<p>' + W.esc(c.intro) + '</p>' +
+    '<div class="tip"><b>这门课怎么算分：</b>' + ids.map(function (id) { return W.A[id].no + ' ' + W.A[id].weight + '%'; }).join(' + ') +
+    ' = 100 分。不用学新内容，全部用你九上已经学过的东西。不会的先自己查（课本、网上、问 AI，按每项作业的 AI 等级来），查到的要注明出处。</div>' +
+    '<h3>作业</h3><div class="alist">' + ids.map(function (id) { return W.aRow(id); }).join('') + '</div>';
+  m.innerHTML = h; document.title = c.name + ' · 寒假大作业';
+})();
+</script>
+</body>
+</html>

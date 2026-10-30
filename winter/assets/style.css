@@ -1,0 +1,146 @@
+/* 寒假大作业站：样式仿姐姐的英语包（Canvas 风格），界面中文 */
+:root{
+  --bg:#f7f5f0; --card:#ffffff; --ink:#1f2328; --muted:#6b6f76; --line:#e4e0d8;
+  --accent:#2f6f5e; --accent-soft:#e3f0eb; --warn:#a4462f; --warn-soft:#f7e6e1;
+  --gold:#8a6a1f; --gold-soft:#f6eed9; --blue:#2c5d8f; --blue-soft:#e4edf6;
+  --nav:#1e1a5c; --radius:12px;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#16181b; --card:#1f2226; --ink:#e8e6e1; --muted:#9a9ea5; --line:#33373d;
+    --accent:#6cc0a5; --accent-soft:#1f3a33; --warn:#e48b74; --warn-soft:#3b2520;
+    --gold:#d9b665; --gold-soft:#3a3120; --blue:#7fb0e0; --blue-soft:#1f2d3b;
+  }
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font:16px/1.75 -apple-system,BlinkMacSystemFont,"PingFang SC","Helvetica Neue",sans-serif}
+a{color:var(--blue)}
+.wrap{max-width:900px;margin:0 auto;padding:24px 16px 80px}
+h1{font-size:27px;line-height:1.3;margin:4px 0 6px}
+h2{font-size:20px;margin:0 0 12px;line-height:1.35}
+h3{font-size:17px;margin:20px 0 8px}
+.sub{color:var(--muted);margin:0 0 16px}
+.note{font-size:14px;color:var(--muted)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:20px;margin:18px 0}
+.tag{display:inline-block;font-size:12px;padding:2px 8px;border-radius:99px;background:var(--accent-soft);color:var(--accent);font-weight:600;white-space:nowrap}
+.tag.gold{background:var(--gold-soft);color:var(--gold)}
+.tag.blue{background:var(--blue-soft);color:var(--blue)}
+.tag.warn{background:var(--warn-soft);color:var(--warn)}
+.tag.gray{background:var(--line);color:var(--muted)}
+.btn{appearance:none;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:8px;
+  padding:7px 14px;font:inherit;font-size:15px;cursor:pointer;line-height:1.4;text-decoration:none;display:inline-block}
+.btn:hover{border-color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn.small{padding:3px 9px;font-size:13px}
+.btn:disabled{opacity:.5;cursor:default}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:10px}
+textarea,input[type=text],input[type=url]{width:100%;font:inherit;font-size:16px;color:var(--ink);background:var(--bg);
+  border:1px solid var(--line);border-radius:8px;padding:8px 10px}
+textarea{min-height:80px;resize:vertical}
+label.f{display:block;font-weight:600;margin:14px 0 4px}
+label.f small{font-weight:400;color:var(--muted)}
+table.t{border-collapse:collapse;width:100%;font-size:15px;margin:8px 0}
+table.t th,table.t td{border:1px solid var(--line);padding:6px 9px;text-align:left;vertical-align:top}
+table.t th{background:var(--bg)}
+.tscroll{overflow-x:auto}
+blockquote{margin:10px 0;padding:8px 14px;border-left:3px solid var(--gold);background:var(--gold-soft);border-radius:0 8px 8px 0}
+blockquote .src{display:block;font-size:13px;color:var(--muted);margin-top:4px}
+.guwen{font-family:"Songti SC","STSong",serif;font-size:18px;line-height:2}
+.tip{background:var(--blue-soft);border-radius:10px;padding:10px 14px;margin:10px 0;font-size:15px}
+.tip b{color:var(--blue)}
+.warnbox{background:var(--warn-soft);border-radius:10px;padding:10px 14px;margin:10px 0;font-size:15px}
+
+/* 左边深色导航 */
+.nav{position:fixed;left:0;top:0;bottom:0;width:84px;background:var(--nav);display:flex;flex-direction:column;z-index:20;padding-top:8px}
+.nav a{color:#fff;text-decoration:none}
+.nav-logo{font-size:22px;font-weight:800;text-align:center;padding:10px 0 14px;line-height:1.2}
+.nav-item{display:flex;flex-direction:column;align-items:center;gap:2px;padding:10px 4px;font-size:12px;text-align:center}
+.nav-item .ic{font-size:22px;line-height:1}
+.nav-item.on{background:#fff;color:var(--nav) !important}
+.nav-item:hover:not(.on){background:rgba(255,255,255,.12)}
+body.has-nav .wrap{margin-left:84px;max-width:none;padding-left:28px;padding-right:28px}
+body.has-nav .wrap.narrow{max-width:900px;margin-left:calc(84px + max(0px, (100% - 84px - 900px) / 2))}
+@media (max-width:700px){
+  .nav{position:sticky;top:0;bottom:auto;width:auto;flex-direction:row;overflow-x:auto;padding:0}
+  .nav-logo{padding:8px 12px;font-size:16px}
+  .nav-item{padding:6px 10px;font-size:11px;min-width:56px}
+  body.has-nav .wrap,body.has-nav .wrap.narrow{margin-left:0;padding-left:16px;padding-right:16px}
+}
+
+/* 首页 */
+.dash{display:grid;grid-template-columns:1fr 300px;gap:28px}
+@media (max-width:1000px){.dash{grid-template-columns:1fr}}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:18px}
+.ccard{background:var(--card);border:1px solid var(--line);border-radius:6px;overflow:hidden;text-decoration:none;color:var(--ink);display:block;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.ccard:hover{box-shadow:0 4px 14px rgba(0,0,0,.12)}
+.ccard .band{height:96px;display:flex;align-items:flex-end;padding:10px 14px;color:#fff;font-size:26px;font-weight:800}
+.ccard .body{padding:12px 14px 14px}
+.ccard .cname{font-weight:700;font-size:17px}
+.ccard .ccode{font-size:13px;color:var(--muted)}
+.bar{height:6px;background:var(--line);border-radius:3px;margin-top:10px;overflow:hidden}
+.bar i{display:block;height:100%}
+.side h3{margin:0 0 8px;font-size:18px;border-bottom:1px solid var(--line);padding-bottom:8px}
+.todo{display:block;padding:10px 0;border-bottom:1px solid var(--line);text-decoration:none;color:var(--ink)}
+.todo .t{color:var(--blue);text-decoration:underline}
+.todo .c{font-size:13px;color:var(--muted)}
+.banner{border-radius:10px;padding:12px 16px;margin:0 0 16px;display:flex;gap:12px;align-items:center;flex-wrap:wrap;justify-content:space-between}
+.banner.gold{background:var(--gold-soft)}
+.banner.warn{background:var(--warn-soft)}
+.banner.blue{background:var(--blue-soft)}
+
+/* 课程 / 作业列表 */
+.alist{border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--card)}
+.aitem{display:flex;gap:12px;align-items:center;padding:12px 14px;border-top:1px solid var(--line);text-decoration:none;color:var(--ink)}
+.aitem:first-child{border-top:0}
+.aitem:hover{background:var(--bg)}
+.aitem .ic{font-size:20px}
+.aitem .m{flex:1;min-width:0}
+.aitem .tt{font-weight:600;color:var(--blue)}
+.aitem .c{font-size:13px;color:var(--muted)}
+.week{margin:22px 0 8px;font-weight:700;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.week .d{font-weight:400;color:var(--muted);font-size:14px}
+
+/* 作业页 */
+.ahead{border-bottom:1px solid var(--line);padding-bottom:12px;margin-bottom:6px}
+.meta{display:flex;gap:18px;flex-wrap:wrap;font-size:14px;color:var(--muted);margin-top:8px}
+.meta b{color:var(--ink)}
+.task{border-top:1px solid var(--line);padding:14px 0}
+.task:first-of-type{border-top:0}
+.task .qh{font-weight:700}
+.task .pts{float:right;font-size:13px;color:var(--gold);font-weight:700}
+.task .full{font-size:14px;color:var(--accent);background:var(--accent-soft);border-radius:8px;padding:6px 10px;margin-top:8px}
+.ailevel{display:inline-flex;gap:6px;align-items:center;font-weight:700;border-radius:8px;padding:4px 10px}
+.ai0{background:var(--warn-soft);color:var(--warn)}
+.ai1{background:var(--blue-soft);color:var(--blue)}
+.ai2{background:var(--gold-soft);color:var(--gold)}
+.ai3{background:var(--accent-soft);color:var(--accent)}
+.steps li{margin:6px 0}
+
+/* 写作框 */
+.wbox{min-height:340px;font-size:17px;line-height:1.8;background:var(--card)}
+.wstat{display:flex;gap:16px;flex-wrap:wrap;font-size:13px;color:var(--muted);margin-top:6px}
+.wstat b{color:var(--ink)}
+
+/* 小测 */
+.q{border-top:1px solid var(--line);padding:14px 0}
+.q:first-of-type{border-top:0}
+.opts{display:grid;gap:6px;margin-top:8px}
+.opt{text-align:left;width:100%}
+.opt.right{background:var(--accent-soft);border-color:var(--accent)}
+.opt.wrong{background:var(--warn-soft);border-color:var(--warn)}
+.fb{margin-top:8px;font-size:15px}
+.fb.ok{color:var(--accent)} .fb.no{color:var(--warn)}
+
+/* 返回键 */
+.nav-back{border-bottom:1px solid rgba(255,255,255,.2);margin-bottom:6px;background:rgba(255,255,255,.08)}
+/* 写作页左右分栏：左边看题，右边写 */
+@media (min-width:1000px){
+  body.split .wrap.narrow{max-width:none;margin-left:84px}
+  .splitgrid{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start}
+  .splitgrid > .left{max-height:calc(100vh - 40px);overflow-y:auto;padding-right:8px;position:sticky;top:20px}
+  .splitgrid > .right{position:sticky;top:20px}
+  .splitgrid .wbox{min-height:55vh}
+}
+.files a{display:block}

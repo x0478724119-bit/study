@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="寒假作业">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="stylesheet" href="assets/style.css?v=1793328064">
+<script src="assets/core.js?v=1793328064"></script>
+<script src="data/chn.js?v=1793328064"></script>
+<script src="data/math.js?v=1793328064"></script>
+<script src="data/eng.js?v=1793328064"></script>
+<script src="data/phy.js?v=1793328064"></script>
+<script src="data/chem.js?v=1793328064"></script>
+<script src="data/his.js?v=1793328064"></script>
+<script src="data/df.js?v=1793328064"></script>
+<script src="data/py.js?v=1793328064"></script>
+<script src="data/des.js?v=1793328064"></script>
+<title>作业 · 寒假大作业</title>
+</head>
+<body>
+<div id="nav"></div>
+<div class="wrap narrow" id="main"></div>
+<script>
+W.nav();
+(function () {
+  var id = W.q('id'), a = W.A[id], m = document.getElementById('main');
+  if (!a) { m.innerHTML = '<p>找不到这项作业。<a href="work.html">回作业列表</a></p>'; return; }
+  var c = W.course(a.course), L = W.AI[a.ai], due = W.due(id), s = W.status(id);
+  document.title = a.no + ' ' + a.title + ' · ' + c.name;
+  var total = (a.tasks || []).reduce(function (x, t) { return x + (t.pts || 0); }, 0);
+  var head = '<div class="ahead"><div class="note"><a href="index.html">首页</a> › <a href="course.html?c=' + c.id + '">' + c.name + '</a> › ' + a.no + '</div>' +
+    '<h1>' + a.no + ' ' + W.esc(a.title) + '</h1>' +
+    '<div class="meta"><span>截止 <b>' + W.fmt(due, true) + ' 23:59</b></span><span>占总评 <b>' + a.weight + '%</b></span>' +
+    (a.time ? '<span>大约 <b>' + a.time + '</b></span>' : '') + (a.length ? '<span>长度 <b>' + a.length + '</b></span>' : '') +
+    '<span>' + s.ic + ' ' + s.txt + '</span></div></div>';
+
+  var h = '<div class="card" style="margin-top:14px">' + W.aiBadge(a.ai) +
+    '<div style="margin-top:8px"><b>可以：</b>' + L.can + '<br><b>不可以：</b>' + L.cant + '</div>' +
+    (a.ai >= 1 ? '<p class="note" style="margin:6px 0 0">用了 AI：①正文里 AI 改过 / 写的句子后面标（AI 修改）或（AI 生成）；②文档最后写「AI 声明」：对话分享链接 + 两三句用它做了什么（一项作业只用<b>一个</b>对话）。用了不声明、或者超出等级，这一项 0 分。<a href="intro.html#ai">看例子</a></p>' : '<p class="note" style="margin:6px 0 0">这一项不能用任何 AI、翻译软件。</p>') + '</div>';
+
+  if (a.submit === 'quiz' && !a.ready) {
+    m.innerHTML = head + h + '<div class="card"><h2>⏳ 小测还没出</h2><p>' + (a.intro || '') + '</p><p class="note">姐姐把你的 5·3 拍过来以后再出题。出好以后会在这里直接做，做完自动出分。</p></div>';
+    return;
+  }
+  if (a.intro) h += '<p>' + a.intro + '</p>';
+  if (a.scenario) h += '<h3>情境</h3>' + a.scenario.map(function (p) { return '<p>' + p + '</p>'; }).join('');
+  if (a.data) h += '<h3>' + (a.dataTitle || '资料') + '</h3>' + a.data;
+  if (a.method) h += '<h3>' + (a.methodTitle || '怎么做') + '</h3><div class="card" style="margin-top:6px">' + a.method + '</div>';
+  if (a.submit === 'pdf') h += '<h3>怎么写、怎么交</h3><ol class="steps">' + W.REPORT_STEPS.map(function (x) { return '<li>' + x + '</li>'; }).join('') + '</ol>';
+  if (a.how) h += '<h3>' + (a.submit === 'pdf' ? '这项作业的特别要求' : '怎么写、怎么交') + '</h3><ul class="steps">' + a.how.map(function (x) { return '<li>' + x + '</li>'; }).join('') + '</ul>';
+  if (a.tasks) {
+    h += '<h3>任务（满分 ' + total + '）</h3><div class="card" style="margin-top:6px">' + a.tasks.map(function (t) {
+      return '<div class="task"><span class="pts">' + t.pts + ' 分</span><div class="qh">' + t.q + ' ' + W.esc(t.title) + '</div><div>' + t.text + '</div>' +
+        (t.full ? '<div class="full">满分要做到：' + t.full + '</div>' : '') + '</div>';
+    }).join('') + '</div>';
+  }
+  if (a.refs) h += '<h3>资料要求</h3><p>至少参考 <b>' + a.refs.min + '</b> 个资料' + (a.refs.nonAI ? '，其中至少 ' + a.refs.nonAI + ' 个不是 AI' : '') +
+    '，列在' + (a.submit === 'write' ? '文章最后的「参考资料」里' : '文档最后的「参考资料」那一页') + '；正文里用到的地方标 [1]、[2]。不够数会扣分。格式看 <a href="intro.html#cite">入门课</a>。</p>';
+  h += '<p class="note">点了「提交」就算交了；做得完不完整打分时看，没写的题拿不到那题的分，所以没做完也先交。晚交一天扣这项作业的 ' + W.CONFIG.LATE_PCT + '%。截止前可以重新交，姐姐看最后一版。报告和作文姐姐 3 月前改完出分。</p>';
+
+  // 在网站里写的作业：左边看题，右边写（iPad 横屏 / 电脑上）
+  if (a.submit === 'write') { document.body.classList.add('split');
+    m.innerHTML = head + '<div class="splitgrid"><div class="left">' + h + '</div><div class="right"><div class="card" id="submit" style="margin-top:14px"></div></div></div>';
+  } else m.innerHTML = head + h + '<div class="card" id="submit"></div>';
+  renderSubmit();
+
+  function renderSubmit() {
+    var box = document.getElementById('submit'), vers = W.subs()[id] || [], x = '';
+    if (vers.length) x += '<div class="banner blue" style="margin:0 0 14px"><span>✅ 已交 ' + vers.length + ' 版，最后一版 ' + new Date(vers[vers.length - 1].t).toLocaleString('zh-CN') +
+      (vers[vers.length - 1].late ? '（晚 ' + vers[vers.length - 1].late + ' 天）' : '') + '。想改的话，改好再交一次。</span></div>';
+    x += '<h2>' + (vers.length ? '重新提交' : '提交') + '</h2>';
+    if (a.submit === 'write') {
+      var d = W.store.get('draft_' + id, {text: '', ms: 0, leaves: 0, pastes: 0});
+      x += '<p class="note">直接在这里打字（<b>不能粘贴</b>，会记录用时和切出去的次数）。自动保存，可以分几天写。最后别忘了写参考资料' + (a.ai >= 1 ? '和 AI 声明' : '') + '。</p>' +
+        (a.write.fromPrev ? '<div class="row" style="margin:0 0 8px"><button class="btn small" id="fromPrev">把 ' + a.write.fromPrev + ' 交过的内容放进来</button></div>' : '') +
+        '<textarea class="wbox" id="wbox" placeholder="' + W.esc(a.write.placeholder || '') + '">' + W.esc(d.text) + '</textarea><div class="wstat" id="wstat"></div>';
+    }
+    if (a.submit === 'code') x += '<label class="f">游戏代码 <small>在学习站 Python 自由编辑器里点「📋 复制代码」，粘贴到这里</small></label><textarea id="code" style="min-height:200px;font-family:Menlo,monospace;font-size:13px"></textarea>';
+    if (a.submit === 'pdf' || a.submit === 'code') x += '<label class="f">上传文件 <small>' + (a.submit === 'pdf' ? '导出的 PDF' : '设计说明 PDF、运行截图（可以多选）') + '</small></label>' +
+      '<input type="file" id="file" ' + (a.submit === 'pdf' ? 'accept="application/pdf,.pdf"' : 'accept="application/pdf,image/*" multiple') + '>' +
+      '<div class="files note" id="flist" style="margin-top:6px"></div>';
+    if (a.submit === 'pdf') x += '<label style="display:block;margin-top:10px"><input type="checkbox" id="chk"> 文档最后有参考资料' + (a.ai >= 1 ? '（用了 AI 的话还有 AI 声明）' : '') + '</label>';
+    if (a.extraField) x += '<label class="f">' + a.extraField.label + ' <small>' + (a.extraField.small || '') + '</small></label><textarea id="extra" style="min-height:140px"></textarea>';
+    x += '<label class="f">想对姐姐说的 <small>可以不写</small></label><input type="text" id="memo">';
+    x += '<div class="row"><button class="btn primary" id="go">提交</button><span class="note" id="err" style="color:var(--warn)"></span></div>';
+    box.innerHTML = x;
+    if (a.submit === 'write') wireWriting();
+    showFiles();
+    document.getElementById('go').onclick = go;
+  }
+  function showFiles() {
+    var fl = document.getElementById('flist'); if (!fl) return;
+    W.FILES.list(id).then(function (all) {
+      fl.innerHTML = all.length ? '已上传：' + all.map(function (r) { return '<a href="' + URL.createObjectURL(r.blob) + '" download="' + W.esc(r.name) + '">📎 ' + W.esc(r.name) + '（' + new Date(r.date).toLocaleString('zh-CN') + '）</a>'; }).join('') : '';
+    }).catch(function () {});
+  }
+
+  function count(t) { return a.write.unit === '词' ? (t.match(/[A-Za-z]+(?:['’-][A-Za-z]+)*/g) || []).length : t.replace(/\s/g, '').length; }
+  function wireWriting() {
+    var box = document.getElementById('wbox'), st = document.getElementById('wstat');
+    var d = W.store.get('draft_' + id, {text: '', ms: 0, leaves: 0, pastes: 0}), lastIn = 0;
+    function show() { var n = count(box.value);
+      st.innerHTML = '<span>已写 <b>' + n + '</b> ' + a.write.unit + (a.write.min ? ' / 至少 ' + a.write.min : '') + '</span><span>打字用时 <b>' + Math.round(d.ms / 60000) + '</b> 分钟</span><span>切出去 <b>' + d.leaves + '</b> 次</span>' + (d.pastes ? '<span>挡住的粘贴 <b>' + d.pastes + '</b> 次</span>' : ''); }
+    function save() { d.text = box.value; W.store.set('draft_' + id, d); }
+    box.addEventListener('paste', function (e) { e.preventDefault(); d.pastes++; save(); show(); alert('写作框不能粘贴，请自己打字。'); });
+    box.addEventListener('drop', function (e) { e.preventDefault(); });
+    box.addEventListener('input', function () { var now = Date.now(); if (lastIn && now - lastIn < 60000) d.ms += now - lastIn; lastIn = now; save(); show(); });
+    document.addEventListener('visibilitychange', function () { if (document.hidden && document.activeElement === box) { d.leaves++; save(); show(); } });
+    var fp = document.getElementById('fromPrev');
+    if (fp) fp.onclick = function () { var p = W.sub(a.write.fromPrevId); if (!p || !p.text) { alert(a.write.fromPrev + ' 还没交。'); return; }
+      if (box.value.trim() && !confirm('会把写作框里现在的内容换掉，确定吗？')) return; box.value = p.text; save(); show(); };
+    show();
+  }
+
+  function go() {
+    var err = document.getElementById('err'), v = function (k) { var e = document.getElementById(k); return e ? e.value.trim() : ''; }, data = {};
+    err.textContent = '';
+    if (a.submit === 'write') { var d = W.store.get('draft_' + id, {}); data.text = document.getElementById('wbox').value; data.count = count(data.text);
+      data.ms = d.ms || 0; data.leaves = d.leaves || 0; data.pastes = d.pastes || 0;
+      if (a.write.min && data.count < a.write.min) return err.textContent = '还差 ' + (a.write.min - data.count) + ' ' + a.write.unit + '。'; }
+    if (a.submit === 'code') { data.code = v('code'); if (!data.code) return err.textContent = '请把代码粘贴进来。'; }
+    var files = document.getElementById('file') ? [].slice.call(document.getElementById('file').files) : [];
+    if (a.submit === 'pdf') { if (!files.length) return err.textContent = '请先选择要上传的 PDF。';
+      if (!document.getElementById('chk').checked) return err.textContent = '检查一下文档最后有没有参考资料，再打勾。'; }
+    if (a.extraField) { data.extra = v('extra'); if (!data.extra) return err.textContent = '请填写「' + a.extraField.label + '」。'; }
+    data.memo = v('memo');
+    if (!confirm('确定提交 ' + a.no + '「' + a.title + '」吗？')) return;
+    Promise.all(files.map(function (f) { return W.FILES.save(id, f); })).then(function (recs) {
+      data.files = recs.map(function (r) { return r.name; }); done();
+    }, function () { data.files = files.map(function (f) { return f.name; }); data.fileErr = true; done();
+      alert('文件没能存进浏览器（可能是空间不够）。这次提交已记下，请把 PDF 微信发给姐姐。'); });
+    function done() {
+      W.submit(id, data);
+      if (a.submit === 'write') W.store.set('draft_' + id, {text: data.text, ms: data.ms, leaves: data.leaves, pastes: data.pastes});
+      renderSubmit(); document.getElementById('submit').scrollIntoView();
+      alert('交好了！' + (W.status(id).k === 'late' ? '' : '按时完成 👍') + '\n每周交完记得去「备份」下载一份，存进微信收藏。');
+    }
+  }
+})();
+</script>
+</body>
+</html>

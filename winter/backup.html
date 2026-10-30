@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="寒假作业">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="stylesheet" href="assets/style.css?v=1793328064">
+<script src="assets/core.js?v=1793328064"></script>
+<script src="data/chn.js?v=1793328064"></script>
+<script src="data/math.js?v=1793328064"></script>
+<script src="data/eng.js?v=1793328064"></script>
+<script src="data/phy.js?v=1793328064"></script>
+<script src="data/chem.js?v=1793328064"></script>
+<script src="data/his.js?v=1793328064"></script>
+<script src="data/df.js?v=1793328064"></script>
+<script src="data/py.js?v=1793328064"></script>
+<script src="data/des.js?v=1793328064"></script>
+<title>备份 · 寒假大作业</title>
+</head>
+<body>
+<div id="nav"></div>
+<div class="wrap narrow">
+  <h1>备份</h1>
+  <div class="card">
+    <h2>为什么要备份</h2>
+    <p>你上传的 PDF、写作框里写的作文、交作业的记录，都<b>只存在这台 iPad 的浏览器里</b>。清掉 Safari 数据、换设备，就全没了。备份文件里包括所有这些东西。</p>
+    <p><b>每周日交完这周的 3 项，下载一次备份</b>，存进<b>微信「收藏」</b>（或者发到飞书自己的对话里）。聊天记录清掉了，收藏里的还在。最后一批交完那天，把最新的备份发给姐姐，姐姐用它来打分。</p>
+    <div class="row"><button class="btn primary" id="ex">下载备份</button><span class="note" id="last"></span></div>
+    <p class="note">iPad 上：点了以后选「下载」，文件在「文件」App →「下载」里。存进微信收藏：在「文件」App 里长按备份文件 → 共享 → 微信 → 选「收藏」。文件名带日期，每周一份，不用删旧的。</p>
+  </div>
+  <div class="card">
+    <h2>恢复备份</h2>
+    <p class="note">换了设备、或者数据丢了，选一个备份文件恢复。会覆盖现在的记录。</p>
+    <input type="file" id="im" accept=".json,application/json">
+  </div>
+</div>
+<script>
+W.nav();
+function showLast() { var l = W.store.get('lastBackup', null); document.getElementById('last').textContent = l ? '上次备份：' + new Date(l).toLocaleString('zh-CN') : '还没备份过'; }
+showLast();
+document.getElementById('ex').onclick = function () { W.exportAll(); showLast(); };
+document.getElementById('im').onchange = function () {
+  if (!this.files[0] || !confirm('确定用这个备份覆盖现在的记录吗？')) return;
+  W.importAll(this.files[0], function (ok) { alert(ok ? '恢复好了。' : '这个文件不是寒假作业的备份。'); if (ok) location.href = 'index.html'; });
+};
+</script>
+</body>
+</html>

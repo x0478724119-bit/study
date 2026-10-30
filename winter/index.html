@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="寒假作业">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="stylesheet" href="assets/style.css?v=1793328064">
+<script src="assets/core.js?v=1793328064"></script>
+<script src="data/chn.js?v=1793328064"></script>
+<script src="data/math.js?v=1793328064"></script>
+<script src="data/eng.js?v=1793328064"></script>
+<script src="data/phy.js?v=1793328064"></script>
+<script src="data/chem.js?v=1793328064"></script>
+<script src="data/his.js?v=1793328064"></script>
+<script src="data/df.js?v=1793328064"></script>
+<script src="data/py.js?v=1793328064"></script>
+<script src="data/des.js?v=1793328064"></script>
+<title>首页 · 寒假大作业</title>
+</head>
+<body>
+<div id="nav"></div>
+<div class="wrap">
+  <h1 style="border-bottom:1px solid var(--line);padding-bottom:12px;margin-bottom:14px">首页</h1>
+  <div id="banners"></div>
+  <div class="dash">
+    <div>
+      <div class="cards" id="cards"></div>
+      <p class="note" style="margin-top:18px">每门课 3 项作业：A1 小测 20%、A2 30%、A3 50%，最后算总评。每周日交 3 项；所有作业现在就能做，可以提前交。</p>
+    </div>
+    <div class="side">
+      <h3>接下来要交</h3>
+      <div id="todo"></div>
+      <h3 style="margin-top:22px">最近交的</h3>
+      <div id="recent"></div>
+    </div>
+  </div>
+</div>
+<script>
+W.nav();
+(function () {
+  var b = document.getElementById('banners'), t = W.today(), start = W.d(W.CONFIG.START);
+  if (t < start) b.insertAdjacentHTML('beforeend', '<div class="banner blue"><span>🗓️ 寒假从 <b>' + W.fmt(start, true) + '</b> 开始。现在可以先看看每门课要做什么。</span></div>');
+  var intro = W.store.get('intro', null);
+  if (!intro || !intro.pass) b.insertAdjacentHTML('beforeend', '<div class="banner gold"><span>🎓 先上 30 分钟的<b>学术规范入门</b>：AI 怎么用、资料怎么注明。小测过了才算开始寒假。</span><a class="btn primary small" href="intro.html">去上课</a></div>');
+  // 备份提醒：交过东西、超过 7 天没备份
+  var any = Object.keys(W.subs()).length, last = W.store.get('lastBackup', null), days = last ? (Date.now() - new Date(last)) / 864e5 : 999;
+  if (any && days >= 7) b.insertAdjacentHTML('beforeend', '<div class="banner warn"><span>💾 ' + (last ? '上次备份是 ' + Math.floor(days) + ' 天前。' : '你还没备份过。') + '作业只存在这台 iPad 里，清掉 Safari 数据就没了。下载一份备份发给姐姐。</span><a class="btn small" href="backup.html">去备份</a></div>');
+
+  var cards = document.getElementById('cards');
+  W.COURSES.forEach(function (c) {
+    var ids = W.ofCourse(c.id), done = ids.filter(function (id) { return W.sub(id); }).length;
+    cards.insertAdjacentHTML('beforeend', '<a class="ccard" href="course.html?c=' + c.id + '"><div class="band" style="background:' + c.color + '">' + c.name + '</div>' +
+      '<div class="body"><div class="cname" style="color:' + c.color + '">' + c.name + '</div><div class="ccode">' + c.code + ' · ' + W.CONFIG.TERM + '</div>' +
+      '<div class="note" style="margin-top:6px">已交 ' + done + ' / ' + ids.length + '</div><div class="bar"><i style="width:' + Math.round(done / ids.length * 100) + '%;background:' + c.color + '"></i></div></div></a>');
+  });
+
+  var open = W.ORDER.filter(function (id) { return !W.sub(id) && !(W.A[id].submit === 'quiz' && !W.A[id].ready); })
+    .sort(function (x, y) { return W.due(x) - W.due(y); }).slice(0, 6);
+  document.getElementById('todo').innerHTML = open.length ? open.map(function (id) {
+    var a = W.A[id], c = W.course(a.course), s = W.status(id);
+    return '<a class="todo" href="assignment.html?id=' + id + '"><div>' + s.ic + ' <span class="t">' + a.no + ' ' + W.esc(a.title) + '</span></div><div class="c">' + c.name + ' · 占 ' + a.weight + '%</div><div class="c">截止 ' + W.fmt(W.due(id), true) + ' · ' + s.txt + '</div></a>';
+  }).join('') : '<p class="note">都交完了 🎉</p>';
+
+  var rec = [];
+  Object.keys(W.subs()).forEach(function (id) { if (W.A[id]) rec.push([id, W.sub(id).t]); });
+  rec.sort(function (x, y) { return x[1] < y[1] ? 1 : -1; });
+  document.getElementById('recent').innerHTML = rec.length ? rec.slice(0, 5).map(function (r) {
+    var a = W.A[r[0]], c = W.course(a.course);
+    return '<a class="todo" href="assignment.html?id=' + r[0] + '"><div>✅ <span class="t">' + a.no + ' ' + W.esc(a.title) + '</span></div><div class="c">' + c.name + ' · ' + W.fmt(new Date(r[1])) + '</div></a>';
+  }).join('') : '<p class="note">还没有交过作业。</p>';
+})();
+</script>
+</body>
+</html>

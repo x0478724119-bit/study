@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="寒假作业">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="stylesheet" href="assets/style.css?v=1793328064">
+<script src="assets/core.js?v=1793328064"></script>
+<script src="data/chn.js?v=1793328064"></script>
+<script src="data/math.js?v=1793328064"></script>
+<script src="data/eng.js?v=1793328064"></script>
+<script src="data/phy.js?v=1793328064"></script>
+<script src="data/chem.js?v=1793328064"></script>
+<script src="data/his.js?v=1793328064"></script>
+<script src="data/df.js?v=1793328064"></script>
+<script src="data/py.js?v=1793328064"></script>
+<script src="data/des.js?v=1793328064"></script>
+<title>学术规范入门 · 寒假大作业</title>
+</head>
+<body>
+<div id="nav"></div>
+<div class="wrap narrow">
+  <h1>学术规范入门</h1>
+  <p class="sub">寒假第一课，大约 30 分钟。大学里每门课第一周都会讲这些：资料怎么用、AI 怎么用、什么算抄袭。最后有 6 道小测，对 5 道就过关。</p>
+
+  <div class="card">
+    <h2>1. 为什么要注明来源</h2>
+    <p>你写报告的时候，一定会用到别人的东西：课本上的公式、网上的数据、视频里的方法、AI 的解释。</p>
+    <ul>
+      <li><b>用了不说</b> = 把别人的东西当成自己的 = <b>抄袭</b>。大学里抄袭轻则这项 0 分，重则整门课挂掉。</li>
+      <li><b>用了、并且注明</b> = <b>参考</b>，完全合法。而且注明得越清楚，越显得你做了功课。</li>
+    </ul>
+    <div class="tip"><b>一句话：</b>不是你自己想出来、自己算出来、自己看到的东西，就要注明从哪来的。</div>
+    <p>这些<b>不用</b>注明：常识（比如"水在 100℃ 沸腾"、"秦始皇统一六国"）、你自己拍的照片、你自己做的实验数据、你自己的想法。</p>
+  </div>
+
+  <div class="card">
+    <h2>2. AI 使用等级</h2>
+    <p>每项作业的最上面都标了一个等级。<b>做之前先看等级。</b></p>
+    <div class="tscroll"><table class="t" id="aitable"></table></div>
+    <h3 id="ai">用了 AI 怎么注明（和标参考资料一样）</h3>
+    <ol class="steps">
+      <li>一项作业只用<b>一个</b> DeepSeek 或豆包对话，从头到尾都在这一个对话里问（不要开好几个）。</li>
+      <li><b>正文里：</b>AI 改过的句子后面标（AI 修改），AI 写的标（AI 生成）。只是问了问题、自己写的，不用标。</li>
+      <li><b>文档最后：</b>参考资料后面写一节「AI 声明」：对话分享链接（对话里点「分享」→「复制链接」）+ 两三句用它做了什么。</li>
+    </ol>
+    <p>例子（AI 3 的作业，自己先写、再让 AI 改）：</p>
+    <blockquote>我的游戏一共有三个关卡，每过一关，怪物的血量会增加 20%（AI 修改）。洗牌用的是 random.shuffle() 函数（AI 生成）。</blockquote>
+    <blockquote><b>AI 声明</b><br>使用的 AI：DeepSeek，https://chat.deepseek.com/share/xxxx（2027-01-25）<br>用途：① 问了"怎么让列表随机打乱"，AI 写了洗牌那一段代码，我改了变量名；② 我先写完设计说明，让 AI 指出语病，第 2 段第 3 句按它的建议改了。其他部分都是我自己写的。</blockquote>
+    <div class="warnbox">用了 AI 但不声明，或者超出了这项作业的等级 → <b>这一项 0 分</b>。如实声明不会扣分。</div>
+  </div>
+
+  <div class="card" id="cite">
+    <h2>3. 资料怎么注明</h2>
+    <p><b>第一步：正文里标编号。</b>用了哪个资料，就在那句话后面加 [1]、[2]……同一个资料再用到，还是用同一个编号。</p>
+    <blockquote>电热水壶工作时，电能转化为内能，产生的热量与电流的平方、电阻和通电时间成正比 [2]。</blockquote>
+    <p><b>第二步：最后写参考资料列表。</b>按编号排，不同来源的格式不一样：</p>
+    <div class="tscroll"><table class="t">
+      <tr><th>来源</th><th>格式</th><th>例子</th></tr>
+      <tr><td>书 / 课本</td><td>作者（或出版社）.《书名》.出版社，年份.第几页</td><td>人民教育出版社.《物理 九年级全一册》.人民教育出版社，2024.第 98 页</td></tr>
+      <tr><td>网页</td><td>网站名.《文章标题》.链接（查看日期）</td><td>百度百科.《焦耳定律》.https://baike.baidu.com/…（2027-01-05 查看）</td></tr>
+      <tr><td>视频</td><td>作者或频道.《视频标题》.平台，链接（查看日期）</td><td>某 UP 主.《家庭电路怎么画》.B 站，https://…（2027-01-05 查看）</td></tr>
+      <tr><td>AI</td><td>AI 名称.对话分享链接（使用日期）+ 用来做什么</td><td>DeepSeek.https://…（2027-01-05）用来解释"额定功率"的意思</td></tr>
+      <tr><td>采访</td><td>被采访的人（关系）.采访，日期</td><td>妈妈.采访，2027-01-20</td></tr>
+    </table></div>
+    <p><b>直接引用原话</b>要加引号，比如：《独立宣言》说"人人生而平等" [3]。<b>用自己的话转述</b>不用引号，但也要标编号。</p>
+  </div>
+
+  <div class="card" id="sample">
+    <h2>4. 报告怎么写、怎么交</h2>
+    <ol class="steps" id="steps"></ol>
+    <h3>示例：一份报告从头到尾长什么样</h3>
+    <p class="note">下面是物理 A2 的一个简化示例，只是让你看格式。真正交的要按作业页的每一题写全。</p>
+    <div class="card" style="background:var(--bg)">
+      <p style="text-align:center"><b style="font-size:20px">家用电器铭牌调查</b><br>物理 PHY 901 · A2<br>诗予 · 2026 年 12 月 26 日 · 约 750 字</p>
+      <hr>
+      <p><b>Q1 电器档案表</b></p>
+      <p>我一共调查了家里 9 件电器，见表 1。其中电视机和冰箱拍不到铭牌，用的是作业里给的样例数据。</p>
+      <p class="note">表 1 我家电器档案</p>
+      <table class="t"><tr><th>电器</th><th>铭牌</th><th>额定功率</th><th>每天使用</th><th>每月耗电</th><th>每月电费</th></tr>
+      <tr><td>电热水壶</td><td>见附录 1</td><td>1.8 kW</td><td>0.3 h</td><td>16.2 kW·h</td><td>9.72 元</td></tr>
+      <tr><td>……</td><td></td><td></td><td></td><td></td><td></td></tr></table>
+      <p><b>Q2 计算过程</b></p>
+      <p>以电热水壶为例：W = Pt = 1.8 kW × 0.3 h × 30 = 16.2 kW·h，电费 = 16.2 × 0.6 = 9.72 元。其余两件的手写过程见附录 2。</p>
+      <p><b>Q3 额定功率和实际功率</b></p>
+      <p>额定功率是用电器在额定电压下正常工作时的功率 [1]。……</p>
+      <p>……（Q4–Q6）</p>
+      <hr>
+      <p><b>参考资料</b>（新起一页）</p>
+      <p>[1] 人民教育出版社.《物理 九年级全一册》.人民教育出版社，2024.第 92 页<br>[2] 国家电网.《网上国网》App 电费查询（2026-12-25 查看）</p>
+      <p><b>AI 声明</b></p>
+      <p>使用的 AI：DeepSeek，https://chat.deepseek.com/share/xxxx（2026-12-24）<br>用途：问了"额定电压和实际电压有什么区别"，看懂以后 Q3 自己写的。没有让 AI 写任何句子。</p>
+      <p><b>附录</b></p>
+      <p>附录 1 电热水壶铭牌（照片）<br>附录 2 Q2 手写计算过程（照片）</p>
+    </div>
+    <h3>怎么交</h3>
+    <ol class="steps"><li>Pages 右上角 ··· → 导出 → PDF → 存到「文件」。</li><li>打开网站这项作业的页面，最下面「上传文件」选这个 PDF，点「提交」。文件存在这台 iPad 里，姐姐会从备份里看到。</li><li>每周日交完，去「备份」下载一份，存进微信收藏。</li></ol>
+    <p class="note">作文（AI 0）和英语文章不用 Pages，直接在作业页的写作框里打字：左边看题，右边写。写作框不能粘贴，会记录用时。</p>
+  </div>
+
+  <div class="card">
+    <h2>5. 截止日期和分数</h2>
+    <ul>
+      <li>每周日晚上 12 点前交 3 项。所有作业现在就开放，可以提前做。</li>
+      <li>在网站上点了「提交」就算<b>交了</b>（交没交、有没有晚交，网站会记录）。<b>做得完不完整</b>是打分的时候看：哪一题没写或者没写够，那一题就拿不到分。所以没做完也先交，能拿多少拿多少。</li>
+      <li>晚交一天扣这项作业的 5%（晚 20 天就扣完了）。截止前可以重交，姐姐看最后一版。</li>
+      <li>小测做完自动出分；报告和作文姐姐会在 <b>3 月之前</b>改完出分（老师改作业也需要时间），你只要按时交就好。</li>
+      <li>每门课 100 分：A1 20% + A2 30% + A3 50%。每项作业页面上写了每一题几分、满分要做到什么。</li>
+      <li>春节那周没有截止日期。考前复习那周也会暂停，截止往后推。</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>小测：这样做行不行？</h2>
+    <div id="quiz"></div>
+    <div class="row"><button class="btn primary" id="check">交卷</button><span id="res"></span></div>
+  </div>
+</div>
+<script>
+W.nav();
+document.getElementById('aitable').innerHTML = '<tr><th>等级</th><th>可以</th><th>不可以</th><th>例子</th></tr>' +
+  W.AI.map(function (L) { return '<tr><td>' + W.aiBadge(L.n) + '</td><td>' + L.can + '</td><td>' + L.cant + '</td><td>' + L.ex + '</td></tr>'; }).join('');
+document.getElementById('steps').innerHTML = W.REPORT_STEPS.map(function (x) { return '<li>' + x + '</li>'; }).join('');
+var QS = [
+  {q: '物理报告（AI 1）里，你从百度百科抄了一句焦耳定律的解释，加了引号和 [2]，参考资料里写了这个词条。', o: ['可以，注明了就是参考', '不行，这是抄袭', '不行，物理报告不能用网上的资料'], a: 0, e: '加了引号、标了编号、列了参考资料，就是合法的引用。'},
+  {q: '英语 A2（AI 0）。你先用中文写好一段，让 DeepSeek 翻译成英文，再自己一个字一个字打进写作框。', o: ['可以，因为是自己打的字', '不行，AI 0 不能用 AI 和翻译软件', '可以，只要交对话链接'], a: 1, e: 'AI 0 什么都不能用，翻译也不行。打字是你打的，但句子是 AI 写的。'},
+  {q: '历史 A3（AI 1）。你问 DeepSeek"启蒙运动是什么"，看懂了，用自己的话写了一段，并交了对话链接。', o: ['不行，历史不能用 AI', '可以，这就是"只能提问"', '可以，但不用交链接'], a: 1, e: '让 AI 解释概念、自己写，正是等级 1 允许的。用了就要交链接。'},
+  {q: '语文 A3（AI 1）。你让 AI 写了"人物小传"那一段，自己改了几个词。', o: ['可以，因为自己改过', '不行，等级 1 不能让 AI 写要交的内容', '可以，只要在声明里说清楚'], a: 1, e: '等级 1 只能提问。只有等级 3 才能让 AI 写，而且要注明。'},
+  {q: '你看了一个 B 站视频，学会了家庭电路怎么画，然后在报告里照着画了你家的电路。', o: ['不用注明，图是自己画的', '要注明：作者.《视频标题》.B 站，链接（查看日期）', '要把视频截图贴进报告'], a: 1, e: '方法是从视频学来的，要按视频的格式注明。'},
+  {q: 'Python 游戏（AI 3）里，你让 AI 写了一个"洗牌"的函数。', o: ['直接用，不用说', '在代码里用注释标出这一段是 AI 写的，并交 AI 声明', 'AI 3 也不能让 AI 写代码'], a: 1, e: '等级 3 可以用 AI 生成，但必须注明是哪一段、自己改了什么。'}
+];
+var pick = {};
+document.getElementById('quiz').innerHTML = QS.map(function (x, i) {
+  return '<div class="q"><b>' + (i + 1) + '.</b> ' + x.q + '<div class="opts">' + x.o.map(function (o, j) { return '<button class="btn opt" data-i="' + i + '" data-j="' + j + '">' + o + '</button>'; }).join('') + '</div><div class="fb" id="fb' + i + '"></div></div>';
+}).join('');
+document.querySelectorAll('.opt').forEach(function (b) { b.onclick = function () {
+  var i = +b.dataset.i; pick[i] = +b.dataset.j;
+  document.querySelectorAll('.opt[data-i="' + i + '"]').forEach(function (x) { x.style.borderColor = ''; x.style.fontWeight = ''; });
+  b.style.borderColor = 'var(--blue)'; b.style.fontWeight = '600';
+}; });
+document.getElementById('check').onclick = function () {
+  if (Object.keys(pick).length < QS.length) { document.getElementById('res').textContent = '还有题没选。'; return; }
+  var n = 0;
+  QS.forEach(function (x, i) { var ok = pick[i] === x.a; if (ok) n++;
+    document.querySelectorAll('.opt[data-i="' + i + '"]').forEach(function (b) { b.classList.remove('right', 'wrong'); if (+b.dataset.j === x.a) b.classList.add('right'); else if (+b.dataset.j === pick[i]) b.classList.add('wrong'); });
+    var f = document.getElementById('fb' + i); f.className = 'fb ' + (ok ? 'ok' : 'no'); f.textContent = (ok ? '✓ ' : '✗ ') + x.e; });
+  var pass = n >= 5, old = W.store.get('intro', null);
+  if (!old || !old.pass) { W.store.set('intro', {pass: pass, score: n, t: new Date().toISOString()}); if (pass) W.notify('🎓 学术规范入门小测过关（' + n + '/6），寒假开始！'); }
+  document.getElementById('res').innerHTML = pass ? '🎉 ' + n + ' / 6，过关！寒假正式开始。<a href="work.html">去看作业</a>' : n + ' / 6，再看看上面的说明，改一下再交卷。';
+};
+</script>
+</body>
+</html>
