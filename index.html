@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="学习站">
 <title>学习站</title>
-<link rel="stylesheet" href="style.css?v=1793180015">
+<link rel="stylesheet" href="style.css?v=1793319584">
 </head><body class="app">
 <header class="top">
   <div class="brand"><div class="logo" style="background:url(apple-touch-icon.png) center/cover"></div><div><b>我的设计工作室</b><small id="lv"></small></div></div>
@@ -21,7 +21,7 @@
 </nav>
 <div class="modal" id="modal"><div class="box" id="mbox"></div></div>
 
-<script src="common.js?v=1793180015"></script>
+<script src="common.js?v=1793319584"></script>
 <script>
 const LEVELS = [
   {lv:1, name:'设计学徒', need:0, icon:'🌱'},
@@ -39,7 +39,7 @@ const isWeekend = d => [0,6].includes(new Date(d + 'T12:00').getDay());
 
 // 加载数据文件（加时间戳，保证拿到最新的）
 function loadScript(src){ return new Promise(r => { const s = document.createElement('script'); s.src = src + '?v=' + Date.now(); s.onload = r; s.onerror = r; document.body.appendChild(s); }); }
-Promise.all([loadScript('data/days.js'), loadScript('data/jobs.js'), loadScript('data/pause.js'), loadScript('data/leave.js'), loadScript('data/adjust.js'), loadScript('data/feedback.js'), loadScript('data/codes.js')]).then(() => { addReviewTasks(); save('daysCache', window.DAYS); checkMissed(); checkWeekJobs(); render(); });
+Promise.all([loadScript('data/days.js'), loadScript('data/jobs.js'), loadScript('data/pause.js'), loadScript('data/leave.js'), loadScript('data/adjust.js'), loadScript('data/feedback.js'), loadScript('data/codes.js')]).then(() => { addReviewTasks(); save('daysCache', window.DAYS); if (!freshDevice()){ checkMissed(); checkWeekJobs(); } else save('start', T); render(); });
 // 错题复习：今天（或已经开始复习的那天）在最后加一项"复习错题"
 function addReviewTasks(){
   const fixed = load('reviewList', {});
@@ -492,7 +492,8 @@ $('#modal').onclick = e => { if (e.target.id === 'modal') closeM(); };
 try { const nav = JSON.parse(sessionStorage.getItem('nav') || '{}'); if (nav.tab) tab = nav.tab; if (nav.job) jobSel = nav.job; if (nav.day && !selDay) selDay = nav.day; } catch(e){}
 function render(){
   try { sessionStorage.setItem('nav', JSON.stringify({tab, job: jobSel, day: selDay})); } catch(e){}
-  if (window.DAYS){ applyAdjust(); settle(); checkMissed(); weekly(); checkJobs(); }
+  // 新设备只看不结算；start 一直记成今天，以后真用这台设备了也不会回头扣以前的天
+  if (window.DAYS){ if (freshDevice()){ save('start', T); settle(); } else { applyAdjust(); settle(); checkMissed(); weekly(); checkJobs(); } }
   const w = wallet(); $('#coin').textContent = w.coins; const L = level(w.earned); $('#lv').textContent = `Lv${L.lv} · ${L.name}`;
   $('#view').innerHTML = (PREVIEW ? '<div class="bar-msg ok">👀 预览模式：你看到的是全部内容（不锁），诗予那边该锁的照样锁。这里的操作只改你自己浏览器的数据，不推送。</div>' : '') + {today: viewToday, jobs: viewJobs, book: viewBook, me: viewMe}[tab]();
   document.querySelectorAll('.tabs button').forEach(b => b.classList.toggle('on', b.dataset.t === tab));

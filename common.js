@@ -40,8 +40,22 @@ function addCoins(n, why){
 // 推送到飞书群。没配置时什么都不做。
 // 姐姐自己的浏览器不推送：打开过 ?me=1，或者登录过后台
 try { if (new URLSearchParams(location.search).get('me') === '1') localStorage.setItem('isAdmin', 'true'); } catch(e){}
+// 新设备：没有任何完成记录（做题、课、文字作业、打卡、订单、任务金币）。
+// 妈妈的手机、别的浏览器打开网站时只看内容：不结算、不扣金币、不推送（10-18、10-29 都误扣过）
+function freshDevice(){
+  try {
+    const has = k => { const v = load(k, null); return !!v && Object.keys(v).length > 0; };
+    if (['taskpaid', 'lesson', 'wake', 'jobs', 'py', 'paid'].some(has)) return false;
+    for (let i = 0; i < localStorage.length; i++){
+      const k = localStorage.key(i);
+      if (/^day-\d/.test(k) && has(k)) return false;
+      if (/^quiz-/.test(k)){ const q = load(k, null); if (q && q.first != null) return false; }
+    }
+    return true;
+  } catch(e){ return true; }
+}
 function notify(text){
-  if (!CONFIG.FEISHU || load('isAdmin', false) || load('adminToken', '')) return;
+  if (!CONFIG.FEISHU || load('isAdmin', false) || load('adminToken', '') || freshDevice()) return;
   const body = JSON.stringify({msg_type: 'text', content: {text: '【学习站】' + text + '\n' + notifyTail()}});
   try { fetch(CONFIG.FEISHU, {method: 'POST', mode: 'no-cors', headers: {'Content-Type': 'text/plain'}, body}); } catch(e){}
 }
