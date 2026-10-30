@@ -7,17 +7,17 @@
 <meta name="apple-mobile-web-app-title" content="寒假作业">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="assets/style.css?v=1793331307">
-<script src="assets/core.js?v=1793331307"></script>
-<script src="data/chn.js?v=1793331307"></script>
-<script src="data/math.js?v=1793331307"></script>
-<script src="data/eng.js?v=1793331307"></script>
-<script src="data/phy.js?v=1793331307"></script>
-<script src="data/chem.js?v=1793331307"></script>
-<script src="data/his.js?v=1793331307"></script>
-<script src="data/df.js?v=1793331307"></script>
-<script src="data/py.js?v=1793331307"></script>
-<script src="data/des.js?v=1793331307"></script>
+<link rel="stylesheet" href="assets/style.css?v=1793331475">
+<script src="assets/core.js?v=1793331475"></script>
+<script src="data/chn.js?v=1793331475"></script>
+<script src="data/math.js?v=1793331475"></script>
+<script src="data/eng.js?v=1793331475"></script>
+<script src="data/phy.js?v=1793331475"></script>
+<script src="data/chem.js?v=1793331475"></script>
+<script src="data/his.js?v=1793331475"></script>
+<script src="data/df.js?v=1793331475"></script>
+<script src="data/py.js?v=1793331475"></script>
+<script src="data/des.js?v=1793331475"></script>
 <title>作业 · 寒假大作业</title>
 </head>
 <body>
@@ -70,7 +70,7 @@ W.nav();
   function renderSubmit() {
     var box = document.getElementById('submit'), vers = W.subs()[id] || [], x = '';
     if (vers.length) x += '<div class="banner blue" style="margin:0 0 14px"><span>✅ 已交 ' + vers.length + ' 版，最后一版 ' + new Date(vers[vers.length - 1].t).toLocaleString('zh-CN') +
-      (vers[vers.length - 1].late ? '（晚 ' + vers[vers.length - 1].late + ' 天）' : '') + '。想改的话，改好再交一次。</span></div>';
+      (vers[vers.length - 1].late ? '（晚 ' + vers[vers.length - 1].late + ' 天）' : '') + '。想改的话，改好再交一次。<br><b>交完马上备份：</b>点右边的按钮 → 选微信 → 发给姐姐（或存进收藏）。</span><button class="btn primary small" id="bk" disabled>准备中…</button></div>';
     x += '<h2>' + (vers.length ? '重新提交' : '提交') + '</h2>';
     if (a.submit === 'write') {
       var d = W.store.get('draft_' + id, {text: '', ms: 0, leaves: 0, pastes: 0});
@@ -89,6 +89,9 @@ W.nav();
     box.innerHTML = x;
     if (a.submit === 'write') wireWriting();
     showFiles();
+    var bk = document.getElementById('bk');
+    if (bk) W.backupFile(id).then(function (f) { bk.disabled = false; bk.textContent = '📤 备份并发给姐姐'; bk.onclick = function () { W.shareFile(f); }; },
+      function () { bk.textContent = '去备份页'; bk.disabled = false; bk.onclick = function () { location.href = 'backup.html'; }; });
     document.getElementById('go').onclick = go;
   }
   function showFiles() {
@@ -136,7 +139,7 @@ W.nav();
       W.submit(id, data);
       if (a.submit === 'write') W.store.set('draft_' + id, {text: data.text, ms: data.ms, leaves: data.leaves, pastes: data.pastes});
       renderSubmit(); document.getElementById('submit').scrollIntoView();
-      alert('交好了！' + (W.status(id).k === 'late' ? '' : '按时完成 👍') + '\n每周交完记得去「备份」下载一份，存进微信收藏。');
+      alert('交好了！' + (W.status(id).k === 'late' ? '' : '按时完成 👍') + '\n接下来点「📤 备份并发给姐姐」，把这一项发到微信。');
     }
   }
 })();

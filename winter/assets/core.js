@@ -122,17 +122,25 @@ W.FILES = (function () {
   };
 })();
 
-W.exportAll = function () {
+// 备份文件：所有文字记录（作文、提交记录）+ 上传的文件。onlyId 给了的话只带这一项的文件（文件小，方便微信发）
+W.backupFile = function (onlyId) {
   var o = {site: 'winter-2026', at: new Date().toISOString(), data: {}};
-  W.store.keys().forEach(function (k) { o.data[k] = localStorage.getItem(k); });
   W.store.set('lastBackup', new Date().toISOString());
+  W.store.keys().forEach(function (k) { o.data[k] = localStorage.getItem(k); });
   return W.FILES.exportAll().then(function (files) {
-    o.files = files;
-    var a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(o)], {type: 'application/json'}));
-    a.download = '寒假作业备份_' + W.iso(new Date()) + '.json'; document.body.appendChild(a); a.click(); a.remove();
+    o.files = onlyId ? files.filter(function (r) { return r.id === onlyId; }) : files;
+    var name = '寒假作业备份_' + (onlyId ? onlyId + '_' : '') + W.iso(new Date()) + '.json';
+    return new File([JSON.stringify(o)], name, {type: 'application/json'});
   });
 };
-W.importAll = function (file, done) {
+W.download = function (f) { var a = document.createElement('a'); a.href = URL.createObjectURL(f); a.download = f.name; document.body.appendChild(a); a.click(); a.remove(); };
+// iPad 上弹出分享菜单（选微信 → 姐姐 / 文件传输助手 / 收藏）；不支持分享的设备就下载
+W.shareFile = function (f) {
+  if (navigator.canShare && navigator.canShare({files: [f]})) return navigator.share({files: [f], title: f.name}).catch(function () {});
+  W.download(f); return Promise.resolve();
+};
+W.exportAll = function () { return W.backupFile().then(W.download); };
+W.importAll = function (file, done) {  // 可以一个一个导入多个备份：文字记录取最新那份，文件累加
   var r = new FileReader();
   r.onload = function () {
     try { var o = JSON.parse(r.result); if (o.site !== 'winter-2026') throw 0;
