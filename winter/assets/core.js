@@ -141,7 +141,7 @@ W.FILES = (function () {
   };
 })();
 
-// 备份文件：所有文字记录（作文、提交记录）+ 上传的文件。onlyId 给了的话只带这一项的文件（文件小，方便微信发）
+// 备份文件：所有文字记录（作文、提交记录）+ 上传的文件。onlyId 给了的话只带这一项的文件（文件小，方便发飞书）
 W.backupFile = function (onlyId) {
   var o = {site: 'winter-2026', at: new Date().toISOString(), data: {}};
   W.store.set('lastBackup', new Date().toISOString());
@@ -160,7 +160,7 @@ W.snapshotFile = function (id) {
   return new File([JSON.stringify(o)], '寒假作业备份_' + id + '_' + W.iso(new Date()) + '.json', {type: 'application/json'});
 };
 W.download = function (f) { var a = document.createElement('a'); a.href = URL.createObjectURL(f); a.download = f.name; document.body.appendChild(a); a.click(); a.remove(); };
-// iPad 上弹出分享菜单（选微信 → 姐姐 / 文件传输助手 / 收藏）；不支持分享的设备就下载
+// iPad 上弹出分享菜单（选飞书 → 寒假作业提交群）；不支持分享的设备就下载
 W.shareFile = function (f) {
   if (navigator.canShare && navigator.canShare({files: [f]})) return navigator.share({files: [f], title: f.name}).catch(function () {});
   W.download(f); return Promise.resolve();
