@@ -82,7 +82,7 @@ W.reg({id: 'ENG-A3', course: 'ENG', n: 3, no: 'A3', title: '英文读书报告',
   intro: '读一本简写版的英文书（分级读物），用英文写一份读书报告。读书可以分几天，每天读一两章。',
   dataTitle: '选一本书',
   data: '<p>推荐《书虫》（Oxford Bookworms）第 2–3 级，比如：</p><ul><li><i>The Railway Children</i>（铁路边的孩子们）</li><li><i>Sherlock Holmes Short Stories</i>（福尔摩斯短篇）</li><li><i>The Secret Garden</i>（秘密花园）</li><li><i>Alice\'s Adventures in Wonderland</i>（爱丽丝漫游奇境）</li></ul>' +
-    '<p class="note">纸书、电子书都可以。读的时候不用每个词都查，看懂故事就行；遇到喜欢的句子抄下来，写报告时要用。</p>',
+    '<div class="tip"><b>去哪找：</b>淘宝、京东搜"书虫 牛津英汉双语读物 2级"（外研社出的，一本十几块钱，买一本就够）；也可以先在微信读书里搜一下书名。姐姐可以帮你买。</div><p class="note">纸书、电子书都可以。读的时候不用每个词都查，看懂故事就行；遇到喜欢的句子抄下来，写报告时要用。</p>',
   method: '<div class="tscroll"><table class="t"><tr><th>部分</th><th>长度</th><th>要包含</th></tr>' +
     '<tr><td>Book information</td><td>—</td><td>书名、作者、级别、你读了几天</td></tr>' +
     '<tr><td>Summary 故事梗概</td><td>120–150 词</td><td>主要人物、发生在哪里、发生了什么、结局（用一般过去时）</td></tr>' +
