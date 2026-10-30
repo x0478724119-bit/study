@@ -9,7 +9,7 @@
 <link rel="icon" type="image/png" href="icon-512.png">
 <meta name="robots" content="noindex">
 <title>管理后台</title>
-<link rel="stylesheet" href="style.css?v=1793323377">
+<link rel="stylesheet" href="style.css?v=1793325214">
 <style>
 .tabs2{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0 14px}.tabs2 button{width:auto;background:var(--card);border:1px solid var(--line);color:var(--ink);padding:8px 14px}.tabs2 button.on{background:var(--acc);color:#fff;border-color:var(--acc)}
 label{display:block;font-size:13px;color:var(--soft);margin:10px 0 4px}
@@ -23,7 +23,7 @@ textarea.in{min-height:72px}.grid3{display:grid;grid-template-columns:1fr 1fr 1f
 </head><body><div class="w">
 <div id="app"></div>
 </div>
-<script src="common.js?v=1793323377"></script>
+<script src="common.js?v=1793325214"></script>
 <script>
 // ===== 管理后台：只有存了 GitHub 钥匙的浏览器能改东西 =====
 const REPO = 'x0478724119-bit/study', API = 'https://api.github.com/repos/' + REPO + '/contents/';
@@ -81,6 +81,10 @@ async function boot(){
   try { codes = await readJS('data/codes.js', 'CODES'); } catch(e){ codes = {}; }
   let cc = false; for (const c of codeTasks){ const h = fnv(await codeOf(c.id, 'full')); if (codes[c.id] !== h){ codes[c.id] = h; cc = true; } }
   if (cc) await writeJS('data/codes.js', 'CODES', codes, '// 每周作业的取件码（由管理后台生成）：key = 码的 id，值 = 码的 fnv 哈希。', '生成作业取件码');
+  // 5·3 交照片的码：每科第 1–30 批 × 1–5 张，预先生成好哈希（码 = 暗号算出来的，不用记）
+  let c53 = {}; try { c53 = await readJS('data/codes53.js', 'CODES53'); } catch(e){}
+  const want = {}; for (const su of CONFIG.B53_SUBJ) for (let k = 1; k <= 30; k++) for (let n = 1; n <= CONFIG.B53_MAX; n++){ const id = `53-${su}-${k}-${n}`; want[id] = fnv(await codeOf(id, 'full')); }
+  if (JSON.stringify(want) !== JSON.stringify(c53)) await writeJS('data/codes53.js', 'CODES53', want, '// 5·3 交照片的码（由管理后台生成）：key = 53-科目-第几批-几张，值 = 码的 fnv 哈希。', '生成 5·3 照片码');
   render();
 }
 
@@ -189,8 +193,16 @@ async function addAdj(){ const n = +$('#c-n').value, w = $('#c-w').value.trim();
 
 function vCodes(){
   const today = todayStr(), list = codeTasks.slice().sort((a, b) => b.d.localeCompare(a.d));
-  return `<p class="s">她把照片发到工作室群、你看过了，就点"看码"，把 6 位码发给她。她输对了，那一项才算完成；周六早上 6 点前没输码，按缺交扣金币。</p>` +
+  const sel = (id, a, f) => `<select class="in" id="${id}">${a.map(f).join('')}</select>`;
+  return `<div class="c"><b>📚 5·3 交照片</b><p class="s">她交一批时，学习站群会收到"数学 第 4 批 · 3 张（P12–P20）"。你看工作室群里每页都拍了（黑笔做题 + 红笔订正），就在这里选同样的科目 / 批次 / 张数，把码发给她。每张 ${CONFIG.B53_COIN} 金币。不齐就先别给，让她补拍。</p>
+    <div class="grid3"><div><label>科目</label>${sel('a53s', CONFIG.B53_SUBJ, x => `<option>${x}</option>`)}</div><div><label>第几批</label>${sel('a53k', [...Array(30)].map((_, i) => i + 1), x => `<option value="${x}">第 ${x} 批</option>`)}</div><div><label>几张</label>${sel('a53n', [...Array(CONFIG.B53_MAX)].map((_, i) => i + 1), x => `<option value="${x}">${x} 张</option>`)}</div></div>
+    <button class="main mini" onclick="code53Show()">看码</button><div class="codes" id="a53r"></div></div>
+    <p class="s">她把照片发到工作室群、你看过了，就点"看码"，把 6 位码发给她。她输对了，那一项才算完成；周六早上 6 点前没输码，按缺交扣金币。</p>` +
     (list.length ? list.map(c => `<div class="c"><div class="row2"><span><b>${c.d.slice(5)}</b> · ${esc(c.t)}${c.d < today ? ' <small class="s">（已过）</small>' : ''}</span><button class="main mini" onclick="codeShow('${c.id}','${c.d}')">看码</button></div><div class="codes" id="cs-${c.id}"></div></div>`).join('') : '<p class="s">现在没有要码的作业。</p>');
+}
+async function code53Show(){
+  const su = $('#a53s').value, k = $('#a53k').value, n = $('#a53n').value, c = await codeOf(`53-${su}-${k}-${n}`, 'full');
+  $('#a53r').innerHTML = `<span style="font-size:28px;font-weight:800;letter-spacing:4px">${c}</span> <button class="ghost mini" onclick="navigator.clipboard.writeText('${c}').then(()=>toast('已复制，发给她吧'))">复制</button><div class="s">${su} 第 ${k} 批 · ${n} 张 = ${n * CONFIG.B53_COIN} 金币</div>`;
 }
 async function codeShow(id, d){
   const c = await codeOf(id, 'full');

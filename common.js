@@ -15,7 +15,10 @@ const CONFIG = {
   WEEK_JOBS_PEN: 10,       // 周日前没交够（周一早上 6 点后结算），少一单扣 10
   WEEK_JOBS_OFF: ['2026-11-02', '2026-11-09'],  // 这几周（周一日期）不要求交订单：期中冲刺和期中考试
   JOB_LIMIT: 2,            // 同时最多 2 个进行中的单；可以放弃换别的
-  STALE: 7,                // 作业欠超过 7 天：不能接单、不能兑换；请假的作业 7 天内没补完照样扣
+  STALE: 7,
+  B53_COIN: 4,             // 5·3 每做一张（一份同步练习，约 40 分钟）4 金币，一批照片交完、输对码一次发
+  B53_SUBJ: ['语文', '数学', '英语', '物理', '化学', '道法', '历史'],
+  B53_MAX: 5,              // 一批最多 5 张（再多就分两批交）                // 作业欠超过 7 天：不能接单、不能兑换；请假的作业 7 天内没补完照样扣
   FEISHU: 'https://open.feishu.cn/open-apis/bot/v2/hook/1af9d69f-acb2-491f-824e-037b5537a920',
 };
 
@@ -46,7 +49,7 @@ try { if (new URLSearchParams(location.search).get('me') === '1') localStorage.s
 function freshDevice(){
   try {
     const has = k => { const v = load(k, null); return !!v && Object.keys(v).length > 0; };
-    if (['taskpaid', 'lesson', 'wake', 'jobs', 'py', 'paid'].some(has)) return false;
+    if (['taskpaid', 'lesson', 'wake', 'jobs', 'py', 'paid', 'b53'].some(has)) return false;
     for (let i = 0; i < localStorage.length; i++){
       const k = localStorage.key(i);
       if (/^day-\d/.test(k) && has(k)) return false;

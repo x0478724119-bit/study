@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="学习站">
 <title>学习站</title>
-<link rel="stylesheet" href="style.css?v=1793323377">
+<link rel="stylesheet" href="style.css?v=1793325214">
 </head><body class="app">
 <header class="top">
   <div class="brand"><div class="logo" style="background:url(apple-touch-icon.png) center/cover"></div><div><b>我的设计工作室</b><small id="lv"></small></div></div>
@@ -22,7 +22,7 @@
 </nav>
 <div class="modal" id="modal"><div class="box" id="mbox"></div></div>
 
-<script src="common.js?v=1793323377"></script>
+<script src="common.js?v=1793325214"></script>
 <script>
 const LEVELS = [
   {lv:1, name:'设计学徒', need:0, icon:'🌱'},
@@ -40,7 +40,7 @@ const isWeekend = d => [0,6].includes(new Date(d + 'T12:00').getDay());
 
 // 加载数据文件（加时间戳，保证拿到最新的）
 function loadScript(src){ return new Promise(r => { const s = document.createElement('script'); s.src = src + '?v=' + Date.now(); s.onload = r; s.onerror = r; document.body.appendChild(s); }); }
-Promise.all([loadScript('data/days.js'), loadScript('data/jobs.js'), loadScript('data/pause.js'), loadScript('data/leave.js'), loadScript('data/adjust.js'), loadScript('data/feedback.js'), loadScript('data/codes.js')]).then(() => { addReviewTasks(); save('daysCache', window.DAYS); if (!viewOnly() && !PREVIEW){ checkMissed(); checkWeekJobs(); } else if (freshDevice()) save('start', T); render(); });
+Promise.all([loadScript('data/days.js'), loadScript('data/jobs.js'), loadScript('data/pause.js'), loadScript('data/leave.js'), loadScript('data/adjust.js'), loadScript('data/feedback.js'), loadScript('data/codes.js'), loadScript('data/codes53.js')]).then(() => { addReviewTasks(); save('daysCache', window.DAYS); if (!viewOnly() && !PREVIEW){ checkMissed(); checkWeekJobs(); } else if (freshDevice()) save('start', T); render(); });
 // 错题复习：今天（或已经开始复习的那天）在最后加一项"复习错题"
 function addReviewTasks(){
   const fixed = load('reviewList', {});
@@ -168,6 +168,7 @@ function viewToday(){
   const bl = backlog(), st = stale();
   if (CONFIG.WEEK_JOBS && T >= CONFIG.WEEK_JOBS_FROM && !paused(T) && !(CONFIG.WEEK_JOBS_OFF || []).includes(weekMon(T))){ const n = jobsInWeek(T), need = CONFIG.WEEK_JOBS; h += `<div class="bar-msg">📦 <b>本周作业</b>：交 ${need} 单订单（已交 <b>${n}/${need}</b>）${n >= need ? ' ✅' : ` · 周日前交完，少一单扣 ${CONFIG.WEEK_JOBS_PEN}`} <a class="go" href="#" onclick="tab='jobs';jobSel=null;render();scrollTo(0,0);return false">去接单 →</a></div>`; }
   if (bl.length) h += `<div class="bar-msg">📌 还欠 <b>${bl.length} 天</b>作业${st.length ? `（${st.length} 天超过 ${CONFIG.STALE} 天，<b>不能接单、不能兑换</b>）` : ''}：${bl.map(k => `<a class="go" href="#" onclick="selDay='${k}';render();scrollTo(0,0);return false">${+k.slice(5,7)}/${+k.slice(8)} 去补</a>`).join(' · ')}</div>`;
+  if (key === T) h += view53();
   if (!day) return h + '<div class="c">这一天没有任务。</div>';
   // ④ 标题 + 进度
   const late = key < T, onLeave = load('leave', {})[key] || okLeave(key), miss = load('missed', {})[key];
@@ -221,6 +222,43 @@ function viewToday(){
   if (!onLeave && key === T && !isWeekend(T) && !all && leaveLeft() > 0) h += `<button class="ghost" onclick="askLeave()">今天请假（本月还剩 ${leaveLeft()} 次）</button>`;
   return h;
 }
+// ===== 5·3 交照片：按自己的进度做，攒一批（1–5 张）交一次 =====
+// 每科一个批次号：数学第 1 批、第 2 批……码绑定"科目 + 第几批 + 几张"，所以张数改不了、同一个码用不了两次
+// b53 = {n: {数学: 已经交了几批}, list: [{s 科目, k 第几批, c 张数, p 页码, at 提交时间, ok 输码时间}]}
+function view53(){
+  const B = load('b53', {n: {}, list: []}), wait = B.list.filter(x => !x.ok);
+  const opt = (a, f) => a.map(f).join('');
+  return `<details class="c" ${wait.length ? 'open' : ''}><summary><b>📚 5·3 交照片</b>${wait.length ? ` <span class="s">（${wait.length} 批等码）</span>` : ' <span class="s">做完一批就交，每张 🪙' + CONFIG.B53_COIN + '</span>'}</summary>
+    <p class="s" style="margin:8px 0">按自己的进度做，学一章做一张。做了一批（1–${CONFIG.B53_MAX} 张）就在这里交：<b>每一页都拍</b>（黑笔做题 + 红笔订正都要看得到），发到工作室群。姐姐看齐了给你码，输对了一次发金币。</p>
+    ${wait.map(x => `<div class="c" style="margin:8px 0;background:var(--bg)"><b>${x.s} · 第 ${x.k} 批 · ${x.c} 张</b>（${esc(x.p)}）<div class="d">${x.at} 提交 · 照片发了吗？等姐姐的码</div>
+      <input class="fill" id="c53-${x.s}-${x.k}" inputmode="numeric" maxlength="6" placeholder="输入姐姐给的 6 位码" style="max-width:220px"><button class="main sm" style="margin-top:8px" onclick="code53('${x.s}',${x.k})">交码（+${x.c * CONFIG.B53_COIN}）</button></div>`).join('')}
+    <div class="row" style="gap:8px;flex-wrap:wrap;margin-top:8px"><select class="fill" id="s53" style="max-width:120px">${opt(CONFIG.B53_SUBJ, x => `<option>${x}</option>`)}</select>
+      <select class="fill" id="n53" style="max-width:110px">${opt([...Array(CONFIG.B53_MAX)].map((_, i) => i + 1), x => `<option value="${x}">${x} 张</option>`)}</select></div>
+    <input class="fill" id="p53" placeholder="哪几页 / 哪几节，比如 P12–P20 第 3 节" style="margin-top:8px">
+    <button class="main" style="margin-top:8px" onclick="submit53()">📸 照片发好了，交这一批</button>
+    ${B.list.filter(x => x.ok).length ? `<div class="d" style="margin-top:8px">已交：${CONFIG.B53_SUBJ.map(su => [su, B.list.filter(x => x.ok && x.s === su).reduce((a, x) => a + x.c, 0)]).filter(x => x[1]).map(([su, c]) => `${su} ${c} 张`).join(' · ')}</div>` : ''}</details>`;
+}
+function submit53(){
+  const s = $('#s53').value, c = +$('#n53').value, p = $('#p53').value.trim();
+  if (p.length < 2){ toast('写一下是哪几页'); return; }
+  const B = load('b53', {n: {}, list: []});
+  if (B.list.some(x => !x.ok && x.s === s)){ toast(`${s} 还有一批在等码，先把那批交完`); return; }
+  const k = (B.n[s] || 0) + 1; B.n[s] = k;
+  B.list.unshift({s, k, c, p, at: todayStr() + ' ' + hm()}); save('b53', B);
+  notify(`📸 5·3 交照片：${s} 第 ${k} 批 · ${c} 张（${p}）
+看看工作室群里照片齐不齐（每页都有黑笔做题 + 红笔订正）。齐了就到后台「📸 作业码」→ 5·3，选 ${s} / 第 ${k} 批 / ${c} 张，把码发给她（${c * CONFIG.B53_COIN} 金币）。`);
+  toast('交了！等姐姐看完照片给码'); render();
+}
+function code53(s, k){
+  const B = load('b53', {n: {}, list: []}), x = B.list.find(y => y.s === s && y.k === k && !y.ok); if (!x) return;
+  const v = document.getElementById(`c53-${s}-${k}`).value.trim(), h = (window.CODES53 || {})[`53-${s}-${k}-${x.c}`];
+  if (!h){ toast('姐姐还没生成码，让她打开一下后台'); return; }
+  if (!/^\d{6}$/.test(v) || fnv(v) !== h){ toast('码不对，再问问姐姐'); return; }
+  x.ok = todayStr() + ' ' + hm(); save('b53', B);
+  const n = x.c * CONFIG.B53_COIN; addCoins(n, `5·3 ${s} 第 ${k} 批（${x.c} 张）`);
+  notify(`✅ 5·3 ${s} 第 ${k} 批 · ${x.c} 张：码正确，+${n} 金币`); toast('+' + n + ' 金币'); render();
+}
+
 // 新批改：feedback.js 里还没看过的（任务"日期-序号"、教程 id、订单 id）
 function newFeedback(){
   const F = window.FEEDBACK || {}, seen = load('fbSeen', {}), out = [];
