@@ -115,3 +115,4 @@ details.tr summary{cursor:pointer;color:var(--acc);font-weight:600;margin-top:8p
 .grp.gdone{border-color:var(--ok)}.grp.gdone .gnum{color:var(--ok)}
 .grp>summary::after{content:'›';font-size:22px;color:var(--faint);transition:.2s}.grp[open]>summary::after{transform:rotate(90deg)}
 .tag.t-复习{background:var(--gold-soft);color:var(--gold)}
+.nocopy{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}

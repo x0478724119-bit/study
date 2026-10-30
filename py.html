@@ -8,8 +8,8 @@
 <meta name="apple-mobile-web-app-title" content="学习站">
 <link rel="icon" type="image/png" href="icon-512.png">
 <title>Python 练习台</title>
-<script src="common.js?v=1793322717"></script>
-<link rel="stylesheet" href="style.css?v=1793322717">
+<script src="common.js?v=1793323377"></script>
+<link rel="stylesheet" href="style.css?v=1793323377">
 <style>
 .sec{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin:12px 0}
 .sec h3{margin:0 0 6px;font-size:17px;display:flex;gap:8px;align-items:baseline}.sec h3 .n{color:var(--acc);font-size:14px;font-weight:800}
@@ -123,6 +123,8 @@ const noEcho = s => String(s).split('\n').filter(l => !l.startsWith('\x01')).joi
 // 测试：in 输入；has 输出里要出现的内容；eq 输出完全一致；py 运行完以后再执行的检查代码（assert）
 async function check(ex, code){
   for (const [k, t] of ex.tests.entries()){
+    for (const [re, msg] of t.src || []) if (!re.test(code)) return {ok: false, msg, t};
+    if (!t.in) continue;  // 只查代码的测试
     const r = await run(code, t.in || [], t.py, t.pre);
     if (!r.ok) return {ok: false, msg: explain(r.err), out: r.out, t};
     const o = norm(unmark(r.out)), oq = norm(noEcho(r.out));
@@ -130,13 +132,15 @@ async function check(ex, code){
     const loose = x => String(x).replace(/\s+/g, '').replace(/，/g, ',').replace(/！/g, '!').replace(/：/g, ':').replace(/？/g, '?');
     for (const h of t.has || []) if (!loose(o).includes(loose(h))) return {ok: false, msg: `输出里应该有「<b>${esc(h)}</b>」，但没找到。`, out: r.out, t};
     for (const h of t.not || []) if (o.includes(h)) return {ok: false, msg: `输出里不应该有「<b>${esc(h)}</b>」。`, out: r.out, t};
+    if (t.any && !t.any.some(h => loose(o).includes(loose(h)))) return {ok: false, msg: `输出里应该有「<b>${t.any.map(esc).join('</b>」或「<b>')}</b>」其中一个。`, out: r.out, t};
+    if (t.order){ const lo = noEcho(r.out), ix = t.order.map(x => lo.lastIndexOf(x)); if (ix.some((v, n) => v < 0 || (n && v < ix[n - 1]))) return {ok: false, msg: `排名顺序不对：应该是 ${t.order.map(esc).join(' → ')}。`, out: r.out, t}; }
   }
   return {ok: true};
 }
 const ST = () => load('py', {}), saveST = s => save('py', s);
 function editor(id, code, opts = {}){
   return `<div class="ed" id="ed-${id}">
-  <textarea class="code" id="c-${id}" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" rows="${Math.max(4, code.split('\n').length + 1)}">${esc(code)}</textarea>
+  <textarea class="code" id="c-${id}" data-ws="${id === 'free' ? 'pyfree-' + FS().cur : 'py-' + LID + '-' + id}" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" rows="${Math.max(4, code.split('\n').length + 1)}">${esc(code)}</textarea>
   <div class="keys">${['⇥', ':', '(', ')', '"', '=', '+', '[', ']', '{', '}', '#', '_'].map(k => `<button type="button" onclick="key('${id}','${k}')">${k === '"' ? '&quot;' : k}</button>`).join('')}</div>
   ${opts.stdin != null ? `<textarea class="stdin" id="i-${id}" placeholder="程序的输入：每行一个（程序里每个 input() 读一行）" autocapitalize="off" autocorrect="off">${esc(opts.stdin)}</textarea>` : ''}
   <div class="pbar"><button class="run" onclick="tryRun('${id}')">▶ 运行</button>${opts.check ? `<button class="pchk" onclick="submitEx('${id}')">✓ 提交检查</button>` : ''}${opts.free ? `<button class="rst" onclick="freeCopy()">📋 复制代码</button>` : `<button class="rst" onclick="resetEd('${id}')">重置</button>`}</div>
@@ -159,6 +163,14 @@ document.addEventListener('keydown', e => {
 document.addEventListener('input', e => { if (e.target.classList && e.target.classList.contains('code')) draftSave(e.target.id.slice(2)); else if (e.target.id === 'i-free') freeSave(); });
 const findEx = id => (P.ex || []).find(x => x.id === id), findDemo = id => DEMOS[id];
 let P, DEMOS = {};
+// 防作弊：代码框不能粘贴（姐姐的预览浏览器可以），记录写了多久、打字和删改次数、切出页面几次
+function guardCodes(){ if (!PREVIEW) document.querySelectorAll('textarea.code[data-ws]').forEach(el => guardWrite(el, el.dataset.ws)); }
+// 自由编辑器运行结果最后一行：写代码统计（截图里能看到）
+function codeStats(){
+  if (PREVIEW) return '';
+  const st = _wsGet('pyfree-' + FS().cur), min = Math.round(st.ms / 60000);
+  return `\n—— ⏱ 这个程序写了约 ${min} 分钟 · 打字 ${st.keys} 次 · 删改 ${st.del} 次 · 切出页面 ${st.away} 次 · 想粘贴 ${st.paste} 次`;
+}
 async function tryRun(id){
   if (!ready) return toast('Python 还在加载，稍等一下');
   const code = clean(document.getElementById('c-' + id).value), si = document.getElementById('i-' + id);
@@ -166,6 +178,7 @@ async function tryRun(id){
   const r = await run(code, si && si.value.trim() ? si.value.replace(/\n+$/, '').split('\n') : []);
   o.innerHTML = esc(unmark(r.out)) + (r.ok ? '' : `<span class="e">${r.out ? '\n' : ''}❌ 出错了</span>\n<span class="h">${explain(r.err)}</span>`);
   if (!r.out && r.ok) o.innerHTML = '<span class="h">（程序运行完了，但没有输出任何东西。要用 print() 才会显示。）</span>';
+  if (id === 'free') o.innerHTML += `<span class="h">${esc(codeStats())}</span>`;
 }
 async function submitEx(id){
   if (!ready) return toast('Python 还在加载，稍等一下');
@@ -192,7 +205,7 @@ function showEx(id, scroll = true){
     ${editor(x.id, dr[LID + '/' + x.id] ?? x.starter, {stdin: x.stdin ?? null, check: true})}
     ${x.hint ? `<details class="hint"><summary>卡住了？看提示</summary><div class="tip">${x.hint}</div></details>` : ''}
     <div class="exnav">${i > 0 ? `<button class="ghost" onclick="showEx('${P.ex[i - 1].id}')">← 上一题</button>` : '<span></span>'}${i < P.ex.length - 1 ? `<button class="${ok ? 'main' : 'ghost'}" id="next-${x.id}" onclick="showEx('${P.ex[i + 1].id}')">下一题 →</button>` : ''}</div></div>`;
-  paint();
+  paint(); guardCodes();
   if (scroll){ const el = document.getElementById('practice'); window.scrollTo({top: el.getBoundingClientRect().top + window.pageYOffset - 10, behavior: 'smooth'}); }
 }
 // 全部通过：记进 lesson（首页任务自动打勾），推送给姐姐
@@ -215,6 +228,7 @@ function render(){
   }
   h += `<div class="sec" id="practice"><h3><span class="n">✍️</span>练习区</h3><div class="pyprog" id="pyprog"></div><div id="exbox"></div></div>`;
   document.getElementById('main').innerHTML = h;
+  guardCodes();
   const done = (ST()[LID]) || {}; showEx((P.ex.find(x => !(done[x.id] && done[x.id].ok)) || P.ex[0]).id, false);
 }
 // ===== 自由编辑器（py.html?l=free）：自己随便写，不判题。可以存好几个程序，都存在本机的 pyfree 里 =====
@@ -226,6 +240,7 @@ async function freeInit(){
   document.title = '自由编辑器'; document.getElementById('title').textContent = '🐍 自由编辑器';
   if (pj){
     await loadJS('data/jobs.js?v=' + Date.now()).catch(() => {});
+    await loadJS('data/py/selftest.js?v=' + Date.now()).catch(() => {});
     FJOB = (window.JOBS || []).find(x => x.id === pj) || null;
     if (FJOB) document.querySelector('.back').textContent = '← 回到订单';
     if (!s.progs[pj]){
@@ -235,7 +250,8 @@ async function freeInit(){
         const proj = window.PY && (window.PY.ex || []).find(x => x.project), mine = proj && ((ST()[from] || {})[proj.id] || {}).code;
         if (proj) code = `# 下面是你第 ${from.slice(2)} 课作品的代码，在这上面升级\n` + (mine || proj.starter);
       }
-      s.progs[pj] = {name: FJOB ? `${jobNo(FJOB)} ${FJOB.title}` : pj, code: (FJOB ? `# ${FJOB.title}\n` : '') + code, stdin: '', t: Date.now()};
+      code = (FJOB ? `# ${FJOB.title}\n` : '') + code;
+      s.progs[pj] = {name: FJOB ? `${jobNo(FJOB)} ${FJOB.title}` : pj, code, base: code.length, stdin: '', t: Date.now()};
     }
     s.cur = pj;
   }
@@ -247,11 +263,43 @@ function freeRender(){
   const s = FS(), p = s.progs[s.cur], ks = Object.keys(s.progs).sort((a, b) => s.progs[b].t - s.progs[a].t);
   const li = a => '<ul>' + (a || []).map(x => `<li>${x}</li>`).join('') + '</ul>';
   document.getElementById('main').innerHTML = `<p class="lede">想写什么就写什么，不判对错。代码自动存在这台 iPad 上，可以存好几个程序，用下面的菜单切换。</p>
-    ${FJOB ? `<details class="hint" open><summary>📋 订单要求：${esc(jobNo(FJOB) + ' ' + FJOB.title)}</summary><div class="tip">${FJOB.brief}${li(FJOB.spec)}<b>验收：</b>${li(FJOB.accept)}</div></details>` : ''}
+    ${FJOB ? `<details class="hint ${PREVIEW ? '' : 'nocopy'}" open><summary>📋 订单要求：${esc(jobNo(FJOB) + ' ' + FJOB.title)}</summary><div class="tip">${FJOB.brief}${li(FJOB.spec)}<b>验收：</b>${li(FJOB.accept)}</div></details>` : ''}
     <div class="frow"><select onchange="freeSwitch(this.value)">${ks.map(k => `<option value="${k}" ${k === s.cur ? 'selected' : ''}>${esc(s.progs[k].name)}</option>`).join('')}</select>
     <button class="ghost" onclick="freeNew()">＋ 新程序</button><button class="ghost" onclick="freeRename()">改名</button><button class="ghost" onclick="freeDel()">删除</button></div>
     ${editor('free', p.code, {stdin: p.stdin || '', free: true})}
+    ${(window.SELFTEST || {})[s.cur] ? `<div class="sec" style="margin-top:12px"><h3><span class="n">🧪</span>自检${p.passed ? ' ✅' : ''}</h3><p class="s" style="margin:4px 0">写完先点自检，<b>全部通过才能提交这单</b>。自检会依次输入：${esc(SELFTEST[s.cur].inputs)}。</p><button class="main" onclick="selfCheck()">🧪 自检</button><div id="self-r"></div></div>` : ''}
     <div class="tip">💡 程序里有 input() 的话，先把要输入的内容写在「程序的输入」框里，每行一个，再点运行。交订单：截图代码和运行结果发工作室群，也可以点「📋 复制代码」贴过去。</div>`;
+  guardCodes();
+}
+// 自检：跑这单的测试。第一次通过（或代码改过后再通过）推送给姐姐：统计 + 建议给哪个码 + 代码
+function codeFlags(p){
+  const st = _wsGet('pyfree-' + FS().cur), f = [];
+  if (st.paste) f.push(`想粘贴 ${st.paste} 次（被拦下）`);
+  if (st.chunk) f.push(`一次冒出一大段 ${st.chunk} 次`);
+  if (st.away >= 3) f.push(`写代码时切出页面 ${st.away} 次`);
+  if (p.code.length - (p.base || 0) > 3 * st.keys + 60) f.push('代码比她打的字多很多');
+  return {st, f, min: Math.round(st.ms / 60000)};
+}
+async function selfCheck(){
+  if (!ready) return toast('Python 还在加载，稍等一下');
+  freeSave(); const s = FS(), id = s.cur, p = s.progs[id], T_ = SELFTEST[id], code = clean(p.code), box = document.getElementById('self-r');
+  box.innerHTML = '<div class="pres">自检中……</div>';
+  p.tries = (p.tries || 0) + 1; saveFS(s);
+  const r = await check(T_, code);
+  if (!r.ok){
+    const t = r.t || {};
+    box.innerHTML = `<div class="pres no">❌ 还没通过（第 ${p.tries} 次自检）。${r.msg}${t.in && t.in.length ? `<br>自检用的输入：<code>${t.in.map(esc).join(' / ')}</code>` : ''}${r.out ? `<br>你的程序输出：<pre style="margin:4px 0;white-space:pre-wrap">${esc(unmark(r.out))}</pre>` : ''}</div>`;
+    return;
+  }
+  const sig = fnv(code), fresh = p.passed !== sig; p.passed = sig; saveFS(s);
+  box.innerHTML = `<div class="pres ok">✅ 自检全部通过！回订单页点「我做完了，提交」，再把代码和运行结果截图发工作室群。</div>`;
+  if (!fresh) return;
+  const {st, f, min} = codeFlags(p), j = FJOB || {title: p.name};
+  const rec = T_.rough ? '👉 这单自检只能粗查（冒险游戏的路线每个人不一样）：看截图，能走到新房间 / 新结局、描述有画面感 → 满意码；勉强做到 → 一般码。'
+    : f.length ? `👉 建议：一般码。测试全过，但有异常：${f.join('；')}。可以先让她讲讲代码怎么写的，讲得清楚再给满意码。`
+    : '👉 建议：满意码（测试全过，没发现异常）。截图对得上就给。';
+  notify(`🧪 自检通过：${FJOB ? jobNo(FJOB) + ' ' : ''}${j.title}（${T_.tests.length} 项全过，第 ${p.tries} 次自检）\n⏱ 写了约 ${min} 分钟 · 打字 ${st.keys} 次 · 删改 ${st.del} 次 · 切出页面 ${st.away} 次\n${rec}\n—— 代码 ——\n${code}`);
+  const html = box.innerHTML; freeRender(); document.getElementById('self-r').innerHTML = html;
 }
 function freeSave(){
   const s = FS(), p = s.progs[s.cur], c = document.getElementById('c-free'), i = document.getElementById('i-free'); if (!p) return;
@@ -268,7 +316,7 @@ function freeRename(){
 }
 function freeDel(){
   const s = FS(), p = s.progs[s.cur]; if (!confirm(`删除「${p.name}」？删了就找不回来了。`)) return;
-  delete s.progs[s.cur]; s.cur = Object.keys(s.progs)[0] || freeAdd(s, '我的程序 1'); saveFS(s); freeRender(); toast('已删除');
+  clearWrite('pyfree-' + s.cur); delete s.progs[s.cur]; s.cur = Object.keys(s.progs)[0] || freeAdd(s, '我的程序 1'); saveFS(s); freeRender(); toast('已删除');
 }
 function freeCopy(){
   const c = document.getElementById('c-free');

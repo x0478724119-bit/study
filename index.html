@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="学习站">
 <title>学习站</title>
-<link rel="stylesheet" href="style.css?v=1793322717">
+<link rel="stylesheet" href="style.css?v=1793323377">
 </head><body class="app">
 <header class="top">
   <div class="brand"><div class="logo" style="background:url(apple-touch-icon.png) center/cover"></div><div><b>我的设计工作室</b><small id="lv"></small></div></div>
@@ -22,7 +22,7 @@
 </nav>
 <div class="modal" id="modal"><div class="box" id="mbox"></div></div>
 
-<script src="common.js?v=1793322717"></script>
+<script src="common.js?v=1793323377"></script>
 <script>
 const LEVELS = [
   {lv:1, name:'设计学徒', need:0, icon:'🌱'},
@@ -379,7 +379,7 @@ function viewJob(j){
   let h = `<a class="back" href="#" onclick="jobSel=null;render();return false">← 返回接单大厅</a>
     <div class="c"><div class="row2"><span class="tag t-${j.type}">${j.type}</span><span class="${STATUS[v.st][1]}">● ${STATUS[v.st][0]}</span></div>
     <div class="jno" style="margin-top:8px">${jobNo(j)}</div><h1 style="margin:2px 0 4px">${j.title}</h1><div class="meta"><span>甲方：${j.client}</span><span>⏱ 接单后 ${j.days} 天内交付</span><span>难度 ${'★'.repeat(j.stars)}${'☆'.repeat(3 - j.stars)}</span></div></div>
-    <div class="c jd"><h3>📝 需求说明</h3><p>${j.brief}</p>
+    <div class="c jd ${PREVIEW ? '' : 'nocopy'}"><h3>📝 需求说明</h3><p>${j.brief}</p>
     ${j.tool ? `<h3>🛠️ 指定工具</h3><p><b>${j.tool}</b>（必须用这个做，验收时会看）</p>` : ''}
     <h3>📦 要交什么</h3>${li(j.deliver)}
     <h3>📐 具体要求</h3>${li(j.spec)}
@@ -403,6 +403,7 @@ function viewJob(j){
       <textarea class="fill wbox" style="min-height:220px" data-ws="job-${j.id}" id="jw-${j.id}" oninput="const d=load('jdraft',{});d['${j.id}']=this.value;save('jdraft',d);$('#wc-${j.id}').textContent=(this.value.match(/[A-Za-z']+/g)||[]).length">${esc(load('jdraft', {})[j.id] || '')}</textarea>
       <div class="s" style="margin:4px 0 0">已写 <b id="wc-${j.id}">${((load('jdraft', {})[j.id] || '').match(/[A-Za-z']+/g) || []).length}</b> 个词</div></div>
       <div class="bar-msg">截止：${v.at ? dueOf(j, v) : '—'} · 已拿定金 ${v.dep}</div><button class="gold" onclick="submitWriteJob('${j.id}')">写完了，提交</button><button class="ghost" style="margin-top:0" onclick="dropJob('${j.id}')">放弃这单（退定金 + 赔付）</button>`;
+  else if (v.st === 'doing' && /l=free/.test(j.ref || '') && !PREVIEW && !((load('pyfree', {}).progs || {})[j.id] || {}).passed) h += `<div class="bar-msg">截止：${v.at ? dueOf(j, v) : '—'} · 已拿定金 ${v.dep}</div><div class="bar-msg">🧪 编程单要先在自由编辑器里点「自检」，全部通过才能提交。</div><a class="btn2" style="display:block;text-align:center" href="${j.ref}">去写代码 / 自检 →</a><button class="gold" disabled>我做完了，提交</button><button class="ghost" style="margin-top:0" onclick="dropJob('${j.id}')">放弃这单（退定金 + 赔付）</button>`;
   else if (v.st === 'doing') h += `<div class="bar-msg">截止：${v.at ? dueOf(j, v) : '—'} · 已拿定金 ${v.dep}</div><button class="gold" onclick="submitJob('${j.id}')">我做完了，提交</button><button class="ghost" style="margin-top:0" onclick="dropJob('${j.id}')">放弃这单（退定金 + 赔付）</button>`;
   else if (v.st === 'review') h += `<div class="bar-msg">已提交，等姐姐验收。不满意的话会让你返工。</div><button class="gold" onclick="askCode('${j.id}')">输入验收码</button>`;
   else h += `<div class="bar-msg ok">✅ 已完成${v.got ? '，拿到 ' + v.got + ' 金币' : ''}</div>`;
