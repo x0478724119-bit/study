@@ -92,6 +92,12 @@ W.reg({id: 'ENG-A3', course: 'ENG', n: 3, no: 'A3', title: '英文读书报告�
     '<li><b>转述：</b>用你自己的、更简单的英文把这句话的意思再说一遍。<br><i>In other words, Holmes ……</i></li>' +
     '<li><b>解释：</b>这句话说明了什么？你怎么看？<br><i>This shows that Holmes notices small things that other people miss.</i></li></ol>' +
     '<div class="tip"><b>例子（格式示范，引号里换成你书里真实的原句和页码）：</b><br><i>Holmes is very observant. When he meets a new client, he says, "……" (p. ??). In other words, he can guess where the man has been just by looking at his clothes. This shows that he learns a lot from small details.</i></div>' +
+    '<h3>怎么转述（第 2 步）</h3><p>转述 = 意思不变，<b>换成你自己的说法</b>。只改一两个词不算转述。三个办法，可以一起用：</p>' +
+    '<div class="tscroll"><table class="t"><tr><th>办法</th><th>原句</th><th>转述</th></tr>' +
+    '<tr><td>① 换近义词</td><td><i>The man was very frightened.</i></td><td><i>The man was really scared.</i></td></tr>' +
+    '<tr><td>② 换句型（长句拆短、主动被动互换）</td><td><i>The diamond was found by a man who was walking home.</i></td><td><i>A man walked home. On the way, he found the diamond.</i></td></tr>' +
+    '<tr><td>③ 只说意思（用你自己的话总结）</td><td><i>"I have no idea what it means, but I am sure it is important."</i></td><td><i>He does not understand it yet, but he knows it is a clue.</i></td></tr></table></div>' +
+    '<p class="note">小窍门：读完原句后<b>把书合上</b>，再用自己的话写出来，写完再打开书对一下意思对不对。这样写出来的一定是你自己的句子。（表里的例句是我们自己编的，用来演示方法，不是书里的。）</p>' +
     '<h3>报告结构</h3><div class="tscroll"><table class="t"><tr><th>部分</th><th>自己写的词数</th><th>要包含</th></tr>' +
     '<tr><td>Beginning 开头</td><td>约 50 词</td><td>书名、原作者（Arthur Conan Doyle）、你挑的是哪个案子、这个案子讲了什么（一两句）</td></tr>' +
     '<tr><td>Middle 中间</td><td>约 250 词</td><td><b>4 个引用三明治</b>，每个一段：<br>① 案子开头：出了什么怪事<br>② 福尔摩斯的一个特点（比如 clever / calm / careful）<br>③ 他的另一个特点<br>④ 你最喜欢的一幕</td></tr>' +
