@@ -10,7 +10,7 @@ var W = {
     PAUSE: [],
     SPRING: ['2027-02-01', '2027-02-07'],  // 春节那周不放截止
     LATE_PCT: 5,                 // 每晚交一天扣这项作业的 5%
-    FEISHU: 'https://open.feishu.cn/open-apis/bot/v2/hook/1af9d69f-acb2-491f-824e-037b5537a920',
+    FEISHU: 'https://open.feishu.cn/open-apis/bot/v2/hook/ae901420-fd00-4cfc-af11-be3f468d58a3',
     KEY: 'w26_'                  // localStorage 前缀（和学习站在同一个域名下，不能撞名）
   },
   // 每周的截止日（周日 23:59）。W0 是学术规范入门。
