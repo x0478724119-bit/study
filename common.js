@@ -54,11 +54,26 @@ function freshDevice(){
     return true;
   } catch(e){ return true; }
 }
+// iPad / iPhone 上不是从主屏幕 App 打开（Safari，或 App 里弹出的带 ✕ 的窗口）：存档和 App 不是同一份
+const isIOS = () => /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+const inApp = () => !!(navigator.standalone || (window.matchMedia && matchMedia('(display-mode: standalone)').matches));
+const outsideApp = () => isIOS() && !inApp();
+// 只看不记：新设备，或者 iOS 上不在主屏幕 App 里。不结算、不扣金币、不推送
+function viewOnly(){ return freshDevice() || outsideApp(); }
 function notify(text){
-  if (!CONFIG.FEISHU || load('isAdmin', false) || load('adminToken', '') || freshDevice()) return;
+  if (!CONFIG.FEISHU || load('isAdmin', false) || load('adminToken', '') || viewOnly()) return;
   const body = JSON.stringify({msg_type: 'text', content: {text: '【学习站】' + text + '\n' + notifyTail()}});
   try { fetch(CONFIG.FEISHU, {method: 'POST', mode: 'no-cors', headers: {'Content-Type': 'text/plain'}, body}); } catch(e){}
 }
+
+// 主屏幕 App 里点站内链接，iPad 有时会弹出带 ✕ 的单独浏览器窗口，那个窗口的存档是空的（10-30 扣到 −115）。
+// 所以在 App 里站内链接一律用 location.href 在原窗口打开
+if (inApp()) document.addEventListener('click', e => {
+  const a = e.target.closest && e.target.closest('a[href]');
+  if (!a || e.defaultPrevented || a.origin !== location.origin || a.hasAttribute('download')) return;
+  if (a.pathname === location.pathname && a.search === location.search && a.hash) return;  // 同一页里的锚点，照常
+  e.preventDefault(); location.href = a.href;
+});
 
 // 订单编号：类别缩写 + 序号，比如 画画 J04 → ART-04（只是显示用，内部还是用 id）
 const JOB_PREFIX = {室内: 'INT', 设计: 'DSN', 画画: 'ART', 编程: 'COD', 英语: 'ENG'};

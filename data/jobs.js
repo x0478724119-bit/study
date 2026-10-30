@@ -845,7 +845,7 @@ window.JOBS = [
    "代码截图 + 运行结果截图，发工作室群"
   ],
   "spec": [
-   "在 Python 练习台随便一个代码框里写（比如作品那题）",
+   "在自由编辑器里写：点下面「📖 参考」进去，会自动建一个以这单命名的程序，里面已经放好你第 1 课作品的代码",
    "至少再加 2 个属性（比如 速度 = 等级 × 3，防御 = 等级 × 8 + 20）",
    "用 ═ ║ ★ ♥ ⚔ 这些符号把卡片框起来",
    "加一个称号：等级 ≥ 20 显示「传说」，≥ 10 显示「精英」，否则「新手」（第 2 课的 if）"
@@ -856,8 +856,8 @@ window.JOBS = [
    "卡片有边框，属性至少 7 个",
    "截图里能看到代码和运行结果"
   ],
-  "ref": "py.html?l=py1",
-  "tool": "Python 练习台",
+  "ref": "py.html?l=free&p=J27&from=py1",
+  "tool": "Python 自由编辑器",
   "pre": [
    "py2"
   ]
@@ -959,8 +959,8 @@ window.JOBS = [
    "评价会根据次数变化",
    "运行不报错"
   ],
-  "ref": "py.html?l=py3",
-  "tool": "Python 练习台",
+  "ref": "py.html?l=free&p=J30&from=py3",
+  "tool": "Python 自由编辑器",
   "pre": [
    "py3"
   ]
@@ -1026,8 +1026,8 @@ window.JOBS = [
    "运行不报错",
    "截图里能看到代码和结果"
   ],
-  "ref": "py.html?l=py5",
-  "tool": "Python 练习台",
+  "ref": "py.html?l=free&p=J32&from=py5",
+  "tool": "Python 自由编辑器",
   "pre": [
    "py5"
   ]
@@ -1061,8 +1061,8 @@ window.JOBS = [
    "输错会提示，不会报错",
    "截图里能看到完整的一场比赛"
   ],
-  "ref": "py.html?l=py6",
-  "tool": "Python 练习台",
+  "ref": "py.html?l=free&p=J33&from=py6",
+  "tool": "Python 自由编辑器",
   "pre": [
    "py6"
   ]
@@ -1164,8 +1164,8 @@ window.JOBS = [
    "有暴击的时候伤害翻倍",
    "运行不报错"
   ],
-  "ref": "py.html?l=py7",
-  "tool": "Python 练习台",
+  "ref": "py.html?l=free&p=J36&from=py7",
+  "tool": "Python 自由编辑器",
   "pre": [
    "py7"
   ]
@@ -1233,8 +1233,8 @@ window.JOBS = [
    "背包数量对得上",
    "运行不报错"
   ],
-  "ref": "py.html?l=py8",
-  "tool": "Python 练习台",
+  "ref": "py.html?l=free&p=J38&from=py8",
+  "tool": "Python 自由编辑器",
   "pre": [
    "py8"
   ]
@@ -1337,8 +1337,8 @@ window.JOBS = [
    "乱输入不会报错",
    "描述有画面感"
   ],
-  "ref": "py.html?l=py9",
-  "tool": "Python 练习台",
+  "ref": "py.html?l=free&p=J41&from=py9",
+  "tool": "Python 自由编辑器",
   "pre": [
    "py9"
   ]
@@ -1400,8 +1400,8 @@ window.JOBS = [
    "乱输入会重新问，不报错",
    "再玩一次时背包和血量会重置"
   ],
-  "ref": "py.html?l=py11",
-  "tool": "Python 练习台",
+  "ref": "py.html?l=free&p=J43&from=py11",
+  "tool": "Python 自由编辑器",
   "pre": [
    "py11"
   ]
@@ -1462,8 +1462,8 @@ window.JOBS = [
    "短名字有提示",
    "运行不报错"
   ],
-  "ref": "py.html?l=py12",
-  "tool": "Python 练习台",
+  "ref": "py.html?l=free&p=J45&from=py12",
+  "tool": "Python 自由编辑器",
   "pre": [
    "py12"
   ]
@@ -1524,8 +1524,8 @@ window.JOBS = [
    "排名顺序对",
    "运行不报错"
   ],
-  "ref": "py.html?l=py13",
-  "tool": "Python 练习台",
+  "ref": "py.html?l=free&p=J47",
+  "tool": "Python 自由编辑器",
   "pre": [
    "py13"
   ]
@@ -1555,8 +1555,8 @@ window.JOBS = [
    "能分出胜负或平局",
    "运行不报错"
   ],
-  "ref": "py.html?l=py15",
-  "tool": "Python 练习台",
+  "ref": "py.html?l=free&p=J48&from=py15",
+  "tool": "Python 自由编辑器",
   "pre": [
    "py15"
   ]

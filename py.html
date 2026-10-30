@@ -2,10 +2,14 @@
 <html lang="zh-CN"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="学习站">
 <link rel="icon" type="image/png" href="icon-512.png">
 <title>Python 练习台</title>
-<script src="common.js?v=1793321640"></script>
-<link rel="stylesheet" href="style.css?v=1793321640">
+<script src="common.js?v=1793322269"></script>
+<link rel="stylesheet" href="style.css?v=1793322269">
 <style>
 .sec{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin:12px 0}
 .sec h3{margin:0 0 6px;font-size:17px;display:flex;gap:8px;align-items:baseline}.sec h3 .n{color:var(--acc);font-size:14px;font-weight:800}
@@ -33,6 +37,8 @@ code{background:var(--bg);border-radius:5px;padding:1px 5px;font-size:14px}
 .tryit{background:var(--blue-soft);border-radius:10px;padding:8px 12px;font-size:14.5px;margin:8px 0}
 #load{position:sticky;top:0;z-index:5;background:var(--gold-soft);padding:8px 12px;border-radius:10px;font-size:14px;margin:8px 0}
 .pyprog{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}.pyprog span{padding:4px 10px;border-radius:999px;background:var(--card);border:1px solid var(--line);font-size:13px}.pyprog span.ok{background:var(--ok-soft);color:var(--ok);border-color:transparent}
+.frow{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin:10px 0}.frow select{flex:1 1 180px;font-size:15px;padding:8px;border-radius:8px;border:1px solid var(--line);background:var(--card)}.frow button{width:auto;padding:8px 12px;font-size:14px}
+#c-free{min-height:280px}
 details.hint{margin:8px 0}details.hint summary{cursor:pointer;color:var(--acc);font-size:14px}
 </style></head><body><div class="w">
 <a class="back" href="index.html">← 回到任务</a>
@@ -133,14 +139,15 @@ function editor(id, code, opts = {}){
   <textarea class="code" id="c-${id}" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" rows="${Math.max(4, code.split('\n').length + 1)}">${esc(code)}</textarea>
   <div class="keys">${['⇥', ':', '(', ')', '"', '=', '+', '[', ']', '{', '}', '#', '_'].map(k => `<button type="button" onclick="key('${id}','${k}')">${k === '"' ? '&quot;' : k}</button>`).join('')}</div>
   ${opts.stdin != null ? `<textarea class="stdin" id="i-${id}" placeholder="程序的输入：每行一个（程序里每个 input() 读一行）" autocapitalize="off" autocorrect="off">${esc(opts.stdin)}</textarea>` : ''}
-  <div class="pbar"><button class="run" onclick="tryRun('${id}')">▶ 运行</button>${opts.check ? `<button class="pchk" onclick="submitEx('${id}')">✓ 提交检查</button>` : ''}<button class="rst" onclick="resetEd('${id}')">重置</button></div>
+  <div class="pbar"><button class="run" onclick="tryRun('${id}')">▶ 运行</button>${opts.check ? `<button class="pchk" onclick="submitEx('${id}')">✓ 提交检查</button>` : ''}${opts.free ? `<button class="rst" onclick="freeCopy()">📋 复制代码</button>` : `<button class="rst" onclick="resetEd('${id}')">重置</button>`}</div>
   <div class="out" id="o-${id}" hidden></div><div id="r-${id}"></div></div>`;
 }
 function key(id, k){
   const ta = document.getElementById('c-' + id), s = ta.selectionStart, e = ta.selectionEnd, ins = k === '⇥' ? '    ' : k === '(' ? '()' : k === '"' ? '""' : k === '[' ? '[]' : k === '{' ? '{}' : k;
   ta.setRangeText(ins, s, e, 'end'); if (['()', '""', '[]', '{}'].includes(ins)) ta.selectionStart = ta.selectionEnd = s + 1; ta.focus(); draftSave(id);
 }
-function draftSave(id){ const s = ST(); s.draft = s.draft || {}; s.draft[LID + '/' + id] = document.getElementById('c-' + id).value; saveST(s); }
+function draftSave(id){ if (id === 'free') return freeSave();
+  const s = ST(); s.draft = s.draft || {}; s.draft[LID + '/' + id] = document.getElementById('c-' + id).value; saveST(s); }
 document.addEventListener('keydown', e => {
   const ta = e.target; if (!ta.classList || !ta.classList.contains('code')) return;
   if (e.key === 'Tab'){ e.preventDefault(); ta.setRangeText('    ', ta.selectionStart, ta.selectionEnd, 'end'); }
@@ -149,7 +156,7 @@ document.addEventListener('keydown', e => {
     e.preventDefault(); ta.setRangeText('\n' + ind, ta.selectionStart, ta.selectionEnd, 'end');
   }
 });
-document.addEventListener('input', e => { if (e.target.classList && e.target.classList.contains('code')) draftSave(e.target.id.slice(2)); });
+document.addEventListener('input', e => { if (e.target.classList && e.target.classList.contains('code')) draftSave(e.target.id.slice(2)); else if (e.target.id === 'i-free') freeSave(); });
 const findEx = id => (P.ex || []).find(x => x.id === id), findDemo = id => DEMOS[id];
 let P, DEMOS = {};
 async function tryRun(id){
@@ -210,8 +217,69 @@ function render(){
   document.getElementById('main').innerHTML = h;
   const done = (ST()[LID]) || {}; showEx((P.ex.find(x => !(done[x.id] && done[x.id].ok)) || P.ex[0]).id, false);
 }
-const sc = document.createElement('script'); sc.src = `data/py/${LID}.js?v=${Date.now()}`;
-sc.onload = () => { P = window.PY; render(); }; sc.onerror = () => { document.getElementById('main').innerHTML = '<p>找不到这一课。</p>'; };
-document.body.appendChild(sc);
+// ===== 自由编辑器（py.html?l=free）：自己随便写，不判题。可以存好几个程序，都存在本机的 pyfree 里 =====
+// 从编程订单点进来是 ?l=free&p=J27&from=py1：自动打开（没有就新建）以订单命名的程序，里面先放好第 N 课作品的代码
+const FS = () => load('pyfree', {progs: {}, cur: null}), saveFS = s => save('pyfree', s);
+let FJOB = null;
+async function freeInit(){
+  const q = new URLSearchParams(location.search), pj = q.get('p'), from = q.get('from'), s = FS();
+  document.title = '自由编辑器'; document.getElementById('title').textContent = '🐍 自由编辑器';
+  if (pj){
+    await loadJS('data/jobs.js?v=' + Date.now()).catch(() => {});
+    FJOB = (window.JOBS || []).find(x => x.id === pj) || null;
+    if (FJOB) document.querySelector('.back').textContent = '← 回到订单';
+    if (!s.progs[pj]){
+      let code = '';
+      if (from){
+        await loadJS(`data/py/${from}.js?v=${Date.now()}`).catch(() => {});
+        const proj = window.PY && (window.PY.ex || []).find(x => x.project), mine = proj && ((ST()[from] || {})[proj.id] || {}).code;
+        if (proj) code = `# 下面是你第 ${from.slice(2)} 课作品的代码，在这上面升级\n` + (mine || proj.starter);
+      }
+      s.progs[pj] = {name: FJOB ? `${jobNo(FJOB)} ${FJOB.title}` : pj, code: (FJOB ? `# ${FJOB.title}\n` : '') + code, stdin: '', t: Date.now()};
+    }
+    s.cur = pj;
+  }
+  if (!s.progs[s.cur]){ const k = Object.keys(s.progs)[0]; s.cur = k || freeAdd(s, '我的程序 1'); }
+  saveFS(s); freeRender();
+}
+function freeAdd(s, name){ const k = 'p' + Date.now(); s.progs[k] = {name, code: '', stdin: '', t: Date.now()}; return k; }
+function freeRender(){
+  const s = FS(), p = s.progs[s.cur], ks = Object.keys(s.progs).sort((a, b) => s.progs[b].t - s.progs[a].t);
+  const li = a => '<ul>' + (a || []).map(x => `<li>${x}</li>`).join('') + '</ul>';
+  document.getElementById('main').innerHTML = `<p class="lede">想写什么就写什么，不判对错。代码自动存在这台 iPad 上，可以存好几个程序，用下面的菜单切换。</p>
+    ${FJOB ? `<details class="hint" open><summary>📋 订单要求：${esc(jobNo(FJOB) + ' ' + FJOB.title)}</summary><div class="tip">${FJOB.brief}${li(FJOB.spec)}<b>验收：</b>${li(FJOB.accept)}</div></details>` : ''}
+    <div class="frow"><select onchange="freeSwitch(this.value)">${ks.map(k => `<option value="${k}" ${k === s.cur ? 'selected' : ''}>${esc(s.progs[k].name)}</option>`).join('')}</select>
+    <button class="ghost" onclick="freeNew()">＋ 新程序</button><button class="ghost" onclick="freeRename()">改名</button><button class="ghost" onclick="freeDel()">删除</button></div>
+    ${editor('free', p.code, {stdin: p.stdin || '', free: true})}
+    <div class="tip">💡 程序里有 input() 的话，先把要输入的内容写在「程序的输入」框里，每行一个，再点运行。交订单：截图代码和运行结果发工作室群，也可以点「📋 复制代码」贴过去。</div>`;
+}
+function freeSave(){
+  const s = FS(), p = s.progs[s.cur], c = document.getElementById('c-free'), i = document.getElementById('i-free'); if (!p) return;
+  if (c) p.code = c.value; if (i) p.stdin = i.value; p.t = Date.now(); saveFS(s);
+}
+function freeSwitch(k){ freeSave(); const s = FS(); s.cur = k; saveFS(s); freeRender(); }
+function freeNew(){
+  freeSave(); const s = FS(), name = prompt('新程序叫什么名字？', '我的程序 ' + (Object.keys(s.progs).length + 1));
+  if (name == null) return; s.cur = freeAdd(s, name.trim() || '没起名的程序'); saveFS(s); freeRender();
+}
+function freeRename(){
+  const s = FS(), p = s.progs[s.cur], name = prompt('改成什么名字？', p.name);
+  if (!name || !name.trim()) return; freeSave(); const s2 = FS(); s2.progs[s2.cur].name = name.trim(); saveFS(s2); freeRender();
+}
+function freeDel(){
+  const s = FS(), p = s.progs[s.cur]; if (!confirm(`删除「${p.name}」？删了就找不回来了。`)) return;
+  delete s.progs[s.cur]; s.cur = Object.keys(s.progs)[0] || freeAdd(s, '我的程序 1'); saveFS(s); freeRender(); toast('已删除');
+}
+function freeCopy(){
+  const c = document.getElementById('c-free');
+  const fallback = () => { c.focus(); c.select(); try { document.execCommand('copy'); toast('已复制'); } catch(e){ toast('复制不了，长按代码手动复制'); } };
+  if (navigator.clipboard) navigator.clipboard.writeText(c.value).then(() => toast('已复制，去工作室群粘贴'), fallback); else fallback();
+}
+if (LID === 'free') freeInit();
+else {
+  const sc = document.createElement('script'); sc.src = `data/py/${LID}.js?v=${Date.now()}`;
+  sc.onload = () => { P = window.PY; render(); }; sc.onerror = () => { document.getElementById('main').innerHTML = '<p>找不到这一课。</p>'; };
+  document.body.appendChild(sc);
+}
 </script>
 </body></html>

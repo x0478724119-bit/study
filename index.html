@@ -2,11 +2,12 @@
 <html lang="zh-CN"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" href="icon-512.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="学习站">
 <title>学习站</title>
-<link rel="stylesheet" href="style.css?v=1793321640">
+<link rel="stylesheet" href="style.css?v=1793322269">
 </head><body class="app">
 <header class="top">
   <div class="brand"><div class="logo" style="background:url(apple-touch-icon.png) center/cover"></div><div><b>我的设计工作室</b><small id="lv"></small></div></div>
@@ -21,7 +22,7 @@
 </nav>
 <div class="modal" id="modal"><div class="box" id="mbox"></div></div>
 
-<script src="common.js?v=1793321640"></script>
+<script src="common.js?v=1793322269"></script>
 <script>
 const LEVELS = [
   {lv:1, name:'设计学徒', need:0, icon:'🌱'},
@@ -39,7 +40,7 @@ const isWeekend = d => [0,6].includes(new Date(d + 'T12:00').getDay());
 
 // 加载数据文件（加时间戳，保证拿到最新的）
 function loadScript(src){ return new Promise(r => { const s = document.createElement('script'); s.src = src + '?v=' + Date.now(); s.onload = r; s.onerror = r; document.body.appendChild(s); }); }
-Promise.all([loadScript('data/days.js'), loadScript('data/jobs.js'), loadScript('data/pause.js'), loadScript('data/leave.js'), loadScript('data/adjust.js'), loadScript('data/feedback.js'), loadScript('data/codes.js')]).then(() => { addReviewTasks(); save('daysCache', window.DAYS); if (!freshDevice()){ checkMissed(); checkWeekJobs(); } else save('start', T); render(); });
+Promise.all([loadScript('data/days.js'), loadScript('data/jobs.js'), loadScript('data/pause.js'), loadScript('data/leave.js'), loadScript('data/adjust.js'), loadScript('data/feedback.js'), loadScript('data/codes.js')]).then(() => { addReviewTasks(); save('daysCache', window.DAYS); if (!viewOnly()){ checkMissed(); checkWeekJobs(); } else if (freshDevice()) save('start', T); render(); });
 // 错题复习：今天（或已经开始复习的那天）在最后加一项"复习错题"
 function addReviewTasks(){
   const fixed = load('reviewList', {});
@@ -384,7 +385,7 @@ function viewJob(j){
     <h3>📐 具体要求</h3>${li(j.spec)}
     <h3>✅ 验收标准</h3>${li(j.accept)}
     ${(j.pre || []).length ? `<h3>📚 前置课（交了小测才能接单）</h3><div>${j.pre.map(id => `<div>${load('lesson', {})[id] ? '✅' : '⬜️'} <a class="go" href="${lessonUrl(id)}">${lessonName(id)}</a></div>`).join('')}</div>` : ''}
-    ${j.ref ? `<h3>📖 参考</h3><a class="go" href="${j.ref}">打开相关教程 →</a>` : ''}</div>
+    ${j.ref ? `<h3>📖 参考</h3><a class="go" href="${j.ref}">${/l=free/.test(j.ref) ? '🐍 打开自由编辑器写代码 →' : '打开相关教程 →'}</a>` : ''}</div>
     ${(window.FEEDBACK || {})[j.id] ? `<div class="c"><div class="fb" style="margin:0"><b>📝 批改</b>${window.FEEDBACK[j.id].html}${v.text ? `<details style="margin-top:6px"><summary>看我交的原文</summary><div style="white-space:pre-wrap">${esc(v.text)}</div></details>` : ''}</div></div>` : ''}
     <div class="c jd"><h3>💰 报酬</h3>
     <div class="pay"><div><small>接单：先拿定金</small><b>+${dep}</b></div><div><small>满意：再拿尾款</small><b>+${j.reward - dep}</b></div><div><small>一般：尾款打折（总共 ${CONFIG.GOOD_ENOUGH * 100}%）</small><b>+${Math.round(j.reward * CONFIG.GOOD_ENOUGH) - dep}</b></div><div><small>放弃或超时：退定金 + 赔付</small><b>−${dep + breach(j)}</b></div></div>
@@ -456,6 +457,7 @@ function viewBook(){
     <div class="c"><a class="go big" href="handbook.html">📘 打开成长手册 →</a><div class="d">从现在到上大学：要去哪、学什么、每个月做什么。</div></div>
     <div class="c"><a class="go big" href="book.html?k=skills">🎓 技能课 →</a><div class="d">接某些订单之前要先学的课（比如奶茶店要先学平面图）。</div></div>
     <div class="c"><a class="go big" href="planner.html">📐 户型练习台 →</a><div class="d">按真实尺寸摆家具，自动检查通道够不够宽。手机上酷家乐太小时用它练布局。</div></div>
+    <div class="c"><a class="go big" href="py.html?l=free">🐍 Python 自由编辑器 →</a><div class="d">自己随便写程序，不判对错，可以存好几个。编程订单都在这里写。</div></div>
     <div class="c"><a class="go big" href="book.html">📗 每日手册 →</a><div class="d">每天要学的讲解都在这里：数学、英语语法、听力方法、软件课。按天翻。</div></div>
 `;
 }
@@ -492,10 +494,10 @@ $('#modal').onclick = e => { if (e.target.id === 'modal') closeM(); };
 try { const nav = JSON.parse(sessionStorage.getItem('nav') || '{}'); if (nav.tab) tab = nav.tab; if (nav.job) jobSel = nav.job; if (nav.day && !selDay) selDay = nav.day; } catch(e){}
 function render(){
   try { sessionStorage.setItem('nav', JSON.stringify({tab, job: jobSel, day: selDay})); } catch(e){}
-  // 新设备只看不结算；start 一直记成今天，以后真用这台设备了也不会回头扣以前的天
-  if (window.DAYS){ if (freshDevice()){ save('start', T); settle(); } else { applyAdjust(); settle(); checkMissed(); weekly(); checkJobs(); } }
+  // 只看不记（新设备 / iOS 不在主屏幕 App 里）：不结算。新设备的 start 一直记成今天，以后真用这台设备了也不会回头扣以前的天
+  if (window.DAYS){ if (viewOnly()){ if (freshDevice()) save('start', T); } else { applyAdjust(); settle(); checkMissed(); weekly(); checkJobs(); } }
   const w = wallet(); $('#coin').textContent = w.coins; const L = level(w.earned); $('#lv').textContent = `Lv${L.lv} · ${L.name}`;
-  $('#view').innerHTML = (PREVIEW ? '<div class="bar-msg ok">👀 预览模式：你看到的是全部内容（不锁），诗予那边该锁的照样锁。这里的操作只改你自己浏览器的数据，不推送。</div>' : '') + {today: viewToday, jobs: viewJobs, book: viewBook, me: viewMe}[tab]();
+  $('#view').innerHTML = (outsideApp() && !PREVIEW ? '<div class="bar-msg">📱 这是浏览器窗口，不是学习站 App：这里只能看，做的作业和金币<b>不会记进 App</b>。请关掉这个窗口，从主屏幕的「学习站」图标打开。</div>' : '') + (PREVIEW ? '<div class="bar-msg ok">👀 预览模式：你看到的是全部内容（不锁），诗予那边该锁的照样锁。这里的操作只改你自己浏览器的数据，不推送。</div>' : '') + {today: viewToday, jobs: viewJobs, book: viewBook, me: viewMe}[tab]();
   document.querySelectorAll('.tabs button').forEach(b => b.classList.toggle('on', b.dataset.t === tab));
   document.querySelectorAll('textarea[data-ws]').forEach(el => guardWrite(el, el.dataset.ws));
 }
