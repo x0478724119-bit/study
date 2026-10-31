@@ -9,22 +9,22 @@ window.SET = {
    "sec": "单选",
    "q": "— Have you ever been to Beijing?  — Yes. I ___ there last summer.",
    "opts": [
+    "have gone",
     "have been",
-    "went",
-    "have gone"
+    "went"
    ],
-   "a": 1,
+   "a": 2,
    "e": "last summer 是过去时间 → 一般过去时。前一句问经历用现在完成时。"
   },
   {
    "sec": "单选",
    "q": "— Where is Tom?  — He ___ to the library. He'll be back soon.",
    "opts": [
+    "has gone",
     "went",
-    "has been",
-    "has gone"
+    "has been"
    ],
-   "a": 2,
+   "a": 0,
    "e": "has gone to 去了（还没回来）；has been to 去过（已经回来）。"
   },
   {
@@ -32,32 +32,32 @@ window.SET = {
    "q": "It is important ___ us to learn from our mistakes.",
    "opts": [
     "of",
-    "to",
-    "for"
+    "for",
+    "to"
    ],
-   "a": 2,
+   "a": 1,
    "e": "It is + 形容词 + for sb to do（课本 U2）。"
   },
   {
    "sec": "单选",
    "q": "It was very kind ___ you to help me.",
    "opts": [
+    "of",
     "for",
-    "to",
-    "of"
+    "to"
    ],
-   "a": 2,
+   "a": 0,
    "e": "形容人的品质（kind, nice, clever）用 of sb。"
   },
   {
    "sec": "单选",
    "q": "— Could you tell me ___?  — In two days.",
    "opts": [
-    "when will the new library open",
     "when did the new library open",
-    "when the new library will open"
+    "when the new library will open",
+    "when will the new library open"
    ],
-   "a": 2,
+   "a": 1,
    "e": "宾语从句陈述语序 + 回答是将来。"
   },
   {
@@ -75,11 +75,11 @@ window.SET = {
    "sec": "单选",
    "q": "The world ___ a lot in the past 20 years.",
    "opts": [
+    "changed",
     "has changed",
-    "changes",
-    "changed"
+    "changes"
    ],
-   "a": 0,
+   "a": 1,
    "e": "in the past 20 years 到现在 → 现在完成时（课本 U1）。"
   },
   {
@@ -97,11 +97,11 @@ window.SET = {
    "sec": "单选",
    "q": "He has been a teacher ___ he left university.",
    "opts": [
-    "for",
     "since",
-    "when"
+    "when",
+    "for"
    ],
-   "a": 1,
+   "a": 0,
    "e": "since + 从句（过去时）。"
   },
   {
@@ -109,8 +109,8 @@ window.SET = {
    "q": "Do you know ___ inspired her to become a doctor?",
    "opts": [
     "what",
-    "that",
-    "whether"
+    "whether",
+    "that"
    ],
    "a": 0,
    "e": "从句缺主语\"什么\"→ what。"

@@ -12,11 +12,11 @@ window.SET = {
    "sec": "单选",
    "q": "— Have you ever been to the Great Wall?  — Yes. I ___ there with my parents last year.",
    "opts": [
-    "have been",
     "went",
-    "have gone"
+    "have gone",
+    "have been"
    ],
-   "a": 1,
+   "a": 0,
    "e": "last year → 一般过去时。"
   },
   {
@@ -24,21 +24,21 @@ window.SET = {
    "q": "The world ___ a lot since the internet was invented.",
    "opts": [
     "changed",
-    "changes",
-    "has changed"
+    "has changed",
+    "changes"
    ],
-   "a": 2,
+   "a": 1,
    "e": "since + 过去时 → 主句现在完成时。"
   },
   {
    "sec": "单选",
    "q": "It is necessary ___ students to get enough sleep.",
    "opts": [
-    "to",
     "of",
-    "for"
+    "for",
+    "to"
    ],
-   "a": 2,
+   "a": 1,
    "e": "It is + 形容词 + for sb to do。"
   },
   {
@@ -46,8 +46,8 @@ window.SET = {
    "q": "It's very kind ___ you to help me.",
    "opts": [
     "of",
-    "with",
-    "for"
+    "for",
+    "with"
    ],
    "a": 0,
    "e": "描述人的品质用 of。"
@@ -67,44 +67,44 @@ window.SET = {
    "sec": "单选",
    "q": "I don't know ___ he will come to the party. Let's wait and see.",
    "opts": [
+    "what",
     "that",
-    "whether",
-    "what"
+    "whether"
    ],
-   "a": 1,
+   "a": 2,
    "e": "\"是否\"。"
   },
   {
    "sec": "单选",
    "q": "Could you tell me ___ the nearest bookshop is?",
    "opts": [
+    "whether",
     "what",
-    "where",
-    "whether"
+    "where"
    ],
-   "a": 1,
+   "a": 2,
    "e": "宾语从句缺地点 → where。"
   },
   {
    "sec": "单选",
    "q": "My father has worked in this city ___ 2015.",
    "opts": [
-    "since",
     "in",
-    "for"
+    "for",
+    "since"
    ],
-   "a": 0,
+   "a": 2,
    "e": ""
   },
   {
    "sec": "完形",
    "q": "第 1 空：bring one photo __1__ showed a special moment",
    "opts": [
-    "who",
     "that",
-    "what"
+    "what",
+    "who"
    ],
-   "a": 1,
+   "a": 0,
    "e": "先行词 photo 是物。",
    "p": "a"
   },
@@ -112,11 +112,11 @@ window.SET = {
    "sec": "完形",
    "q": "第 2 空：I didn't know __2__ photo to choose",
    "opts": [
+    "which",
     "who",
-    "how",
-    "which"
+    "how"
    ],
-   "a": 2,
+   "a": 0,
    "e": "\"哪一张\"。",
    "p": "a"
   },
@@ -124,11 +124,11 @@ window.SET = {
    "sec": "完形",
    "q": "第 3 空：she __3__ me how to plant tomatoes",
    "opts": [
+    "has taught",
     "teaches",
-    "was teaching",
-    "has taught"
+    "was teaching"
    ],
-   "a": 1,
+   "a": 2,
    "e": "照片里的那一刻正在做 → 过去进行时。",
    "p": "a"
   },
@@ -137,10 +137,10 @@ window.SET = {
    "q": "第 4 空：my grandmother __4__ away two years ago",
    "opts": [
     "passes",
-    "has passed",
-    "passed"
+    "passed",
+    "has passed"
    ],
-   "a": 2,
+   "a": 1,
    "e": "two years ago → 一般过去时。pass away 去世。",
    "p": "a"
   },
@@ -148,11 +148,11 @@ window.SET = {
    "sec": "完形",
    "q": "第 5 空：It is important for us __5__ our memories",
    "opts": [
-    "to treasure",
     "treasure",
-    "treasuring"
+    "treasuring",
+    "to treasure"
    ],
-   "a": 0,
+   "a": 2,
    "e": "It is + adj. + for sb + to do。",
    "p": "a"
   },
@@ -160,12 +160,12 @@ window.SET = {
    "sec": "阅读",
    "q": "What was the \"Memory Wall\" project about?",
    "opts": [
+    "Learning how to plant tomatoes",
+    "Writing letters to grandparents",
     "Sharing photos of special moments",
-    "Painting the school wall",
-    "Learning to plant tomatoes",
-    "Writing about grandparents"
+    "Painting pictures on the school wall"
    ],
-   "a": 0,
+   "a": 2,
    "e": "",
    "p": "a"
   },
@@ -173,8 +173,8 @@ window.SET = {
    "sec": "阅读",
    "q": "How old was the writer in the photo?",
    "opts": [
-    "Two",
     "Fifteen",
+    "Two",
     "Ten",
     "Five"
    ],
@@ -186,12 +186,12 @@ window.SET = {
    "sec": "阅读",
    "q": "What does the writer think memories can do?",
    "opts": [
-    "Help us plant gardens",
-    "Make us sad",
-    "Make us famous",
-    "Remind us where we come from and who we want to become"
+    "Remind us where we come from",
+    "Make us famous among friends",
+    "Help us forget our problems",
+    "Make us feel sad and lonely"
    ],
-   "a": 3,
+   "a": 0,
    "e": "",
    "p": "a"
   },

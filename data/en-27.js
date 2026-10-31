@@ -9,12 +9,12 @@ window.SET = {
    "sec": "完形",
    "q": "第 1 空",
    "opts": [
-    "happily",
-    "alone",
     "loudly",
-    "together"
+    "happily",
+    "together",
+    "alone"
    ],
-   "a": 1,
+   "a": 3,
    "e": "不认识人，一个人坐 → alone。",
    "p": "a"
   },
@@ -22,12 +22,12 @@ window.SET = {
    "sec": "完形",
    "q": "第 2 空",
    "opts": [
+    "leave",
     "answer",
-    "eat",
     "stand",
-    "leave"
+    "eat"
    ],
-   "a": 0,
+   "a": 1,
    "e": "她问能不能坐，我还没来得及\"回答\"。",
    "p": "a"
   },
@@ -35,9 +35,9 @@ window.SET = {
    "sec": "完形",
    "q": "第 3 空",
    "opts": [
-    "sleeping",
-    "drawing",
     "writing",
+    "drawing",
+    "sleeping",
     "reading"
    ],
    "a": 1,
@@ -48,12 +48,12 @@ window.SET = {
    "sec": "完形",
    "q": "第 4 空",
    "opts": [
-    "angry",
     "surprised",
-    "bored",
-    "sad"
+    "angry",
+    "sad",
+    "bored"
    ],
-   "a": 1,
+   "a": 0,
    "e": "她注意到我 → 惊讶。",
    "p": "a"
   },
@@ -61,10 +61,10 @@ window.SET = {
    "sec": "完形",
    "q": "第 5 空",
    "opts": [
-    "famous",
     "tired",
+    "late",
     "perfect",
-    "late"
+    "famous"
    ],
    "a": 2,
    "e": "后句\"所以要练习\" → 一开始没人完美。",
@@ -74,12 +74,12 @@ window.SET = {
    "sec": "完形",
    "q": "第 6 空",
    "opts": [
-    "because",
-    "but",
     "so",
-    "or"
+    "or",
+    "because",
+    "but"
    ],
-   "a": 1,
+   "a": 3,
    "e": "没得奖，\"但是\"很开心 → 转折。",
    "p": "a"
   },
@@ -87,12 +87,12 @@ window.SET = {
    "sec": "完形",
    "q": "第 7 空",
    "opts": [
-    "the year before",
     "every",
-    "this",
-    "next"
+    "the year after",
+    "the year before",
+    "the next"
    ],
-   "a": 0,
+   "a": 2,
    "e": "她\"前一年\"也是新生，所以懂。",
    "p": "a"
   },
@@ -100,12 +100,12 @@ window.SET = {
    "sec": "完形",
    "q": "第 8 空",
    "opts": [
-    "fear",
-    "anger",
+    "kindness",
     "sadness",
-    "kindness"
+    "fear",
+    "anger"
    ],
-   "a": 3,
+   "a": 0,
    "e": "全文主旨：善举。",
    "p": "a"
   }
