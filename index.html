@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="学习站">
 <title>学习站</title>
-<link rel="stylesheet" href="style.css?v=1793510592">
+<link rel="stylesheet" href="style.css?v=1793511500">
 </head><body class="app">
 <header class="top">
   <div class="brand"><div class="logo" style="background:url(apple-touch-icon.png) center/cover"></div><div><b>我的设计工作室</b><small id="lv"></small></div></div>
@@ -22,7 +22,7 @@
 </nav>
 <div class="modal" id="modal"><div class="box" id="mbox"></div></div>
 
-<script src="common.js?v=1793510592"></script>
+<script src="common.js?v=1793511500"></script>
 <script>
 const LEVELS = [
   {lv:1, name:'设计学徒', need:0, icon:'🌱'},
@@ -387,13 +387,15 @@ function checkJobs(){
     if (dueOf(j, v) < T){ const pen = v.dep + breach(j); addCoins(-pen, '超时赔付：' + j.title); jset(j.id, {st: 'open'}); notify(`⌛ 订单超时：${jobNo(j)} ${j.title}，退还定金 ${v.dep} + 赔付 ${breach(j)}，共扣 ${pen}`); }
   }
 }
+// 订单到了发布日期（pub）才显示：姐姐回国前一次传完，每周一自动"上新"。预览浏览器、已经接过的单不受影响
+const jobLive = j => PREVIEW || !j.pub || j.pub <= T || jget(j.id).st !== 'open';
 function viewJobs(){
-  if (jobSel && (PREVIEW || !(job(jobSel).minLv && level(wallet().earned).lv < job(jobSel).minLv))) return viewJob(job(jobSel));
+  if (jobSel && job(jobSel) && jobLive(job(jobSel)) && (PREVIEW || !(job(jobSel).minLv && level(wallet().earned).lv < job(jobSel).minLv))) return viewJob(job(jobSel));
   jobSel = null;
   let h = `<h1>接单大厅</h1><p class="s">点开订单看详情 · 接单先拿 ${CONFIG.DEPOSIT * 100}% 定金 · 同时最多 ${CONFIG.JOB_LIMIT} 单</p>`;
   // 排序：进行中 / 待验收在最上面，可接单在中间，已完成变灰放最下面
   const rank = {doing: 0, review: 0, open: 1, done: 2};
-  const list = (window.JOBS || []).slice().sort((a, b) => (rank[jget(a.id).st] - rank[jget(b.id).st]) || (b.pub || '').localeCompare(a.pub || ''));
+  const list = (window.JOBS || []).filter(jobLive).sort((a, b) => (rank[jget(a.id).st] - rank[jget(b.id).st]) || (b.pub || '').localeCompare(a.pub || ''));
   let shownDone = false, shownDoing = false, shownOpen = false;
   h += '<div class="chips">' + ['全部','室内','设计','画画','编程','英语'].map(t => `<button class="${jobType === t ? 'on' : ''}" onclick="jobType='${t}';render()">${t}</button>`).join('') + '</div>';
   for (const j of list.filter(j => jobType === '全部' || j.type === jobType)){
