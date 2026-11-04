@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="学习站">
 <title>学习站</title>
-<link rel="stylesheet" href="style.css?v=1793764894">
+<link rel="stylesheet" href="style.css?v=1793765257">
 </head><body class="app">
 <header class="top">
   <div class="brand"><div class="logo" style="background:url(apple-touch-icon.png) center/cover"></div><div><b>我的设计工作室</b><small id="lv"></small></div></div>
@@ -22,7 +22,7 @@
 </nav>
 <div class="modal" id="modal"><div class="box" id="mbox"></div></div>
 
-<script src="common.js?v=1793764894"></script>
+<script src="common.js?v=1793765257"></script>
 <script>
 const LEVELS = [
   {lv:1, name:'设计学徒', need:0, icon:'🌱'},
@@ -176,7 +176,7 @@ function viewToday(){
   const n = day.tasks.filter((t,i) => taskDone(key, i, t)).length, all = n === day.tasks.length, paid = load('paid', {})[key];
   const note = key === T ? '今天' : key > T ? '可以提前做 · 金币到这天才发' : '已经过了';
   h += `<div class="c head"><div class="row2"><div><h1>${day.name}</h1><span class="s">${key} 周${WK[new Date(key + 'T12:00').getDay()]} · ${note}</span></div><b class="big2">${n}/${day.tasks.length}</b></div><div class="prog"><i style="width:${n/day.tasks.length*100}%"></i></div></div>`;
-  if (okLeave(key)) h += `<div class="bar-msg ok">✅ 这一天减量了，没做的不用补，也不扣金币</div>`;
+  if (okLeave(key)) h += `<div class="bar-msg ok">📝 这一天没做完的尽量补上，不扣金币</div>`;
   else if (onLeave) h += `<div class="bar-msg ok">🙋 这一天请假了，不扣金币</div>`;
   else if (late && !all) h += `<div class="bar-msg">⏰ ${miss && miss.pen ? `扣了 ${miss.pen} 金币，<b>今天补完退 ${Math.round(miss.pen * Math.max(0, 1 - CONFIG.REFUND * daysBetween(key, T)))}</b>，越晚退得越少` : '补完不发金币'}</div>`;
   // ⑤ 任务卡片：按科目收成几张卡，点开看里面的小项
@@ -235,8 +235,7 @@ function weekData(){
     if (!d) continue;
     d.tasks.forEach((t, i) => {
       const on = taskDone(k, i, t);
-      if (okLeave(k) && !on) return;
-      items.push({k, t, on});
+      items.push({k, t, on, bu: k < T && !on});
       if (/拍照/.test(t.d || '')) photos.push({id: k + '-' + i, k, t, on: !!ph[k + '-' + i]});
     });
   }
@@ -245,9 +244,9 @@ function weekData(){
 function viewWeek(){
   const {items, photos} = weekData(), a = items.filter(x => x.on).length, b = photos.filter(x => x.on).length, WK = ['日','一','二','三','四','五','六'];
   if (!items.length) return '';
-  const days = [...new Set(items.map(x => x.k))].map(k => `<p class="s" style="margin:8px 0 2px"><b>${k.slice(5)} 周${WK[new Date(k + 'T12:00').getDay()]}</b></p>` + items.filter(x => x.k === k).map(x => `<div>${x.on ? '✅' : '⬜'} ${x.t.tag}｜${x.t.t}</div>`).join('')).join('');
+  const days = [...new Set(items.map(x => x.k))].map(k => `<p class="s" style="margin:8px 0 2px"><b>${k.slice(5)} 周${WK[new Date(k + 'T12:00').getDay()]}</b></p>` + items.filter(x => x.k === k).map(x => `<div>${x.on ? '✅' : '⬜'} ${x.bu ? '（补）' : ''}${x.t.tag}｜${x.t.t}</div>`).join('')).join('');
   const ph = photos.map(x => `<div style="cursor:pointer;padding:3px 0" onclick="togPhoto('${x.id}')">${x.on ? '✅' : '⬜'} ${x.k.slice(5)} ${x.t.t}</div>`).join('');
-  return `<div class="c"><details><summary><b>📋 这周清单</b> · 完成 ${a}/${items.length} 项${photos.length ? ` · 📸 ${b}/${photos.length} 张` : ''}</summary>
+  return `<div class="c"><details><summary><b>📋 这周清单</b> · 完成 ${a}/${items.length} 项${items.some(x => x.bu) ? ` · 要补 ${items.filter(x => x.bu).length} 项` : ''}${photos.length ? ` · 📸 ${b}/${photos.length} 张` : ''}</summary>
     ${days}
     ${photos.length ? `<h3 style="margin-top:14px">📸 这周要拍的照片</h3><p class="s">不用天天发，拍好就点一下打勾，周日一起发工作室群。</p>${ph}` : ''}
     <button class="btn2" style="margin-top:12px" onclick="sendWeek()">📤 把这周清单发给姐姐</button>
@@ -256,7 +255,7 @@ function viewWeek(){
 function togPhoto(id){ const p = load('wkphoto', {}); p[id] = !p[id]; save('wkphoto', p); render(); }
 function sendWeek(){
   const {mon, items, photos} = weekData(), a = items.filter(x => x.on).length, b = photos.filter(x => x.on).length;
-  const not = items.filter(x => !x.on).map(x => `⬜ ${x.k.slice(5)} ${x.t.tag}｜${x.t.t}`), np = photos.filter(x => !x.on).map(x => `⬜ ${x.k.slice(5)} ${x.t.t}`);
+  const not = items.filter(x => !x.on).map(x => `⬜ ${x.k.slice(5)} ${x.bu ? '（补）' : ''}${x.t.tag}｜${x.t.t}`), np = photos.filter(x => !x.on).map(x => `⬜ ${x.k.slice(5)} ${x.t.t}`);
   notify(`📋 这周清单（${mon.slice(5)} 起）：完成 ${a}/${items.length} 项，照片 ${b}/${photos.length} 张` + (not.length ? `\n还没做：\n${not.join('\n')}` : '') + (np.length ? `\n还没拍：\n${np.join('\n')}` : ''));
   toast('发给姐姐了，照片记得发工作室群');
 }
