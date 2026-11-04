@@ -28,7 +28,7 @@ window.BOOK = {
    "icon": "📐",
    "title": "数学：5·3 期中卷",
    "time": "约 60 分钟",
-   "html": "<div class=\"sec\" id=\"s53\"><h3><span class=\"n\">📗</span>今天这一科做 5·3（实体书）</h3>\n<p><b>范围：5·3 里的期中测试卷（如果没有期中卷，就做第 27–28 章的章末测试）</b></p>\n<div class=\"step\"><i>1</i><div>先翻一下课本或以前的网站手册，把这一章的重点过一遍（5 分钟）。</div></div>\n<div class=\"step\"><i>2</i><div>做 5·3 上这一部分的同步练习，<b>不看答案、不查手机</b>。</div></div>\n<div class=\"step\"><i>3</i><div>用书后答案对，红笔订正，错题旁边写一句\"错在哪\"。</div></div>\n<div class=\"step\"><i>4</i><div><b>拍照发工作室群</b>，回首页写一句：做了哪几页、错了几题、哪几题还是不会。</div></div></div>"
+   "html": "<div class=\"sec\" id=\"s53\"><h3><span class=\"n\">📗</span>这一科的 5·3（实体书，做不做以今日任务为准）</h3>\n<p><b>范围：5·3 里的期中测试卷（如果没有期中卷，就做第 27–28 章的章末测试）</b></p>\n<div class=\"step\"><i>1</i><div>先翻一下课本或以前的网站手册，把这一章的重点过一遍（5 分钟）。</div></div>\n<div class=\"step\"><i>2</i><div>做 5·3 上这一部分的同步练习，<b>不看答案、不查手机</b>。</div></div>\n<div class=\"step\"><i>3</i><div>用书后答案对，红笔订正，错题旁边写一句\"错在哪\"。</div></div>\n<div class=\"step\"><i>4</i><div><b>拍照存好，周日一起发工作室群</b>，回首页写一句：做了哪几页、错了几题、哪几题还是不会。</div></div></div>"
   }
  ],
  "checks": {}

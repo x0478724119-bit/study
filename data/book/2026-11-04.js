@@ -14,7 +14,7 @@ window.BOOK = {
    "icon": "⚡",
    "title": "物理：5·3 第 15–17 章",
    "time": "约 45 分钟",
-   "html": "<div class=\"sec\" id=\"s53\"><h3><span class=\"n\">📗</span>今天这一科做 5·3（实体书）</h3>\n<p><b>范围：第 15 章 电流和电路、第 16 章 电压 电阻、第 17 章第 1–2 节</b></p>\n<div class=\"step\"><i>1</i><div>先翻一下课本或以前的网站手册，把这一章的重点过一遍（5 分钟）。</div></div>\n<div class=\"step\"><i>2</i><div>做 5·3 上这一部分的同步练习，<b>不看答案、不查手机</b>。</div></div>\n<div class=\"step\"><i>3</i><div>用书后答案对，红笔订正，错题旁边写一句\"错在哪\"。</div></div>\n<div class=\"step\"><i>4</i><div><b>拍照发工作室群</b>，回首页写一句：做了哪几页、错了几题、哪几题还是不会。</div></div></div>"
+   "html": "<div class=\"sec\" id=\"s53\"><h3><span class=\"n\">📗</span>这一科的 5·3（实体书，做不做以今日任务为准）</h3>\n<p><b>范围：第 15 章 电流和电路、第 16 章 电压 电阻、第 17 章第 1–2 节</b></p>\n<div class=\"step\"><i>1</i><div>先翻一下课本或以前的网站手册，把这一章的重点过一遍（5 分钟）。</div></div>\n<div class=\"step\"><i>2</i><div>做 5·3 上这一部分的同步练习，<b>不看答案、不查手机</b>。</div></div>\n<div class=\"step\"><i>3</i><div>用书后答案对，红笔订正，错题旁边写一句\"错在哪\"。</div></div>\n<div class=\"step\"><i>4</i><div><b>拍照存好，周日一起发工作室群</b>，回首页写一句：做了哪几页、错了几题、哪几题还是不会。</div></div></div>"
   },
   {
    "id": "chem",
@@ -28,7 +28,7 @@ window.BOOK = {
    "icon": "🔤",
    "title": "英语：5·3 Unit 3–4",
    "time": "约 40 分钟",
-   "html": "<div class=\"sec\" id=\"s53\"><h3><span class=\"n\">📗</span>今天这一科做 5·3（实体书）</h3>\n<p><b>范围：Unit 3、Unit 4（含听力）</b></p>\n<div class=\"step\"><i>1</i><div>先翻一下课本或以前的网站手册，把这一章的重点过一遍（5 分钟）。</div></div>\n<div class=\"step\"><i>2</i><div>做 5·3 上这一部分的同步练习，<b>不看答案、不查手机</b>。</div></div>\n<div class=\"step\"><i>3</i><div>用书后答案对，红笔订正，错题旁边写一句\"错在哪\"。</div></div>\n<div class=\"step\"><i>4</i><div><b>拍照发工作室群</b>，回首页写一句：做了哪几页、错了几题、哪几题还是不会。</div></div><div class=\"tip\">🎧 <b>听力：</b>5·3 英语每单元都有听力，扫书上的二维码听。第一遍不看原文，做完再对着原文听一遍。</div></div>"
+   "html": "<div class=\"sec\" id=\"s53\"><h3><span class=\"n\">📗</span>这一科的 5·3（实体书，做不做以今日任务为准）</h3>\n<p><b>范围：Unit 3、Unit 4（含听力）</b></p>\n<div class=\"step\"><i>1</i><div>先翻一下课本或以前的网站手册，把这一章的重点过一遍（5 分钟）。</div></div>\n<div class=\"step\"><i>2</i><div>做 5·3 上这一部分的同步练习，<b>不看答案、不查手机</b>。</div></div>\n<div class=\"step\"><i>3</i><div>用书后答案对，红笔订正，错题旁边写一句\"错在哪\"。</div></div>\n<div class=\"step\"><i>4</i><div><b>拍照存好，周日一起发工作室群</b>，回首页写一句：做了哪几页、错了几题、哪几题还是不会。</div></div><div class=\"tip\">🎧 <b>听力：</b>5·3 英语每单元都有听力，扫书上的二维码听。第一遍不看原文，做完再对着原文听一遍。</div></div>"
   },
   {
    "id": "yw",
@@ -49,7 +49,7 @@ window.BOOK = {
    "icon": "⚖️",
    "title": "道法：5·3 第 4–6 课",
    "time": "约 25 分钟",
-   "html": "<div class=\"sec\" id=\"s53\"><h3><span class=\"n\">📗</span>今天这一科做 5·3（实体书）</h3>\n<p><b>范围：第二单元 第 4–6 课</b></p>\n<div class=\"step\"><i>1</i><div>先翻一下课本或以前的网站手册，把这一章的重点过一遍（5 分钟）。</div></div>\n<div class=\"step\"><i>2</i><div>做 5·3 上这一部分的同步练习，<b>不看答案、不查手机</b>。</div></div>\n<div class=\"step\"><i>3</i><div>用书后答案对，红笔订正，错题旁边写一句\"错在哪\"。</div></div>\n<div class=\"step\"><i>4</i><div><b>拍照发工作室群</b>，回首页写一句：做了哪几页、错了几题、哪几题还是不会。</div></div></div>"
+   "html": "<div class=\"sec\" id=\"s53\"><h3><span class=\"n\">📗</span>这一科的 5·3（实体书，做不做以今日任务为准）</h3>\n<p><b>范围：第二单元 第 4–6 课</b></p>\n<div class=\"step\"><i>1</i><div>先翻一下课本或以前的网站手册，把这一章的重点过一遍（5 分钟）。</div></div>\n<div class=\"step\"><i>2</i><div>做 5·3 上这一部分的同步练习，<b>不看答案、不查手机</b>。</div></div>\n<div class=\"step\"><i>3</i><div>用书后答案对，红笔订正，错题旁边写一句\"错在哪\"。</div></div>\n<div class=\"step\"><i>4</i><div><b>拍照存好，周日一起发工作室群</b>，回首页写一句：做了哪几页、错了几题、哪几题还是不会。</div></div></div>"
   }
  ],
  "checks": {

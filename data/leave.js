@@ -1,1 +1,1 @@
-window.LEAVE_OK = [];
+window.LEAVE_OK = ["2026-11-02", "2026-11-03"];

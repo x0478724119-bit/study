@@ -154,6 +154,17 @@ function lessonName(id){
 
 // 预览模式：姐姐的浏览器（开过后台或 ?me=1）什么都不锁，方便检查内容
 const PREVIEW = (() => { try { return load('isAdmin', false) || !!load('adminToken', ''); } catch(e){ return false; } })();
+// 全站禁止粘贴、禁止复制题目（她自己写在框里的字可以复制）；姐姐的预览和后台不限制
+if (!PREVIEW && !/admin\.html/.test(location.pathname)){
+  const inField = t => t && t.closest && t.closest('input,textarea');
+  const noPaste = e => { const was = e.defaultPrevented; e.preventDefault(); if (!was) toast('这里不能粘贴，要自己写哦'); };
+  document.addEventListener('paste', noPaste);
+  document.addEventListener('drop', e => e.preventDefault());
+  document.addEventListener('dragstart', e => { if (!inField(e.target)) e.preventDefault(); });
+  document.addEventListener('beforeinput', e => { if (e.inputType === 'insertFromPaste' || e.inputType === 'insertFromDrop') e.preventDefault(); });
+  ['copy', 'cut'].forEach(n => document.addEventListener(n, e => { if (!inField(e.target)) e.preventDefault(); }));
+  document.documentElement.classList.add('nocopy');
+}
 // 预览浏览器里没有诗予的记录，以前会被结算成负数、"欠作业"：余额清零一次；start 每次记成今天，不再算欠账
 if (PREVIEW){
   if (!load('previewReset', false)){ save('wallet', {coins: 0, earned: 0, log: []}); save('missed', {}); save('weekJobs', {}); save('previewReset', true); }
